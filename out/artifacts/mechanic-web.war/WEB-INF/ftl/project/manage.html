@@ -1,0 +1,264 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(function(){
+	// 初始化隐藏详细信息TAB
+	$(".outBox .hd .details").hide();
+	$(".inBox").hide();
+	
+	// 点击列表和详细信息TAB切换效果
+	$(".outBox .hd .list").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".Box").show();
+		$(".Box").siblings().hide();
+	});
+	
+	$(".outBox .hd .details").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".inBox").show();
+		$(".inBox").siblings().hide();
+	});
+	
+	// 信息列表选中背景效果
+	$(".Box tr").click(function() {
+		$(this).css({
+			"background" : "#FAF3D6"
+		}).siblings().css({
+			"background" : "#fff"
+		});
+	});
+	
+	// 子TAB切换效果
+	jQuery(".inBox").slide({
+		titCell : ".inHd li",
+		mainCell : ".inBd",
+		trigger : "click"
+	});
+	
+	$(".Box tr .con").click(function() {
+		$(".outBox .hd .details").show();
+		$(".inBox").show();
+		$(".Box,.outBox .hd .list").removeClass("on");
+		$(".Box").hide();
+		$(".Box,.outBox .hd .details").addClass("on");
+		$(".outBox .bd div").eq(1).show().siblings().hide();
+		
+		var code = $(this).parent().parent().find('input').val();
+		
+		$('#infoTab').off().on('click',function(){$('#infoFrame').attr('src','project.htm?method=initModify&projectCode='+code);});
+		$('#enclosureTab').off().on('click',function(){$('#enclosureFrame').attr('src','projectEnclosure.htm?method=getProjectEnclosure&projectCode='+code);});
+		
+		$('#infoFrame').attr('src','project.htm?method=initModify&projectCode='+code);
+	});
+	
+	/**$("#test1").load(function(){ 
+        $(this).height(0); //用于每次刷新时控制IFRAME高度初始化 
+        var height = $(this).contents().find("body").height(); 
+        alert(height);
+        $(this).height( height < 500 ? 500 : height ); 
+      }); 
+	
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": false,//控制顶部显示条数 
+		"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": false, //分页
+		"bInfo": false,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[4]}// 不参与排序的列
+		]
+	});*/
+});
+
+//删除
+function del(projectCode){
+	layer.confirm('确认要删除该项目产品信息吗？',function(index){
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "project.htm?method=del",
+			data : {
+				projectCode : projectCode
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						layer.alert("删除成功！",  {icon: 1}, function(index){
+							$("form").submit();
+						});
+					} else {
+						layer.msg(data.message,{icon:2,time:3000});
+					}
+				} else {
+					layer.msg("删除失败，请重试！",{icon:2,time:3000});
+				}
+			},
+			error : function() {
+				layer.msg("系统繁忙，请稍后再试！",{icon:2,time:3000});
+			}
+		});
+	});
+}
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 项目产品中心 <span class="c-gray en">&gt;</span> 项目产品管理<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<form action="project.htm?method=query" method="post" class="form form-horizontal" id="form-member-add">
+	<div class="text-c">
+		<span class="select-box inline">
+		<select name="projectCategoryCode" class="select">
+			<option value="" selected>所有分类</option>
+			<#list categorys as category>
+			<#assign offsetNode = "&nbsp;&nbsp;"/>
+			<#assign linkNode = "&nbsp;&nbsp;"/>
+			<#assign childNode = "├&nbsp;"/>
+			<#assign endNode = "└&nbsp;"/>
+			<option value="${category.projectCategoryCode}" <#if (category.projectCategoryCode == query.projectCategoryCode)>selected</#if>>
+			<#if (category.depth > 0)>
+			<#list 1..category.depth as m>
+				<#assign showInfo = showInfo+offsetNode />
+				<#if (m == category.depth)>
+					<#if (category.nextId > 0)>
+						<#assign showInfo = showInfo+childNode />
+					<#else>
+						<#assign showInfo = showInfo+endNode />
+					</#if>
+				<#else>
+					<#assign showInfo = showInfo+linkNode />
+				</#if>
+			</#list>
+			</#if>
+			${showInfo+category.projectCategoryName}
+			</option>
+			<#assign showInfo = "" />
+			</#list>
+		</select>
+		</span> 
+		<input type="text" name="projectName" id="projectName" value="${query.projectName}" placeholder=" 项目产品名称" style="width:200px" class="input-text">
+		<input type="text" name="owner" id="owner" value="${query.owner}" placeholder=" 主导人" style="width:200px" class="input-text">
+		<span class="select-box inline">
+		<select name="projectState" class="select">
+			<option value="" selected>所有状态</option>
+		<#list projectStates?keys as key>
+			<option value="${key}" <#if query.projectState==key>selected="true"</#if>>${projectStates[key]}</option>
+		</#list>
+		</select>
+		</span> 
+		<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button><#if error?exists><span class="c-red">${error}</span></#if>
+	</div>
+	</form>
+	<#if !(projects?exists)>
+	<#else>
+	<div class="outBox">
+		<div class="hd">
+			<ul>
+				<li class="list on"><span>项目产品列表</span></li>
+				<li class="details"><span>详细信息</span></li>
+			</ul>
+		</div>
+		<div class="bd">
+			<!-- inBox S -->
+			<div class="Box" style="display: block;">
+				<div class="inBd">
+					<ul>
+						<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer" id="">
+							<thead>
+								<tr class="text-c" role="row">
+									<th>项目产品名称</th>
+									<th width="300">主导人</th>
+									<th width="100">最低限价</th>
+									<th width="100">项目状态</th>
+									<th width="80">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<#list projects as project>
+								<tr class="text-c">
+									<input type="hidden" name="projectCode" value="${project.projectCode}">
+									<td class="con text-l">[${project.projectCategoryName}] ${project.projectName}</td>
+									<td class="con text-l">${project.owner}</td>
+									<td class="con text-l">${project.floorPrice}</td>
+									<td class="con">${projectStates[project.projectState]}</td>
+									<td class="td-manage">
+									<a style="text-decoration:none" class="ml-5" onClick="openOperation('修改项目产品状态','project.htm?method=initModifyState&projectCode=${project.projectCode}','400','240')" href="javascript:;" title="修改项目产品状态"><i class="Hui-iconfont f-20">&#xe6df;</i></a>
+									<#if project.infoState=="1">
+									<i class="Hui-iconfont f-20 ml-5 c-red " title="不可操作">&#xe6e2;</i>
+									<#else>
+									<a style="text-decoration:none" class="ml-5" onClick="del('${project.projectCode}')" href="javascript:;" title="删除"><i class="Hui-iconfont f-20">&#xe6e2;</i></a>
+									</#if>
+									</td>
+								</tr>
+								</#list>
+							</tbody>
+						</table>
+						<!-- <div class="dataTables_wrapper no-footer">
+							<div class="dataTables_info" id="">共2条记录，共 1 页，当前显示第1页</div>
+							<div class="dataTables_paginate paging_simple_numbers" id="">
+								<a class="paginate_button previous disabled" tabindex="0" id="">首页</a> <a class="paginate_button previous disabled" tabindex="0" id="">上一页</a>
+								<span><a class="paginate_button current" tabindex="0">1</a></span> <a class="paginate_button next disabled" tabindex="0" id="">下一页</a> <a
+									class="paginate_button previous disabled" tabindex="0" id="">末页</a>
+							</div>
+						</div> -->
+					</ul>
+				</div>
+			</div>
+			<div class="inBox">
+				<div class="inHd">
+					<ul>
+						<li><span id="infoTab">项目产品信息</span></li>
+						<li><span id="enclosureTab">附件信息</span></li>
+					</ul>
+				</div>
+				<div class="inBd">
+					<ul><iframe id="infoFrame" scrolling="no" frameborder="0" width="100%"></iframe></ul>
+					<ul><iframe id="enclosureFrame" scrolling="auto" frameborder="0" width="100%" ></iframe></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	</#if>
+</div>
+</body>
+</html>

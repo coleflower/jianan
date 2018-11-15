@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<LINK rel="Bookmark" href="/favicon.ico">
+	<LINK rel="Shortcut Icon" href="/favicon.ico" />
+	<title>设计工单管理</title>
+	<!--[if IE 6]>
+	<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/common/page.css" />
+	<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript">
+        /*弹框不带大小*/
+        function add(title,url){
+            var index = layer.open({
+                type: 2,
+                title: title,
+                content: url
+            });
+            layer.full(index);
+            //layer_show(title,url,w,h);
+        }
+        function show(title,url,w,h){
+            layer_show(title,url,w,h);
+        }
+	</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 技术中心 <span class="c-gray en">&gt;</span> 设计审核<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		<form action="${base}/review/list.htm" method="get" >
+		<input type="text" name="designCode" placeholder=" 工单编号" value="${designCode}" style="width:250px" class="input-text">
+		<button name="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+		</form>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20">
+		</span> <span class="r">共有数据：<strong>${result.total}</strong> 条</span>
+	</div>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover">
+			<thead>
+			<tr class="text-c">
+				<th width="100">工单编号</th>
+				<th width="150">创建时间</th>
+				<th width="100">操作</th>
+			</tr>
+			</thead>
+			<list>
+			<#list result.records as design>
+			<tr class="text-c">
+				<td>${design.designCode!''}</td>
+				<td><#if design.createDate??>${design.createDate?datetime}</#if></td>
+				<td class="td-manage">
+					<a style="text-decoration:none" onclick="add('审核工单 编号:${design.designCode}','${base}/review/preSave.htm?designCode=${design.designCode}')" href="javascript:;" title="审核">审核</a>
+				</td>
+			</tr>
+			</#list>
+			</tbody>
+		</table>
+		<#if result?? && result.records?size != 0 >
+		<#assign baseUrl = base + '/review/list.htm?designCode=' + designCode/>
+		<#include  "/common/new_page.html">
+		<#else>
+		<div class="pagin">
+			<div class="message" style="text-align: center">无查询结果！</div>
+		</div>
+		</#if>
+		</table>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,128 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(function(){	
+	$("#reissueFrame", window.parent.document).load(function(){
+	    var main = $("#reissueFrame", window.parent.document);
+	    var thisheight = $(document).height();
+	    var showheight = $(parent.window).height()-295;// 获取当前显示区域的高度
+	    main.height(thisheight > showheight ? showheight : thisheight);
+	});
+});
+
+//弹出全屏操作窗口，关闭后回调刷新本页面
+function fullOpenOperation(title,url){
+    var index = layer.open({
+        type: 2,
+        title: title,
+        content: url
+    });
+    layer.full(index);
+}
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+    layer_show(title,url,w,h);
+}
+
+
+//删除
+function del(id){
+	parent.layer.confirm('确认要删除该款项信息吗？',function(index){
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "contractFund.htm?method=del",
+			data : {
+				id : id
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						parent.layer.alert("删除成功！",  {icon: 1}, function(index){
+							location.replace(location.href);
+							parent.layer.close(index); 
+						});
+					} else {
+						parent.layer.msg(data.message,{icon:2,time:3000});
+					}
+				} else {
+					parent.layer.msg("删除失败，请重试！",{icon:2,time:3000});
+				}
+			},
+			error : function() {
+				parent.layer.msg("系统繁忙，请稍后再试！",{icon:2,time:3000});
+			}
+		});
+	});
+}
+</script>
+</head>
+<body>
+<div>
+	<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer">
+		<thead>
+			<tr class="text-c" role="row">
+				<th>合同编号</th>
+				<th>合同名称</th>
+				<th>备案号</th>
+				<th>成交日期</th>
+				<th>联系方式</th>
+				<th>合同状态</th>
+			</tr>
+		</thead>
+		<tbody>
+			<#list contractDTOS as contractDTO>
+			<tr class="text-c">
+				<td >${contractDTO.contractCode}</td>
+				<td >${contractDTO.contractName}</td>
+				<td >${contractDTO.recordNumber}</td>
+				<td >${contractDTO.dealDate}</td>
+				<td >${contractDTO.contacts}</td>
+				<td >
+					<#if contractDTO.contractState == 'tobeeffective'><span style="background-color: grey" class="label label-success radius">待生效</span></#if>
+					<#if contractDTO.contractState == 'effective'><span class="label label-success radius">有效</span></#if>
+					<#if contractDTO.contractState == 'cancel'><span style="background-color: grey" class="label label-success radius">作废</span></#if>
+					<#if contractDTO.contractState == 'expired'><span style="background-color: grey" class="label label-success radius">已过期</span></#if>
+				</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>

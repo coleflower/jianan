@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4"  xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+    http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<context-param>  
+	     <param-name>webAppRootKey</param-name>  
+	     <param-value>demo2</param-value>  
+	</context-param>
+  <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			classpath*:context/db/spring-db.xml,
+			classpath*:context/dao/*.xml,
+			classpath*:context/service/*.xml,
+			classpath*:context/ruleengine/*.xml,
+		</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+<!--	<filter>
+		<filter-name>securityFilter</filter-name>
+		<filter-class>com.cubicpark.mechanic.filter.SecurityFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>securityFilter</filter-name>
+		<url-pattern>*.htm</url-pattern>
+	</filter-mapping>-->
+	
+	<servlet>
+		<servlet-name>mentha</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>
+				classpath*:context/spring-servlet.xml
+			</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>mentha</servlet-name>
+		<url-pattern>*.htm</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>mentha</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.htm</welcome-file>
+	</welcome-file-list>
+	
+	<!--<error-page>-->
+		<!--<error-code>500</error-code>-->
+		<!--<location>/500.htm</location>-->
+	<!--</error-page>-->
+	<!--<error-page>-->
+		<!--<error-code>404</error-code>-->
+		<!--<location>/404.htm</location>-->
+	<!--</error-page>-->
+</web-app>

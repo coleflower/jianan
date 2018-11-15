@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title>新增仓库</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/js/util.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script>
+        function save() {
+            if ($("#storageName").val() == "") {
+                layer.tips('请输入仓库名称！', '#storageName');
+                return false;
+			} else if ($("#manager option:selected").val() == "") {
+                layer.tips('请选择仓库管理员！', '#manager');
+                return false;
+			} else {
+                layer.closeAll('tips');
+            }
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            //var data = $('#form').serialize();
+            $.ajax({
+                type: 'POST',
+                url: '${base}/storage/save.htm',
+                data: $('#form').serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    if(data.code == 0){
+                        setTimeout(function(){
+                            top.layer.close(index);
+                            top.layer.msg(data.msg);
+                            layer.closeAll("iframe");
+                            //刷新父页面
+                            parent.location.reload();
+                        },500);
+                    }else {
+                        top.layer.close(index);
+                        layer.alert(data.msg);
+                    }
+                    return false;
+                },
+			error: function () {
+                top.layer.close(index);
+				layer.alert("系统繁忙!请重试");
+				return false;
+			}
+            });
+        }
+	</script>
+</head>
+<body>
+<article class="page-container">
+	<form id="form" role="form" class="form form-horizontal" >
+        <input type="text" class="input-text" name="id" value="${storage.id!''}" hidden>
+		<input type="text" class="input-text" name="storageCode" value="${storage.storageCode!''}" hidden>
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>仓库名称：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+				<input type="text" class="input-text" value="${storage.storageName!''}" placeholder="请输入仓库名称" name="storageName" id="storageName">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>管理员：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+			<span class="select-box" style="width:150px;">
+			<select class="select" name="manager" id="manager" size="1">
+				<option value="">请选择管理员</option>
+				<option value="总编">总编</option>
+				<option value="栏目主辑">栏目主辑</option>
+				<option value="栏目编辑">栏目编辑</option>
+			</select>
+			</span>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<div class="col-xs-7 col-sm-6 col-xs-offset-3 col-sm-offset-3">
+				<!--<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存并提交</button>-->
+				<button id="saveButton" onclick="save()" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

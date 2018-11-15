@@ -1,0 +1,132 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(function(){
+	$("#contactsFrame", window.parent.document).load(function(){
+	    var main = $("#contactsFrame", window.parent.document);
+	    var thisheight = $(document).height();
+	    var showheight = $(parent.window).height()-341;// 获取当前显示区域的高度
+	    main.height(thisheight > showheight ? showheight : thisheight);
+	});
+});
+
+//删除
+function del(id){
+	parent.layer.confirm('确认要删除该联系人吗？',function(index){
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "customerContacts.htm?method=del",
+			data : {
+				id : id
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						parent.layer.alert("删除成功！",  {icon: 1}, function(index){
+							location.replace(location.href);
+							parent.layer.close(index); 
+						});
+					} else {
+						parent.layer.msg(data.message,{icon:2,time:3000});
+					}
+				} else {
+					parent.layer.msg("删除失败，请重试！",{icon:2,time:3000});
+				}
+			},
+			error : function() {
+				parent.layer.msg("系统繁忙，请稍后再试！",{icon:2,time:3000});
+			}
+		});
+	});
+}
+</script>
+</head>
+<body>
+<div>
+	<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer">
+		<thead>
+			<tr>
+				<td colspan="9"><span class="l f-14"><b>所属客户：${customerInfo.customerName}</b></span> <span class="r"><button id="submitButton" class="btn btn-primary radius" type="button" onClick="parent.openOperation('新增联系人','customerContacts.htm?method=initAdd&customerCode=${customerInfo.customerCode}','800','400')"><i class="Hui-iconfont">&#xe632;</i> 新增联系人</button></span></td>
+			</tr>
+			<tr class="text-c" role="row">
+				<th width="70">联系人姓名</th>
+				<th width="70">所在部门</th>
+				<th width="100">职位</th>
+				<th width="120">固定电话</th>
+				<th width="80">手机</th>
+				<th>E-MAIL</th>
+				<th width="100">QQ号</th>
+				<th width="150">微信号</th>
+				<th width="80">操作</th>
+			</tr>
+		</thead>
+		<tbody>
+			<#list customerContacts as contacts>
+			<tr class="text-c">
+				<input type="hidden" name="id" value="${contacts.id}">
+				<td class="con text-l">${contacts.contactsName}</td>
+				<td class="con text-l">${contacts.department}</td>
+				<td class="con text-l">${contacts.position}</td>
+				<td class="con text-l">${contacts.telephone}</td>
+				<td class="con text-l">${contacts.mobile}</td>
+				<td class="con text-l text-overflow">${contacts.email}</td>
+				<td class="con text-l">${contacts.qq}</td>
+				<td class="con text-l">${contacts.weixin}</td>
+				<td class="td-manage">
+				<a style="text-decoration:none" class="ml-5" onClick="parent.openOperation('修改联系人','customerContacts.htm?method=initModify&contactsCode=${contacts.contactsCode}','800','400')" href="javascript:;" title="修改联系人"><i class="Hui-iconfont f-20">&#xe6df;</i></a>
+				<#if contacts.infoState=="1">
+				<i class="Hui-iconfont f-20 ml-5 c-red" title="不可操作">&#xe6e2;</i>
+				<#else>
+				<a style="text-decoration:none" class="ml-5" onClick="del(${contacts.id})" href="javascript:;" title="删除"><i class="Hui-iconfont f-20">&#xe6e2;</i></a>
+				</#if>
+				</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+	<!-- <div class="dataTables_wrapper no-footer">
+		<div class="dataTables_info" id="">共2条记录，共 1 页，当前显示第1页</div>
+		<div class="dataTables_paginate paging_simple_numbers" id="">
+			<a class="paginate_button previous disabled" tabindex="0" id="">首页</a> <a class="paginate_button previous disabled" tabindex="0" id="">上一页</a>
+			<span><a class="paginate_button current" tabindex="0">1</a></span> <a class="paginate_button next disabled" tabindex="0" id="">下一页</a> <a
+				class="paginate_button previous disabled" tabindex="0" id="">末页</a>
+		</div>
+	</div> -->
+</div>
+</body>
+</html>

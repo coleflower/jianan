@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.customer.ICustomerDemandDAO">
+	<resultMap id="customerDemandResultMapper" type="com.cubicpark.mechanic.domain.dto.customer.CustomerDemandDTO">
+		<id column="id" property="id" />
+		<result column="customercode" property="customerCode" />
+		<result column="demandtype" property="demandType" />
+		<result column="demanddate" property="demandDate" />
+		<result column="demandinfo" property="demandInfo" />
+		<result column="demandstate" property="demandState" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addCustomerDemand" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerDemandDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_customer_demand (
+		customercode, demandtype, demanddate, 
+		demandinfo, infostate, createdate, updatedate
+		) values (
+		#{customerCode}, #{demandType}, #{demandDate}, 
+		#{demandInfo}, #{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyCustomerDemand" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerDemandDTO">
+		<![CDATA[update t_customer_demand ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="demandType != null and demandType != '' ">  
+				<![CDATA[demandtype = #{demandType},]]>
+			</if>
+			<if test="demandDate != null and demandDate != '' ">  
+				<![CDATA[demanddate = #{demandDate},]]>
+			</if>
+			<if test="demandInfo != null and demandInfo != '' ">  
+				<![CDATA[demandinfo = #{demandInfo},]]>
+			</if>
+			<if test="demandState != null and demandState != '' ">  
+				<![CDATA[demandstate = #{demandState},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+	
+	<update id="setDemandState" >
+		<![CDATA[update t_customer_demand set demandstate = #{newState} where id = #{id} and demandstate = #{currentState}]]>
+	</update>
+	
+	<select id="getCustomerDemandByCustomerCode" parameterType="String" resultMap="customerDemandResultMapper">
+		<![CDATA[SELECT * FROM t_customer_demand where customercode = #{customerCode}]]>
+	</select>
+	
+	<select id="getCustomerDemandById" parameterType="int" resultMap="customerDemandResultMapper">
+		<![CDATA[SELECT * FROM t_customer_demand where id = #{id}]]>
+	</select>
+	
+	<delete id="delCustomerDemand" parameterType="int">
+		<![CDATA[delete from t_customer_demand where id = #{id} and infostate = '0']]>
+	</delete>
+</mapper>

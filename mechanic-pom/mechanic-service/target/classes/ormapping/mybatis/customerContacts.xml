@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.customer.ICustomerContactsDAO">
+	<resultMap id="customerContactsResultMapper" type="com.cubicpark.mechanic.domain.dto.customer.CustomerContactsDTO">
+		<id column="id" property="id" />
+		<result column="customercode" property="customerCode" />
+		<result column="contactscode" property="contactsCode" />
+		<result column="contactsname" property="contactsName" />
+		<result column="department" property="department" />
+		<result column="position" property="position" />
+		<result column="telephone" property="telephone" />
+		<result column="mobile" property="mobile" />
+		<result column="qq" property="qq" />
+		<result column="weixin" property="weixin" />
+		<result column="email" property="email" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addCustomerContacts" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerContactsDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_customer_contacts (
+		customercode, contactscode, contactsname, 
+		department, position, telephone, mobile, qq, weixin, email, 
+		infostate, createdate, updatedate
+		) values (
+		#{customerCode}, #{contactsCode}, #{contactsName}, 
+		#{department}, #{position}, #{telephone}, #{mobile}, #{qq}, #{weixin}, #{email}, 
+		#{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyCustomerContacts" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerContactsDTO">
+		<![CDATA[update t_customer_contacts ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="contactsName != null and contactsName != '' ">  
+				<![CDATA[contactsname = #{contactsName},]]>
+			</if>
+			<if test="department != null and department != '' ">  
+				<![CDATA[department = #{department},]]>
+			</if>
+			<if test="position != null and position != '' ">  
+				<![CDATA[position = #{position},]]>
+			</if>
+			<if test="telephone != null and telephone != '' ">  
+				<![CDATA[telephone = #{telephone},]]>
+			</if>
+			<if test="mobile != null and mobile != '' ">  
+				<![CDATA[mobile = #{mobile},]]>
+			</if>
+			<if test="qq != null and qq != '' ">  
+				<![CDATA[qq = #{qq},]]>
+			</if>
+			<if test="weixin != null and weixin != '' ">  
+				<![CDATA[weixin = #{weixin},]]>
+			</if>
+			<if test="email != null and email != '' ">  
+				<![CDATA[email = #{email},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where contactscode = #{contactsCode}]]>
+	</update>
+	
+	<select id="getCustomerContactsByCustomerCode" parameterType="String" resultMap="customerContactsResultMapper">
+		<![CDATA[SELECT * FROM t_customer_contacts where customercode = #{customerCode}]]>
+	</select>
+	
+	<select id="getCustomerContactsByContactsCode" parameterType="String" resultMap="customerContactsResultMapper">
+		<![CDATA[SELECT * FROM t_customer_contacts where contactscode = #{contactsCode}]]>
+	</select>
+	
+	<delete id="delCustomerContactsById" parameterType="int">
+		<![CDATA[delete from t_customer_contacts where id = #{id} and infostate = '0']]>
+	</delete>
+	
+</mapper>

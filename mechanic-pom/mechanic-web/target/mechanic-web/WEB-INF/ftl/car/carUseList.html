@@ -1,0 +1,214 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<title></title>
+	<!--[if IE 6]>
+	<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+
+	<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript">
+        $(document).ready(function() {
+            $('.table-sort').dataTable({
+                "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+                "bStateSave": true,//状态保存
+                "pading":false,
+                "aoColumnDefs": [
+                    //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                    {"orderable":false,"aTargets":[0,5]}// 不参与排序的列
+                ]
+            });
+
+        });
+
+
+        //弹出指定的操作窗口
+        function openOperation(title,url,w,h){
+            layer_show(title,url,w,h);
+        }
+
+        //弹出全屏操作窗口，关闭后回调刷新本页面
+        function fullOpenOperation(title,url){
+            var index = layer.open({
+                type: 2,
+                title: title,
+                content: url
+            });
+            layer.full(index);
+
+        }
+
+        //删除工单
+        function  del(id) {
+            layer.confirm('确认要删除吗？', {
+                btn : [ '确定', '取消' ]//按钮
+            },function(index){
+                $.ajax({
+                    type: 'POST',
+                    url: 'productMaterials.htm?method=del',
+                    dataType: 'json',
+                    contentType : "application/x-www-form-urlencoded",
+                    data:{
+                        id:id
+                    },
+                    success: function(data){
+                        if(data.status == "success"){
+                            if(data.message == "200"){
+                                var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+                                setTimeout(function(){
+                                    top.layer.msg("删除成功!",{time : 1500});
+                                    layer.closeAll("iframe");
+                                    //刷新父页面
+                                    window.location.reload();
+                                },500);
+                                return false;
+                            }else{
+                                layer.alert(data.message, 1);
+                                return false;
+                            }
+                        }else{
+                            layer.alert(data.message, {
+                                icon: 4,
+                                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                            });
+                            return false;
+                        }
+                    },
+                    error:function(data) {
+                        layer.alert("修改失败，请重试！", 1);
+                        return false;
+                    },
+                });
+            });
+        }
+
+
+        function submitProductMaterials(productCode,productMaterialsCode) {
+            layer.confirm('确认要提交吗？', {
+                btn : [ '确定', '取消' ]//按钮
+            },function(index){
+                $.ajax({
+                    type: 'POST',
+                    url: 'productMaterials.htm?method=submitProductMaterials',
+                    dataType: 'json',
+                    contentType : "application/x-www-form-urlencoded",
+                    data:{
+                        productCode:productCode,
+                        productMaterialsCode : productMaterialsCode
+                    },
+                    success: function(data){
+                        if(data.status == "success"){
+                            if(data.message == "200"){
+                                var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+                                setTimeout(function(){
+                                    top.layer.close(index);
+                                    top.layer.msg("提交成功!",{time : 1500});
+                                    layer.closeAll("iframe");
+                                    //刷新父页面
+                                    window.location.reload();
+                                },500);
+                                return false;
+                            }else{
+                                layer.alert(data.message, 1);
+                                return false;
+                            }
+                        }else{
+                            layer.alert(data.message, {
+                                icon: 4,
+                                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                            });
+                            return false;
+                        }
+                    },
+                    error:function(data) {
+                        layer.alert("修改失败，请重试！", 1);
+                        return false;
+                    },
+                });
+            });
+        }
+
+
+	</script>
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 新增车辆 <span class="c-gray en">&gt;</span> 车辆使用记录   </nav>
+<div class="page-container">
+	<form action="carApplication.htm?method=selectByEmployeeNameAndDate" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="text-c">
+
+			<input type="hidden" value="${carId}" name="carId" id="carId" >
+			<input type="text" name="employeeName" id="employeeName" placeholder=" 员工姓名" style="width:180px" value="${employeeName!''}" class="input-text">
+
+			归还日期：
+			<input type="text" value="${startDate}" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" name="startDate" id="startDate" class="input-text Wdate" style="width:165px;">
+			-
+			<input type="text" value="${endDate}" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" name="endDate" id="endDate" class="input-text Wdate" style="width:165px;">
+			<!--<button name="" id="query" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button><#if error?exists><span class="c-red">${error}</span></#if>-->
+			<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;查询&nbsp;&nbsp;">
+</div>
+</form>
+
+	<div class="mt-20">
+	<table id="test" class="table table-border table-bordered table-bg table-hover table-sort ">
+		<thead>
+		<tr class="text-c" >
+			<th width="100">车辆申请流水号</th>
+			<th width="100">车辆使用里程数(公里)</th>
+			<th width="100">加油次数(次)</th>
+			<th width="100">备注</th>
+			<th width="100">使用人</th>
+			<th width="100">使用时间</th>
+			<th width="100">归还时间</th>
+		</tr>
+		</thead>
+		<tbody>
+		<#if carApplicationDTOList?exists>
+		<#list carApplicationDTOList as carApplicationDTO>
+			<tr class="text-c">
+				<td>${carApplicationDTO.carUseCode}</td>
+				<td>${carApplicationDTO.roadHaul}</td>
+				<td>${carApplicationDTO.refuelingNumber}</td>
+				<td>${carApplicationDTO.remark}</td>
+				<td>${carApplicationDTO.employeeName}</td>
+				<td>${carApplicationDTO.useTime?string('yyyy-MM-dd HH:mm:ss')}</td>
+				<td>
+					<#if carApplicationDTO.endTime ??>
+					${carApplicationDTO.endTime?string('yyyy-MM-dd HH:mm:ss')}
+					</#if>
+				</td>
+
+
+			</tr>
+		</#list>
+		</#if>
+		</tbody>
+	</table>
+</div>
+</div>
+</body>
+</html>

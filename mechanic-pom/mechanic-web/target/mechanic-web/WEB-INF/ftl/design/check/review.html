@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title>新增设计工单</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/js/util.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script>
+        function save(review) {
+            if (review == -1 && $("#remarks").val() == "") {
+                layer.tips('请输入备注！', '#remarks');
+                return false;
+			} else {
+                layer.closeAll('tips');
+            }
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            $.ajax({
+                type: 'POST',
+                url: '${base}/review/save.htm',
+                data: {
+                    review:review,
+                    designCode:$("#designCode").val(),
+                    remarks:$("#remarks").val()
+					},
+                dataType: 'json',
+                success: function (data) {
+                    if(data.code == 0){
+                        setTimeout(function(){
+                            top.layer.close(index);
+                            top.layer.msg(data.msg);
+                            layer.closeAll("iframe");
+                            //刷新父页面
+                            parent.location.reload();
+                        },500);
+                    }else {
+                        top.layer.close(index);
+                        layer.alert(data.msg);
+                    }
+                    return false;
+                },
+				error: function () {
+					top.layer.close(index);
+					layer.alert("系统繁忙!请重试");
+					return false;
+				}
+            });
+        }
+	</script>
+</head>
+<body>
+<div class="pd-20">
+	<table class="table">
+		<tbody>
+		<tr>
+			<th class="text-r" width="80">工单编号：</th>
+			<td>${design.designCode}</td>
+		</tr>
+		<tr>
+			<th class="text-r" width="80">合同编号：</th>
+			<td>${design.contractCode}</td>
+		</tr>
+		<tr>
+			<th class="text-r">文件名称：</th>
+			<td>${design.fileName!''}</td>
+		</tr>
+		<tr>
+			<th class="text-r">材料：</th>
+			<td>${design.material}</td>
+		</tr>
+		<tr>
+			<th class="text-r">技术要求：</th>
+			<td>${design.technicalRequirement}</td>
+		</tr>
+		<tr>
+			<th class="text-r">创建时间：</th>
+			<td>${design.createDate?datetime}</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<article class="page-container">
+	<form id="form" role="form" class="form form-horizontal" >
+		<input type="text" class="input-text" id="designCode" name="designCode" value="${design.designCode}" hidden>
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>备注：</label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <textarea name="remarks" class="textarea" style="width: 800px; height: 300px;"  placeholder="请输入备注"  dragonfly="true" id="remarks"></textarea>
+            </div>
+        </div>
+
+        <div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button id="submitButton" onclick="save(-1)" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 不通过</button>
+				<button id="saveButton" onclick="save(1)" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 通过</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.customer.ICustomerProductDAO">
+	<resultMap id="customerProductResultMapper" type="com.cubicpark.mechanic.domain.dto.customer.CustomerProductDTO">
+		<id column="id" property="id" />
+		<result column="customercode" property="customerCode" />
+		<result column="productname" property="productName" />
+		<result column="description" property="description" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addCustomerProduct" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerProductDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_customer_product (
+		customercode, productname, description, infostate, createdate, updatedate
+		) values (
+		#{customerCode}, #{productName}, #{description}, #{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyCustomerProduct" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerProductDTO">
+		<![CDATA[update t_customer_product ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="productName != null and productName != '' ">  
+				<![CDATA[productname = #{productName},]]>
+			</if>
+			<if test="description != null and description != '' ">  
+				<![CDATA[description = #{description},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">  
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+	
+	<select id="getCustomerProductByCustomerCode" parameterType="String" resultMap="customerProductResultMapper">
+		<![CDATA[SELECT * FROM t_customer_product where customercode = #{customerCode}]]>
+	</select>
+	
+	<select id="getCustomerProductById" parameterType="int" resultMap="customerProductResultMapper">
+		<![CDATA[SELECT * FROM t_customer_product where id = #{id}]]>
+	</select>
+	
+	<delete id="delCustomerProduct" parameterType="int">
+		<![CDATA[delete from t_customer_product where id = #{id} and infostate = '0']]>
+	</delete>
+</mapper>

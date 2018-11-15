@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<LINK rel="Bookmark" href="/favicon.ico" >
+	<LINK rel="Shortcut Icon" href="/favicon.ico" />
+	<title>开始生产</title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<!--[if IE 6]>
+	<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/jquery.raty.css" />
+	<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="${resRoot}/js/wangEditor.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/jquery.raty.js"></script>
+
+	<script type="text/javascript">
+        $(document).ready(function() {
+            $('.skin-minimal input').iCheck({
+                checkboxClass: 'icheckbox-blue',
+                radioClass: 'iradio-blue',
+                increaseArea: '20%'
+            });
+
+            $('#modify').on('click', function() {
+
+                var id = $("#productionId").val();
+                var workerCount = $("#workerCount").val();
+                var finishTime = $("#finishTime").val();
+
+                if (isNaN(workerCount) || workerCount.trim() == "") {
+                    layer.tips('请填写一个数字！', '#workerCount');
+                    return false;
+                } else {
+                    layer.closeAll('tips');
+                }
+
+                if (finishTime.trim() == "") {
+                    layer.tips('请填写预计结束时间！', '#finishTime');
+                    return false;
+                } else {
+                    layer.closeAll('tips');
+                }
+
+
+                layer.confirm('确认要提交吗？', {
+                    btn : [ '确定', '取消' ]//按钮
+                }, function(index) {
+                    $.ajax({
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/x-www-form-urlencoded",//"application/json; charset=utf-8"
+                        url: "production.htm?method=startProduct",
+                        data: {
+                            id : id,
+                            workerCount : workerCount,
+                            finishTime : finishTime
+                        },
+                        success: function (data) {
+                            if (data.status == "success") {
+                                if (data.message == "200") {
+                                    setTimeout(function(){
+                                        top.layer.msg("提交成功!",{time : 1500});
+                                        layer.closeAll("iframe");
+                                        //刷新父页面
+                                        parent.location.reload();
+                                    },500);
+
+                                    return false;
+                                } else {
+                                    layer.alert(data.message, 1);
+                                    return false;
+                                }
+                            } else {
+                                layer.alert("修改失败，请重试！", 1);
+                                return false;
+                            }
+                        },
+                        error: function () {
+                            layer.alert("系统繁忙，请稍后再试！", 1);
+                        }
+                    });
+                    return false;
+                })
+            });
+
+
+        });
+	</script>
+
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+
+		<input type="hidden" id="productionId" value="${id}">
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>工人人数：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" name="workerCount" id="workerCount" maxlength="10">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>完成时间：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" name="finishTime" id="finishTime" class="input-text Wdate">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input id="modify" class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+
+
+	</form>
+</article>
+</body>
+</html>

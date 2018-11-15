@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<LINK rel="Bookmark" href="/favicon.ico" >
+	<LINK rel="Shortcut Icon" href="/favicon.ico" />
+	<title></title>
+	<meta name="keywords" content="">
+	<meta name="description" content="">
+	<!--[if IE 6]>
+	<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/jquery.raty.css" />
+	<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript" src="${resRoot}/js/wangEditor.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/jquery.raty.js"></script>
+
+	<script type="text/javascript">
+        $(document).ready(function() {
+            $('.skin-minimal input').iCheck({
+                checkboxClass: 'icheckbox-blue',
+                radioClass: 'iradio-blue',
+                increaseArea: '20%'
+            });
+        });
+	</script>
+
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+
+		<input type="hidden" id="productCode" value="${productionDTO.productCode}">
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品规格：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" readonly placeholder="" name="productType" id="productType" maxlength="10" value="${productionDTO.productType}">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">产品名称：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" readonly name="productName" id="productName" maxlength="10" value="${productionDTO.productName}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品数量：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" readonly name="productCount" id="productCount" maxlength="10" value="${productionDTO.productCount}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">合同编号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" readonly name="contractCode" id="contractCode" maxlength="10" value="${productionDTO.contractCode}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">状态：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<span class="select-box">
+				<select class="select"  name="status" id="status">
+					<option value="0" <#if productionDTO.status==0>selected</#if> >待下发</option>
+					<option value="1" <#if productionDTO.status==1>selected</#if> >已下发</option>
+				</select>
+				</span>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">产品原料状态：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<span class="select-box">
+				<select class="select"  name="status" id="productMaterialsStatus">
+					<option value="0" <#if productionDTO.productMaterialsStatus==0 || productionDTO.productMaterialsStatus==1>selected</#if> >待审核</option>
+					<option value="2" <#if productionDTO.productMaterialsStatus==2>selected</#if> >审核成功</option>
+					<option value="3" <#if productionDTO.productMaterialsStatus==3>selected</#if> >审核拒绝</option>
+				</select>
+				</span>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">备注：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="remark" id="remark" style="height: 130px" readonly cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内">${productionDTO.remark}</textarea>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">原料审核备注：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="remark" id="materialsRemark"  readonly style="height: 130px" cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内">${productionDTO.materialsRemark}</textarea>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">质检备注：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="remark" id="qualityRemark"  readonly style="height: 130px" cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内">${productionDTO.qualityRemark}</textarea>
+			</div>
+		</div>
+
+	</form>
+</article>
+</body>
+</html>

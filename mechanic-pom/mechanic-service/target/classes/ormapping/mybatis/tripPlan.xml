@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.trip.ITripPlanDAO">
+	<resultMap id="tripPlanResultMapper" type="com.cubicpark.mechanic.domain.dto.trip.TripPlanDTO">
+		<id column="id" property="id" />
+		<result column="plancode" property="planCode" />
+		<result column="employeecode" property="employeeCode" />
+		<result column="days" property="days" />
+		<result column="cause" property="cause" />
+		<result column="cost" property="cost" />
+		<result column="state" property="state" />
+		<result column="approver" property="approver" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addTripPlan" parameterType="com.cubicpark.mechanic.domain.dto.trip.TripPlanDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_trip_plan (plancode, employeecode, days, cause, cost, state, createdate, updatedate
+		) values (
+		#{planCode}, #{employeeCode}, #{days}, #{cause}, #{cost}, #{state}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyTripPlanState">
+		<![CDATA[update t_trip_plan ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="newState != null and newState != '' ">  
+				<![CDATA[state = #{newState},]]>
+			</if>
+			<if test="approver != null and approver != '' ">  
+				<![CDATA[approver = #{approver},]]>
+			</if>
+			<![CDATA[updatedate = now(),]]>
+		</trim>
+		<![CDATA[where plancode = #{planCode} and state = #{oldState}]]>
+		<if test="employeeCode != null and employeeCode != '' ">  
+			<![CDATA[and employeecode = #{employeeCode}]]>
+		</if>
+	</update>
+	
+	<select id="queryTripPlanTotal" parameterType="com.cubicpark.mechanic.domain.dto.trip.TripPlanQueryDTO" resultType="int">
+		<![CDATA[SELECT count(0) FROM t_trip_plan where 1=1]]>
+		<if test="state !=null and state !=''">
+		 	<![CDATA[ and state = #{state}]]>
+		</if>
+		<if test="employeeList !=null and employeeList.size > 0">
+		 	<![CDATA[ and employeecode in]]>
+			<foreach item="item" index="index" collection="employeeList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startDate !=null and startDate != '' and endDate != null and endDate != ''">
+		 	<![CDATA[ and createdate >= #{startDate} and createdate <= #{endDate}]]>
+		</if>
+		<![CDATA[ order by createdate DESC]]>
+	</select>
+	
+	<select id="queryTripPlan" parameterType="com.cubicpark.mechanic.domain.dto.trip.TripPlanQueryDTO" resultMap="tripPlanResultMapper">
+		<![CDATA[SELECT * FROM t_trip_plan where 1=1]]>
+		 <if test="state !=null and state !=''">
+		 	<![CDATA[ and state = #{state}]]>
+		 </if>
+		 <if test="employeeList !=null and employeeList.size() > 0">
+		 	<![CDATA[ and employeecode in]]>
+			<foreach item="item" index="index" collection="employeeList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+		 <if test="startDate !=null and startDate != '' and endDate != null and endDate != ''">
+		 	<![CDATA[ and createdate >= #{startDate} and createdate <= #{endDate}]]>
+		 </if>
+		<![CDATA[ order by createdate DESC]]>
+		<if test="pageSize != 0">
+		 <![CDATA[ LIMIT #{startIndex},#{pageSize}]]>
+		 </if>
+	</select>
+	
+	<select id="getTripPlan" parameterType="String" resultMap="tripPlanResultMapper">
+		<![CDATA[SELECT * FROM t_trip_plan where plancode = #{planCode}]]>
+	</select>
+	
+	<select id="getTripPlanByState" parameterType="String" resultMap="tripPlanResultMapper">
+		<![CDATA[SELECT * FROM t_trip_plan where state = #{state}]]>
+	</select>
+</mapper>

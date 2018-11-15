@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<LINK rel="Bookmark" href="/favicon.ico">
+	<LINK rel="Shortcut Icon" href="/favicon.ico" />
+	<title>货架/堆货区管理</title>
+	<!--[if IE 6]>
+	<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+	<link rel="stylesheet" type="text/css" href="${resRoot}/common/page.css" />
+	<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+	<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+	<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script type="text/javascript">
+        /*弹框不带大小*/
+        function add(title,url){
+            var index = layer.open({
+                type: 2,
+                title: title,
+                content: url
+            });
+            layer.full(index);
+            //layer_show(title,url,w,h);
+        }
+        function add(title,url,w,h){
+            layer_show(title,url,w,h);
+        }
+        function del(obj,id) {
+            layer.confirm('真的删除么', function(index){
+                $.ajax({
+                    type: 'POST',
+                    url: '${base}/rack/delete.htm',
+                    data: {id:id},
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data.code == 0){
+                            setTimeout(function(){
+                                top.layer.close(index);
+                                top.layer.msg(data.msg);
+                                layer.closeAll("iframe");
+                                //刷新本页面
+                                location.reload();
+                            },500);
+                        }else {
+                            top.layer.close(index);
+                            layer.alert(data.msg);
+                        }
+                        return false;
+                    },
+                    error: function () {
+                        top.layer.close(index);
+                        layer.alert("系统繁忙!请重试");
+                        return false;
+                    }
+                });
+            });
+        }
+	</script>
+</head>
+<body>
+<nav class="breadcrumb"><a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		<form action="${base}/rack/list.htm" method="get" >
+		<input type="text" name="storageCode" placeholder=" 仓库名称" value="${param.storage_code}" style="width:250px" class="input-text" hidden>
+		<span class="select-box inline">
+		<select name="type" class="select">
+			<option value="">全部分类</option>
+			<option value="0" <#if param.type == 0> selected="selected" </#if> >堆货区</option>
+			<option value="1" <#if param.type == 1> selected="selected" </#if> >货架</option>
+		</select>
+		</span>
+		<button name="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 搜索</button>
+		</form>
+	</div>
+	<div class="cl pd-5 bg-1 bk-gray mt-20">
+		<a class="btn btn-primary radius" onclick="add('添加堆货区/货架','${base}/rack/preSave.htm?storageCode=${param.storage_code}',700,500)" href="javascript:;"><i class="Hui-iconfont">&#xe600;</i> 添加货架/堆货区</a>
+		</span> <span class="r">共有数据：<strong>${rackList?size}</strong> 条</span>
+	</div>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover">
+			<thead>
+			<tr class="text-c">
+				<th width="100">货架编号</th>
+				<th width="100">所在区域</th>
+				<th width="100">总库存</th>
+				<th width="150">已使用库存</th>
+				<th width="100">类型</th>
+				<th width="100">操作</th>
+			</tr>
+			</thead>
+			<list>
+			<#list rackList as rack>
+			<tr class="text-c">
+				<td>${rack.rackCode!''}</td>
+				<td>${rack.area!''}</td>
+				<td>${rack.size!''}</td>
+				<td>${rack.stock!'0'}</td>
+				<td><#if rack.type == '0'>堆货区<#else>货架</#if></td>
+				<td class="td-manage">
+					<a style="text-decoration:none" class="ml-5" onclick="add('修改货架/堆货区信息 编号:${rack.rackCode}','${base}/rack/preSave.htm?storageCode=${param.storage_code}&id=${rack.id}',700,500)" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a>
+					<a style="text-decoration:none" class="ml-5" onClick="del(this,'${rack.id}')" href="javascript:;" title="删除"><i class="Hui-iconfont">&#xe6e2;</i></a>
+				</td>
+			</tr>
+			</#list>
+			</tbody>
+		</table>
+		</table>
+	</div>
+</div>
+</body>
+</html>

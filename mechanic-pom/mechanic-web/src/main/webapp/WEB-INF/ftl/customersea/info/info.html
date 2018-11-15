@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/cityselect/jquery.cityselect.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	//注意：下面的代码是放在test.html调用,并且id跟test.html中的iframe的id要保持一致
+	$(window.parent.document).find("#infoFrame").load(function(){
+	    var main = $(window.parent.document).find("#infoFrame");
+	    var thisheight = $(document).height();
+	    main.height(thisheight);
+	});
+
+});
+</script>
+</head>
+<body>
+<article>
+	<table class="table table-border table-bordered table-bg dataTable">
+		<tr class="text-l">
+			<td class="sorting_1">客户名称：</td>
+			<td>${customerInfo.customerName}</td>
+			<td class="sorting_1">法人姓名：</td>
+			<td>${customerInfo.legalPerson}</td>
+			<td class="sorting_1">企业总机：</td>
+			<td>${customerInfo.switchBoard}</td>
+			<td class="sorting_1">传真号码：</td>
+			<td>${customerInfo.fax}</td>
+		</tr>
+		<tr class="text-l">
+			<td class="sorting_1">公司地址：</td>
+			<td colspan="3" id="area">
+			${customerInfo.province}${customerInfo.city}${customerInfo.county}${customerInfo.address}</td>
+			<td class="sorting_1">邮政编码：</td>
+			<td colspan="3">${customerInfo.postCode}</td>
+		</tr>
+		<tr class="text-l">
+			<td class="sorting_1">所属行业：</td>
+			<td colspan="3">
+			<div class="formControls">
+			${customerInfo.industry}
+			</div>
+			</td>
+			<td class="sorting_1">经营范围：</td>
+			<td colspan="3">
+			<div class="formControls">
+			${customerInfo.businessScope}
+			</div>
+			</td>
+		</tr>
+		<tr class="text-l">
+			<td class="sorting_1">客户等级：</td>
+			<td colspan="3">
+			${grade[customerInfo.grade]}
+			</td>
+			<td class="sorting_1">备注：</td>
+			<td colspan="3">
+			<div class="formControls">
+			${customerInfo.remarks}
+			</div>
+			</td>
+		</tr>
+	</table>
+</article>
+</body>
+</html>

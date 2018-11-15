@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.aftersale.IAfterSaleDAO" >
+  <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.aftersale.AfterSaleDTO" >
+    <id column="id" property="id"  />
+    <result column="after_service_code" property="afterServiceCode"  />
+    <result column="contract_code" property="contractCode"  />
+    <result column="employee_code" property="employeeCode"  />
+    <result column="customer_code" property="customerCode"  />
+    <result column="services_core" property="servicesCore"  />
+    <result column="remark" property="remark"  />
+    <result column="status" property="status"  />
+    <result column="version" property="version"  />
+    <result column="create_date" property="createDate"  />
+    <result column="update_date" property="updateDate"  />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.cubicpark.mechanic.domain.dto.aftersale.AfterSaleDTOWithBLOBs" extends="BaseResultMap" >
+    <result column="customer_complaint" property="customerComplaint"  />
+    <result column="solution" property="solution"  />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, after_service_code, contract_code, employee_code, customer_code, services_core,
+    remark, status, version,create_date, update_date
+  </sql>
+  <sql id="Blob_Column_List" >
+    customer_complaint, solution
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_after_sale
+    where id = #{id}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from t_after_sale
+    where id = #{id}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.cubicpark.mechanic.domain.dto.aftersale.AfterSaleDTOWithBLOBs" >
+    insert into t_after_sale
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="afterServiceCode != null" >
+        after_service_code,
+      </if>
+      <if test="contractCode != null" >
+        contract_code,
+      </if>
+      <if test="employeeCode != null" >
+        employee_code,
+      </if>
+      <if test="customerCode != null" >
+        customer_code,
+      </if>
+      <if test="servicesCore != null" >
+        services_core,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+      <if test="customerComplaint != null" >
+        customer_complaint,
+      </if>
+      <if test="solution != null" >
+        solution,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="afterServiceCode != null" >
+        #{afterServiceCode},
+      </if>
+      <if test="contractCode != null" >
+        #{contractCode},
+      </if>
+      <if test="employeeCode != null" >
+        #{employeeCode},
+      </if>
+      <if test="customerCode != null" >
+        #{customerCode},
+      </if>
+      <if test="servicesCore != null" >
+        #{servicesCore},
+      </if>
+      <if test="remark != null" >
+        #{remark},
+      </if>
+      <if test="status != null" >
+        #{status},
+      </if>
+      <if test="createDate != null" >
+        #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate},
+      </if>
+      <if test="customerComplaint != null" >
+        #{customerComplaint},
+      </if>
+      <if test="solution != null" >
+        #{solution},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.cubicpark.mechanic.domain.dto.aftersale.AfterSaleDTOWithBLOBs" >
+    update t_after_sale
+    <set >
+      <if test="afterServiceCode != null" >
+        after_service_code = #{afterServiceCode},
+      </if>
+      <if test="contractCode != null" >
+        contract_code = #{contractCode},
+      </if>
+      <if test="employeeCode != null" >
+        employee_code = #{employeeCode},
+      </if>
+      <if test="customerCode != null" >
+        customer_code = #{customerCode},
+      </if>
+      <if test="servicesCore != null" >
+        services_core = #{servicesCore},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate},
+      </if>
+      <if test="customerComplaint != null" >
+        customer_complaint = #{customerComplaint},
+      </if>
+      <if test="solution != null" >
+        solution = #{solution},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="findOneMouseAfterService" resultMap="ResultMapWithBLOBs">
+    select <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_after_sale
+    where create_date &gt;= #{oneMouseBefore}
+  </select>
+
+  <select id="findAll" resultMap="ResultMapWithBLOBs">
+    select <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_after_sale
+  </select>
+
+  <update id="choiceDebugOrder" >
+    update t_after_sale
+    set employee_code = #{employeeCode},
+      update_date = #{now},
+      status = 1,
+      version = version + 1
+    where id = #{id}
+    and version = #{version}
+  </update>
+
+  <select id="selectByCodeOrStatusOrDate" resultMap="ResultMapWithBLOBs">
+    SELECT <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    FROM t_after_sale
+    <where>
+      <if test="afterServiceCode != null and afterServiceCode != ''">
+        after_service_code like concat("%", #{afterServiceCode},"%")
+      </if>
+      <if test="status != null">
+        and status = #{status}
+      </if>
+      <if test="createTime != null">
+        and create_date &gt;= #{createTime}
+      </if>
+      <if test="endTime != null">
+        and create_date &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="searchCodeLike" resultType="string">
+    select after_service_code
+    from t_after_sale
+    where after_service_code like concat("%", #{code},"%")
+  </select>
+
+</mapper>

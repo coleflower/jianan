@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.project.IProjectDAO">
+	<resultMap id="projectResultMapper" type="com.cubicpark.mechanic.domain.dto.project.ProjectDTO">
+		<id column="id" property="id" />
+		<result column="projectcategorycode" property="projectCategoryCode" />
+		<result column="projectcode" property="projectCode" />
+		<result column="projectname" property="projectName" />
+		<result column="owner" property="owner" />
+		<result column="floorprice" property="floorPrice" />
+		<result column="projectstate" property="projectState" />
+		<result column="targetindustry" property="targetIndustry" />
+		<result column="projectdescription" property="projectDescription" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addProject" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_project (projectcategorycode, projectcode, projectname, owner, floorprice, projectstate, targetindustry, projectdescription, infostate, createdate, updatedate)
+		values
+		(#{projectCategoryCode}, #{projectCode}, #{projectName}, #{owner}, #{floorPrice}, #{projectState}, #{targetIndustry}, #{projectDescription}, #{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyProject" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectDTO">
+		<![CDATA[update t_project ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="projectCategoryCode != null and projectCategoryCode != '' ">  
+				<![CDATA[projectcategorycode = #{projectCategoryCode},]]>
+			</if>
+			<if test="projectName != null and projectName != '' ">  
+				<![CDATA[projectname = #{projectName},]]>
+			</if>
+			<if test="owner != null and owner != '' ">  
+				<![CDATA[owner = #{owner},]]>
+			</if>
+			<if test="floorPrice != null and floorPrice != '' ">  
+				<![CDATA[floorprice = #{floorPrice},]]>
+			</if>
+			<if test="targetIndustry != null and targetIndustry != '' ">  
+				<![CDATA[targetindustry = #{targetIndustry},]]>
+			</if>
+			<if test="projectDescription != null and projectDescription != '' ">  
+				<![CDATA[projectdescription = #{projectDescription},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">  
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where projectcode = #{projectCode}]]>
+	</update>
+	
+	<update id="setProjectState" >
+		<![CDATA[update t_project set projectstate = #{projectState} where projectcode = #{projectCode}]]>
+	</update>
+	
+	<select id="getProjectByCode" parameterType="String" resultMap="projectResultMapper">
+		<![CDATA[SELECT * FROM t_project where projectcode = #{projectCode}]]>
+	</select>
+	
+	<select id="getProjectByCategoryCode" parameterType="String" resultMap="projectResultMapper">
+		<![CDATA[SELECT * FROM t_project where projectcategorycode = #{categoryCode}]]>
+	</select>
+	
+	<delete id="delProject" parameterType="String">
+		<![CDATA[delete from t_project where projectcode = #{projectCode} and infostate = '0']]>
+	</delete>
+	
+	<select id="getProjetByCategoryAndName" resultMap="projectResultMapper">
+		<![CDATA[SELECT * FROM t_project where projectcategorycode = #{projectCategoryCode} and projectname = #{projectName}]]>
+	</select>
+	
+	<select id="getProjetByCategoryAndNameEcxeptSelf" resultMap="projectResultMapper">
+		<![CDATA[SELECT * FROM t_project where projectcategorycode = #{projectCategoryCode} and projectname = #{projectName} and projectcode <> #{projectCode}]]>
+	</select>
+	
+	<select id="queryProject" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectQueryDTO" resultMap="projectResultMapper">
+		<![CDATA[SELECT * FROM t_project where 1=1]]>
+		 <if test="projectName !=null and projectName !=''">
+		 	<![CDATA[ and projectname like CONCAT('%',#{projectName},'%')]]>
+		 </if>
+		 <if test="owner !=null and owner !=''">
+		 	<![CDATA[ and owner like CONCAT('%',#{owner},'%')]]>
+		 </if>
+		 <if test="projectState !=null and projectState !=''">
+		 	<![CDATA[ and projectstate=#{projectState}]]>
+		 </if>
+		 <if test="categoryCodes !=null and categoryCodes.size() > 0">
+		 	<![CDATA[ and projectcategorycode in]]>
+			<foreach item="item" index="index" collection="categoryCodes" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+	</select>
+	
+</mapper>

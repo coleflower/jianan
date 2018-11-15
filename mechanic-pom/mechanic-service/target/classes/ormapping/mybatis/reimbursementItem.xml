@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.finance.IReimbursementItemDAO" >
+
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.finance.ReimbursementItemDTO" >
+        <id column="id" property="id" />
+        <result column="apply_no" property="applyNo"  />
+        <result column="cost" property="cost"  />
+        <result column="category" property="category"  />
+        <result column="detail" property="detail"  />
+        <result column="bill" property="bill"  />
+        <result column="remarks" property="remarks"  />
+        <result column="create_date" property="createDate"  />
+        <result column="update_date" property="updateDate"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, apply_no,cost, category, detail, bill, remarks, create_date, update_date
+    </sql>
+
+    <select id="selectByApplyNo" resultMap="BaseResultMap" >
+        select <include refid="Base_Column_List" />
+        from t_reimbursementItem
+        where apply_no = #{applyNo}
+    </select>
+
+</mapper>

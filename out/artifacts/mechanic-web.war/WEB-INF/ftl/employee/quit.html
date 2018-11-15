@@ -1,0 +1,161 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#quit').on('click', function() {
+		var leaveDate = $("#leaveDate").val();
+		var handoverPerson = $("#handoverPerson option:selected").attr("value");
+		var remarks = $("#remarks").val();
+		
+		if (leaveDate == "") {
+			layer.tips('请选择离职日期！', '#leaveDate');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (handoverPerson == "") {
+			layer.tips('请选择交接人！', '#handoverPerson');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "employee.htm?method=quit",
+			data : {
+				employeeCode : "${employee.employeeCode}",
+				leaveDate : leaveDate,
+				handoverPerson : handoverPerson,
+				remarks : remarks
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						layer.alert("办理成功！",  {icon: 1}, function(index){
+							parent.$("form").submit();
+						});
+					} else {
+						layer.alert(data.message, 1);
+					}
+				} else {
+					layer.alert("办理失败，请重试！", 1);
+				}
+			},
+			error : function() {
+				layer.alert("系统繁忙，请稍后再试！", 1);
+			}
+		});
+	});
+});
+</script>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-admin-role-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2" id="rolevalue"><span class="c-red">*</span>离职人员：</label>
+			<div class="formControls col-xs-8 col-sm-8">
+			${employee.name} (工号：${employee.employeeCode})
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2" id="menuvalue"><span class="c-red">*</span>离职日期：</label>
+			<div class="formControls col-xs-8 col-sm-8">
+			<input type="text" onfocus="WdatePicker()" class="input-text Wdate" readonly="readonly" style="width:120px;" id="leaveDate" name="leaveDate">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>交接人：</label>
+			<div class="formControls col-xs-8 col-sm-8">
+				<span class="select-box" style="width:150px;">
+				<select name="departmentCode" id="departmentCode" class="select" size="1" disabled>
+					<#list allDepartment as department>
+					<#assign offsetNode = "&nbsp;&nbsp;"/>
+					<#assign linkNode = "&nbsp;&nbsp;"/>
+					<#assign childNode = "├&nbsp;"/>
+					<#assign endNode = "└&nbsp;"/>
+					<option value="${department.departmentCode}" <#if (employee.departmentCode == department.departmentCode)>selected</#if>>
+					<#if (department.depth > 0)>
+					<#list 1..department.depth as m>
+						<#assign showInfo = showInfo+offsetNode />
+						<#if (m == department.depth)>
+							<#if (department.nextId > 0)>
+								<#assign showInfo = showInfo+childNode />
+							<#else>
+								<#assign showInfo = showInfo+endNode />
+							</#if>
+						<#else>
+							<#assign showInfo = showInfo+linkNode />
+						</#if>
+					</#list>
+					</#if>
+					${showInfo+department.departmentName}
+					</option>
+					<#assign showInfo = "" />
+					</#list>
+				</select>
+				</span>
+				<span class="select-box" style="width:150px;">
+				<select class="select" name="handoverPerson" id="handoverPerson" size="1">
+					<#list teams as team>
+					<#if employee.employeeCode != team.employeeCode>
+					<option value="${team.employeeCode}">${team.name}</option>
+					</#if>
+					</#list>
+				</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">备注：</label>
+			<div class="formControls col-xs-8 col-sm-8">
+				<textarea name="remarks" id="remarks" cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/100</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button type="button" class="btn btn-success radius" id="quit" name="quit"><i class="icon-ok"></i> 确定</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

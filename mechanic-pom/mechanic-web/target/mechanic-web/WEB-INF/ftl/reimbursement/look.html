@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/jquery.raty.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/jquery.raty.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.skin-minimal input').iCheck({
+        checkboxClass: 'icheckbox-blue',
+        radioClass: 'iradio-blue',
+        increaseArea: '20%'
+    });
+})
+
+function big(id){
+
+    var url = $("#"+id+"").attr("src");
+    var img = "<img src='"+url+"' style='width: 500px;height: 500px'/>";
+    layer.open({
+        type: 1,
+        shade: false,
+        title: false, //不显示标题
+        area: ['500px', '500px'],
+        content: img, //捕获的元素，注意：最好该指定的元素要存放在body最外层，否则可能被其它的相对元素所影响
+        cancel: function () {
+            //layer.msg('图片查看结束！', { time: 5000, icon: 6 });
+        }
+    });
+}
+
+</script>
+</head>
+<style>
+	.panel{ background-color:#fff; border:solid 1px transparent}
+	.panel-header{ border-bottom:solid 1px transparent; padding:8px 15px; font-size:14px; font-weight:700}/*面板标题*/
+	.panel-body{ padding:15px}/*面板内容*/
+	.panel-footer{background-color: #f5f5f5;border-top: 1px solid #ddd;padding:5px 20px}/*面板页脚*/
+	.panel-primary{border-color:#5a98de}
+	.panel-primary > .panel-header{ border-color:#5a98de; background-color:#5a98de; color:#fff}
+
+</style>
+<body>
+	<#list reimbursementItemDTOS as reimbursementItem>
+	<div class="panel panel-primary  mt-20">
+		<div class="panel-header">${reimbursementItem.category}</div>
+		<div class="panel-body">
+
+			<div class="row cl" >
+				<div class="clearfix" style="margin-left: 20px">
+					<strong>金额：</strong>
+					${reimbursementItem.cost} 元
+				</div>
+			</div>
+
+			<div class="row cl" >
+				<div class="clearfix" style="margin-left: 20px">
+					<strong>费用明细：</strong>
+					<div style="margin-left: 20px">${reimbursementItem.detail}</div>
+				</div>
+			</div>
+
+			<div class="row cl" >
+				<div class="clearfix" style="margin-left: 20px">
+					<strong>票据资料：</strong><br>
+					<img ondblclick="big('${reimbursementItem.id}')" id="${reimbursementItem.id}" src="${reimbursementItem.bill}" alt="票据资料" class="thumbnail" style="width: 200px;height: 200px;margin-left: 68px">
+				</div>
+			</div>
+
+			<div class="row cl">
+				<div class="clearfix" style="margin-left: 20px">
+					<strong>备注：</strong><br>
+					<div style="margin-left: 20px">${reimbursementItem.remark}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</#list>
+</body>
+</html>

@@ -1,0 +1,82 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(function(){
+	$("#tripItemFrame", window.parent.document).load(function(){
+	    var main = $("#tripItemFrame", window.parent.document);
+	    var thisheight = $(document).height();
+	    var showheight = $(parent.window).height()-341;// 获取当前显示区域的高度
+	    main.height(thisheight > showheight ? showheight : thisheight);
+	});
+});
+</script>
+</head>
+<body>
+<div>
+	<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer">
+		<thead>
+			<tr>
+				<td colspan="4"><span class="l f-14"><b>出差计划编号：${planCode}</b></span></td>
+			</tr>
+			<tr class="text-c" role="row">
+				<th width="200">目的地</th>
+				<th width="120">开始时间</th>
+				<th width="120">结束时间</th>
+				<th>备注</th>
+			</tr>
+		</thead>
+		<tbody>
+			<#list items as item>
+			<tr class="text-c">
+				<td class="con text-l">${item.destination}</td>
+				<td class="con">${item.startTime?datetime}</td>
+				<td class="con">${item.endTime?datetime}</td>
+				<td class="con text-l">${item.remarks}</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+	<!-- <div class="dataTables_wrapper no-footer">
+		<div class="dataTables_info" id="">共2条记录，共 1 页，当前显示第1页</div>
+		<div class="dataTables_paginate paging_simple_numbers" id="">
+			<a class="paginate_button previous disabled" tabindex="0" id="">首页</a> <a class="paginate_button previous disabled" tabindex="0" id="">上一页</a>
+			<span><a class="paginate_button current" tabindex="0">1</a></span> <a class="paginate_button next disabled" tabindex="0" id="">下一页</a> <a
+				class="paginate_button previous disabled" tabindex="0" id="">末页</a>
+		</div>
+	</div> -->
+</div>
+</body>
+</html>

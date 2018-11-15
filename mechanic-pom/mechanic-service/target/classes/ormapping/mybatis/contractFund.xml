@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.contract.IContractFundDAO">
+	<resultMap id="contractFundResultMapper" type="com.cubicpark.mechanic.domain.dto.contract.ContractFundDTO">
+		<id column="id" property="id" />
+		<result column="contractcode" property="contractCode" />
+		<result column="fundtype" property="fundType" />
+		<result column="itemname" property="itemName" />
+		<result column="payway" property="payWay" />
+		<result column="fund" property="fund" />
+		<result column="remarks" property="remarks" />
+		<result column="infostate" property="infoState" />
+		<result column="isdel" property="isDel" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addContractFund" parameterType="com.cubicpark.mechanic.domain.dto.contract.ContractFundDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_contract_fund (
+		contractcode, fundtype, itemname, payway, 
+		fund, remarks, infostate, isdel, createdate, updatedate
+		) values (
+		#{contractCode}, #{fundType}, #{itemName}, #{payWay}, 
+		#{fund}, #{remarks}, #{infoState}, #{isDel}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyContractFund" parameterType="com.cubicpark.mechanic.domain.dto.contract.ContractFundDTO">
+		<![CDATA[update t_contract_fund ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="fundType != null and fundType != '' ">  
+				<![CDATA[fundtype = #{fundType},]]>
+			</if>
+			<if test="itemName != null and itemName != '' ">  
+				<![CDATA[itemname = #{itemName},]]>
+			</if>
+			<if test="payWay != null and payWay != '' ">  
+				<![CDATA[payway = #{payWay},]]>
+			</if>
+			<if test="fund != null and fund != '' ">  
+				<![CDATA[fund = #{fund},]]>
+			</if>
+			<if test="remarks != null and remarks != '' ">  
+				<![CDATA[remarks = #{remarks},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">  
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+	
+	<update id="delContractFundById" >
+		<![CDATA[update t_contract_fund set isdel = 1 where id=#{id} and infostate = '0']]>
+	</update>
+	
+	<select id="getContractFundByContractCode" parameterType="String" resultMap="contractFundResultMapper">
+		<![CDATA[SELECT * FROM t_contract_fund where contractcode = #{contractCode} and isdel = 0]]>
+	</select>
+	
+	<select id="getContractFundById" parameterType="int" resultMap="contractFundResultMapper">
+		<![CDATA[SELECT * FROM t_contract_fund where id=#{id}]]>
+	</select>
+	
+	<select id="getSaveContractFundByContractCode" parameterType="String" resultMap="contractFundResultMapper">
+		<![CDATA[SELECT * FROM t_contract_fund where contractcode = #{contractCode} and infostate = '0' and isdel = 0]]>
+	</select>
+	
+</mapper>

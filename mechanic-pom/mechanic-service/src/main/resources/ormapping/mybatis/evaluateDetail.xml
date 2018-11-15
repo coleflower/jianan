@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.evaluate.IEvaluateDetailDAO" >
+  <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDetailDTO" >
+    <id column="id" property="id"  />
+    <result column="product_evlauate_code" property="productEvlauateCode"  />
+    <result column="department_code" property="departmentCode"  />
+    <result column="employee_code" property="employeeCode"  />
+    <result column="score" property="score" jdbcType="DECIMAL" />
+    <result column="evaluate" property="evaluate"  />
+    <result column="create_date" property="createDate" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_evlauate_code, department_code, employee_code, score, evaluate, create_date
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_evaluate_detail
+    where id = #{id}
+  </select>
+
+  <insert id="insert" parameterType="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDetailDTO" >
+    insert into t_evaluate_detail (id, product_evlauate_code, department_code,
+      employee_code, score, evaluate, 
+      create_date)
+    values (#{id}, #{productEvlauateCode}, #{departmentCode}, 
+      #{employeeCode}, #{score,jdbcType=DECIMAL}, #{evaluate}, 
+      #{createDate})
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDetailDTO" >
+    update t_evaluate_detail
+    <set >
+      <if test="productEvlauateCode != null" >
+        product_evlauate_code = #{productEvlauateCode},
+      </if>
+      <if test="departmentCode != null" >
+        department_code = #{departmentCode},
+      </if>
+      <if test="employeeCode != null" >
+        employee_code = #{employeeCode},
+      </if>
+      <if test="score != null" >
+        score = #{score,jdbcType=DECIMAL},
+      </if>
+      <if test="evaluate != null" >
+        evaluate = #{evaluate},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDetailDTO" >
+    update t_evaluate_detail
+    set product_evlauate_code = #{productEvlauateCode},
+      department_code = #{departmentCode},
+      employee_code = #{employeeCode},
+      score = #{score,jdbcType=DECIMAL},
+      evaluate = #{evaluate},
+      create_date = #{createDate}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByProductEvaluateCode" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_evaluate_detail
+    where product_evlauate_code = #{productEvaluateCode}
+  </select>
+
+  <select id="selectByProductEvaluateCodeAndEmployeeCode" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_evaluate_detail
+    where product_evlauate_code = #{productEvaluateCode}
+    and employee_code = #{employeeCode}
+  </select>
+</mapper>

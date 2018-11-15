@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.evaluate.IEvaluateDAO" >
+  <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDTO" >
+    <id column="id" property="id"  />
+    <result column="product_evluate_code" property="productEvluateCode"  />
+    <result column="contract_code" property="contractCode"  />
+    <result column="average" property="average" jdbcType="DECIMAL" />
+    <result column="create_date" property="createDate" />
+    <result column="update_date" property="updateDate" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_evluate_code, contract_code,average, create_date, update_date
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_evaluate
+    where id = #{id}
+  </select>
+
+  <insert id="insertSelective" parameterType="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDTO" >
+    insert into t_evaluate
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="productEvluateCode != null" >
+        product_evluate_code,
+      </if>
+      <if test="contractCode != null" >
+        contract_code,
+      </if>
+      <if test="average != null" >
+        average,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="productEvluateCode != null" >
+        #{productEvluateCode},
+      </if>
+      <if test="contractCode != null" >
+        #{contractCode},
+      </if>
+      <if test="average != null" >
+        #{average},
+      </if>
+      <if test="createDate != null" >
+        #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDTO" >
+    update t_evaluate
+    <set >
+      <if test="productEvluateCode != null" >
+        product_evluate_code = #{productEvluateCode},
+      </if>
+      <if test="contractCode != null" >
+        contract_code = #{contractCode},
+      </if>
+      <if test="average != null" >
+        average = #{average},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.cubicpark.mechanic.domain.dto.evaluate.EvaluateDTO" >
+    update t_evaluate
+    set product_evluate_code = #{productEvluateCode},
+      contract_code = #{contractCode},
+      average = #{average},
+      create_date = #{createDate},
+      update_date = #{updateDate}
+    where id = #{id}
+  </update>
+
+  <select id="selectByContractCode" resultType="java.lang.Integer">
+    select count(1)
+    from t_evaluate
+    where contract_code = #{contractCode}
+  </select>
+  
+  <select id="selectOneMouthOrder" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_evaluate
+    where create_date &gt;= #{oneMouseBefore}
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_evaluate
+  </select>
+
+  <select id="selectByCodeOrStatusOrDate" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM t_evaluate
+    <where>
+      <if test="debugOrderCode != null and debugOrderCode != ''">
+        product_evluate_code like concat("%", #{debugOrderCode},"%")
+      </if>
+      <if test="status == 0">
+        and average is null
+      </if>
+      <if test="status == 1">
+        and average is not null
+      </if>
+      <if test="createTime != null">
+        and create_date &gt;= #{createTime}
+      </if>
+      <if test="endTime != null">
+        and create_date &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="searchDebugOrderCodeLike" resultType="string">
+    select product_evluate_code
+    from t_evaluate
+    where product_evluate_code like concat("%", #{code},"%")
+  </select>
+</mapper>

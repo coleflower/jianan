@@ -1,0 +1,125 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+
+
+	$('#modify').on('click', function() {
+
+        var id = $("#reimbursementId").val();
+		var username = $("#username").val();
+
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+            contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8"
+			url : "reimbursement.htm?method=debug",
+			data : {
+			    id : id,
+                username : username
+			},
+            success : function(data) {
+                if(data.status == "success") {
+                    if (data.message == "200") {
+                        //弹出loading
+                        var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+                        setTimeout(function(){
+                            top.layer.close(index);
+                            top.layer.msg("请求处理成功成功！");
+                            layer.closeAll("iframe");
+                            //刷新父页面
+                            parent.location.reload();
+                        },500);
+                        return false;
+                    } else {
+                        layer.alert(data.message, 1);
+                        return false;
+                    }
+                } else {
+                    layer.alert("修改失败，请重试！", 1);
+                    return false;
+                }
+            },
+            error : function() {
+                layer.alert("系统繁忙，请稍后再试！", 1);
+            }
+		});
+        return false;
+	});
+
+
+});
+</script>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+
+		<input type="hidden" name="id" value="${id}" id="reimbursementId">
+		<input type="hidden" name="employeeCode" id="employeeCode" value="${employeeCode}">
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>处理人：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" readonly="readOnly" class="input-text" placeholder="" id="username" name="username" maxlength="10" value="${username}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>工单编号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" readonly="readOnly" class="input-text" placeholder="" name="debugOrderCode" maxlength="10" value="${applyNo}">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input id="modify" class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;确认处理&nbsp;&nbsp;">
+			</div>
+
+		</div>
+
+	</form>
+</article>
+</body>
+</html>

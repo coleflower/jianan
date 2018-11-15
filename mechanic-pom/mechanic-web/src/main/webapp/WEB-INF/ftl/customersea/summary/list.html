@@ -1,0 +1,75 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(function(){
+	$("#summaryFrame", window.parent.document).load(function(){
+	    var main = $("#summaryFrame", window.parent.document);
+	    var thisheight = $(document).height();
+	    var showheight = $(parent.window).height()-341;// 获取当前显示区域的高度
+	    main.height(thisheight > showheight ? showheight : thisheight);
+	});
+});
+</script>
+</head>
+<body>
+<div>
+	<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer">
+		<thead>
+			<tr>
+				<td colspan="4"><span class="l f-14"><b>所属客户：${customerInfo.customerName}</b></span> </td>
+			</tr>
+			<tr class="text-c" role="row">
+				<th width="100">开始时间</th>
+				<th width="120">结束时间</th>
+				<th>总结摘要</th>
+				<th width="300">评价</th>
+			</tr>
+		</thead>
+		<tbody>
+			<#list customerSummarys as summary>
+			<tr class="text-c">
+				<input type="hidden" name="id" value="${summary.id}">
+				<td class="con text-l">${summary.startTime?datetime}</td>
+				<td class="con">${summary.endTime?datetime}</td>
+				<td class="con text-l text-overflow">${summary.description}</td>
+				<td class="con text-l text-overflow">${summary.replyInfo}</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+</div>
+</body>
+</html>

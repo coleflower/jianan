@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.base.IPositionDAO">
+	<resultMap id="positionResultMapper" type="com.cubicpark.mechanic.domain.dto.base.PositionDTO">
+		<id column="id" property="id" />
+		<result column="positioncode" property="positionCode" />
+		<result column="positionname" property="positionName" />
+		<result column="parentid" property="parentId" />
+		<result column="parentpath" property="parentPath" />
+		<result column="depth" property="depth" />
+		<result column="sameroottag" property="sameRootTag" />
+		<result column="child" property="child" />
+		<result column="previd" property="prevId" />
+		<result column="nextid" property="nextId" />
+		<result column="sort" property="sort" />
+	</resultMap>
+	
+	<select id="getAll" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position order by sameroottag,sort]]>
+	</select>
+	
+	<select id="getMaxID" resultType="Integer">
+		<![CDATA[SELECT Max(id) FROM t_position]]>
+	</select>
+	
+	<select id="getMaxSameRootTag" resultType="Integer">
+		<![CDATA[SELECT Max(sameroottag) FROM t_position]]>
+	</select>
+	
+	<select id="getByID" parameterType="int" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE id = #{id}]]>
+	</select>
+	
+	<select id="getMaxChildSortByParentID" parameterType="int" resultType="int">
+		<![CDATA[SELECT Max(sort) FROM t_position where parentid = #{id}]]>
+	</select>
+	
+	<select id="getChildByParentIDWithSort" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid = #{id} and sort = #{sort}]]>
+	</select>
+	
+	<select id="getMaxSortByParentPath" parameterType="String" resultType="int">
+		<![CDATA[SELECT Max(sort) FROM t_position where parentpath like CONCAT(#{parentPath},'%')]]>
+	</select>
+	
+	<select id="getCountByParentPath" parameterType="String" resultType="int">
+		<![CDATA[SELECT count(id) FROM t_position where parentpath like CONCAT('%',#{parentPath},'%')]]>
+	</select>
+	
+	<select id="getRootBySameRootTagWithDepth" parameterType="int" resultType="int">
+		<![CDATA[SELECT id FROM t_position where sameroottag = #{sameRootTag} and Depth=0]]>
+	</select>
+	
+	<select id="getChildByParentIDWithName" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid = #{id} and positionname = #{name}]]>
+	</select>
+	
+	<select id="getByParentIDWithNameExceptSelf" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid = #{parentId} and positionname = #{name} and id <> #{id}]]>
+	</select>
+	
+	<select id="getInIDOrderByDepth" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE id in]]>
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach> 
+		<![CDATA[order by Depth]]>
+	</select>
+	
+	<select id="getAllRootOrderBySameRootTag" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid=0 order by sameroottag]]>
+	</select>
+	
+	<select id="getRootLtSameRootTag" parameterType="int" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid=0  and sameroottag < #{sameRootTag} order by sameroottag desc]]>
+	</select>
+	
+	<select id="getRootGtSameRootTag" parameterType="int" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid=0  and sameroottag > #{sameRootTag} order by sameroottag]]>
+	</select>
+	
+	<select id="getChildsByParentIDLtSort" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid=#{id}  and sort < #{sort} order by sort desc]]>
+	</select>
+	
+	<select id="getChildsByParentIDGtSort" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentid=#{id}  and sort > #{sort} order by sort]]>
+	</select>
+	
+	<select id="getGroupByParentPathWithSortDesc" parameterType="String" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentpath like CONCAT('%',#{parentPath},'%') order by sort desc]]>
+	</select>
+	
+	<select id="getGroupByParentPathWithSortAsc" parameterType="String" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE parentpath like CONCAT('%',#{parentPath},'%') order by sort]]>
+	</select>
+	
+	<select id="getChildsCountByParentIDLtSort" resultType="int">
+		<![CDATA[SELECT count(id) FROM t_position where parentid=#{id} and sort < #{sort}]]>
+	</select>
+	
+	<select id="getChildsCountByParentIDGtSort" resultType="int">
+		<![CDATA[SELECT count(id) FROM t_position where parentid=#{id} and sort > #{sort}]]>
+	</select>
+	
+	<insert id="add" parameterType="com.cubicpark.mechanic.domain.dto.base.PositionDTO">
+		<![CDATA[insert into t_position (id, positioncode, positionname, parentid, parentpath, depth, sameroottag, child, previd, nextid, sort)
+		values
+		(#{id}, #{positionCode}, #{positionName}, #{parentId}, #{parentPath}, #{depth}, #{sameRootTag}, #{child}, #{prevId}, #{nextId}, #{sort})]]>
+	</insert>
+	
+	<update id="modifyChildNumByID" >
+		<![CDATA[update t_position set child = #{childNum} where id = #{id}]]>
+	</update>
+	
+	<update id="modifySortAddOneBySameRootTagWithGtSort" >
+		<![CDATA[update t_position set sort=sort+1 where sameroottag = #{sameRootTag} and sort > #{sort}]]>
+	</update>
+	
+	<update id="modifySortByID" >
+		<![CDATA[update t_position set sort = #{sort} where id = #{id}]]>
+	</update>
+	
+	<update id="modify" parameterType="com.cubicpark.mechanic.domain.dto.base.PositionDTO">
+		<![CDATA[update t_position ]]>
+		<set>
+			<if test="positionName != null">
+				<![CDATA[positionname = #{positionName}, ]]>
+			</if>
+		</set>
+		<![CDATA[where id=#{id}]]>
+	</update>
+	
+	<update id="modifyPrevIDByID" >
+		<![CDATA[update t_position set previd = #{prevID} where id = #{id}]]>
+	</update>
+	
+	<update id="modifyNextIDByID" >
+		<![CDATA[update t_position set nextid = #{nextID} where id = #{id}]]>
+	</update>
+	
+	<update id="modifySelfSameRootTag" >
+		<![CDATA[update t_position set sameroottag = #{newSameRootTag} where sameroottag = #{sameRootTag}]]>
+	</update>
+	
+	<delete id="delByID" parameterType="int">
+		<![CDATA[delete from t_position where id=#{id}]]>
+	</delete>
+	
+	<select id="getPositionByCode" parameterType="String" resultMap="positionResultMapper">
+		<![CDATA[SELECT * FROM t_position WHERE positioncode = #{positionCode}]]>
+	</select>
+</mapper>

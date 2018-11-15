@@ -1,0 +1,274 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(function(){
+	// 初始化隐藏详细信息TAB
+	$(".outBox .hd .details").hide();
+	$(".inBox").hide();
+	
+	// 点击列表和详细信息TAB切换效果
+	$(".outBox .hd .list").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".Box").show();
+		$(".Box").siblings().hide();
+	});
+	
+	$(".outBox .hd .details").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".inBox").show();
+		$(".inBox").siblings().hide();
+	});
+	
+	// 信息列表选中背景效果
+	$(".Box tr").click(function() {
+		$(this).css({
+			"background" : "#FAF3D6"
+		}).siblings().css({
+			"background" : "#fff"
+		});
+	});
+	
+	// 子TAB切换效果
+	/**jQuery(".inBox").slide({
+		titCell : ".inHd li",
+		mainCell : ".inBd",
+		trigger : "click"
+	});*/
+	
+	$(".Box tr .con").click(function() {
+		$(".outBox .hd .details").show();
+		$(".inBox").show();
+		$(".Box,.outBox .hd .list").removeClass("on");
+		$(".Box").hide();
+		$(".Box,.outBox .hd .details").addClass("on");
+		$(".outBox .bd div").eq(1).show().siblings().hide();
+		
+		var code = $(this).parent().find('input').val();
+		
+		$('#fundInfoTab').off().on('click',function(){$('#fundInfoFrame').attr('src','contractInfo.htm?method=getContractInfo&contractCode='+code);});
+		$('#fundTab').off().on('click',function(){$('#fundFrame').attr('src','contractFund.htm?method=getContractFund&contractCode='+code);});
+        $('#billTab').off().on('click',function(){$('#billFrame').attr('src','bill.htm?method=selectBillByContractCode&contractCode='+code);});
+        $('#reissueTab').off().on('click',function(){$('#reissueFrame').attr('src','contractReissue.htm?method=selectReissueContractByContractCode&contractCode='+code);});
+
+		$(".inBox .inHd li").eq(0).addClass("on").siblings().removeClass("on");
+		$(".inBox .inBd ul").eq(0).show().siblings().hide();
+		$('#fundInfoFrame').attr('src','contractInfo.htm?method=getContractInfo&contractCode='+code);
+
+		
+		jQuery(".inBox").off().slide({
+			titCell : ".inHd li",
+			mainCell : ".inBd",
+			trigger : "click"
+		});
+	});
+
+	
+	/**$("#test1").load(function(){ 
+        $(this).height(0); //用于每次刷新时控制IFRAME高度初始化 
+        var height = $(this).contents().find("body").height(); 
+        alert(height);
+        $(this).height( height < 500 ? 500 : height ); 
+      }); 
+	
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": false,//控制顶部显示条数 
+		"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": false, //分页
+		"bInfo": false,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[4]}// 不参与排序的列
+		]
+	});*/
+});
+
+//删除
+function del(customerCode){
+	layer.confirm('确认要删除该客户信息吗？',function(index){
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "customer.htm?method=del",
+			data : {
+				customerCode : customerCode
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						layer.alert("删除成功！",  {icon: 1}, function(index){
+							$("form").submit();
+						});
+					} else {
+						layer.msg(data.message,{icon:2,time:3000});
+					}
+				} else {
+					layer.msg("删除失败，请重试！",{icon:2,time:3000});
+				}
+			},
+			error : function() {
+				layer.msg("系统繁忙，请稍后再试！",{icon:2,time:3000});
+			}
+		});
+	});
+}
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 合同中心 <span class="c-gray en">&gt;</span> 合同管理<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<form action="contract.htm?method=query" method="post" class="form form-horizontal" id="form-member-add">
+	<div>
+		<div class="guanli"> 
+			<span><a href="javascript:;">合同管理</a></span>
+		</div>
+		<table class="table table-border table-bordered table-bg dataTable">
+			<tr>
+				<td class="text-c sorting_1" width="80">合同名称</td>
+				<td class="text-l formControls"><input type="text" name="contractName" id="contractName" value="${query.contractName}" placeholder=" " class="input-text"></td>
+				<td class="text-c sorting_1" width="80">成交日期</td>
+				<td width="300">
+				<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDealDate\')||\'%y-%M-%d\'}'})" name="startDealDate" id="startDealDate" value="${query.startDealDate}" class="input-text Wdate" style="width:140px;">
+				-
+				<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDealDate\')}',maxDate:'%y-%M-%d'})" name="endDealDate" id="endDealDate" value="${query.endDealDate}" class="input-text Wdate" style="width:140px;"> 
+				</td>
+				<td class="text-c sorting_1" width="80">合同状态</td>
+				<td class="formControls">
+				<span class="select-box">
+				<select name="contractState" class="select">
+					<option value="" selected>不限定</option>
+				<#list contractStates?keys as key>
+					<option value="${key}" <#if query.contractState==key>selected="true"</#if>>${contractStates[key]}</option>
+				</#list>
+				</select>
+				</span>
+				</td>
+			</tr>
+			<tr class="cha-xun">
+				<td colspan="6" class="text-r">
+				<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button><#if error?exists><span class="c-red">${error}</span></#if>
+				</td>
+			</tr>
+		</table>
+	</div>
+	</form>
+	<#if !(contracts?exists)>
+	<#else>
+	<div class="outBox">
+		<div class="hd">
+			<ul>
+				<li class="list on"><span>合同列表</span></li>
+				<li class="details"><span>详细信息</span></li>
+			</ul>
+		</div>
+		<div class="bd">
+			<!-- inBox S -->
+			<div class="Box" style="display: block;">
+				<div class="inBd">
+					<ul>
+						<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer" id="">
+							<thead>
+								<tr class="text-c" role="row">
+									<th>合同名称</th>
+									<th width="150">所属客户</th>
+									<th width="100">成交日期</th>
+									<th width="100">合同状态</th>
+									<th width="100">款项状态</th>
+									<th width="100">结清日期</th>
+									<th width="80">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<#list contracts as contract>
+								<tr class="text-c">
+									<input type="hidden" name="contractCode" value="${contract.contractCode}">
+									<td class="con text-l">${contract.contractName}</td>
+									<td class="con text-l">${contract.customerName}</td>
+									<td class="con text-l">${contract.dealDate?date}</td>
+									<td class="con text-l">${contractStates[contract.contractState]}</td>
+									<td class="con text-l">${fundStates[contract.fundState]}</td>
+									<td class="con text-l"><#if contract.settleDate != "">${contract.settleDate?date}</#if></td>
+									<td class="td-manage">
+									<#if customer.infoState=="1">
+									<i class="Hui-iconfont f-20 ml-5 c-red " title="不可操作">&#xe6e2;</i>
+									<#else>
+									<a style="text-decoration:none" class="ml-5" onClick="del('${customer.customerCode}')" href="javascript:;" title="删除"><i class="Hui-iconfont f-20">&#xe6e2;</i></a>
+									</#if>
+									</td>
+								</tr>
+								</#list>
+							</tbody>
+						</table>
+						<!-- <div class="dataTables_wrapper no-footer">
+							<div class="dataTables_info" id="">共2条记录，共 1 页，当前显示第1页</div>
+							<div class="dataTables_paginate paging_simple_numbers" id="">
+								<a class="paginate_button previous disabled" tabindex="0" id="">首页</a> <a class="paginate_button previous disabled" tabindex="0" id="">上一页</a>
+								<span><a class="paginate_button current" tabindex="0">1</a></span> <a class="paginate_button next disabled" tabindex="0" id="">下一页</a> <a
+									class="paginate_button previous disabled" tabindex="0" id="">末页</a>
+							</div>
+						</div> -->
+					</ul>
+				</div>
+			</div>
+			<div class="inBox">
+				<div class="inHd">
+					<ul>
+						<li><span id="fundInfoTab">合同信息</span></li>
+						<li><span id="fundTab">款项信息</span></li>
+						<li><span id="reissueTab">补发配件信息</span></li>
+						<li><span id="billTab">开票信息</span></li>
+					</ul>
+				</div>
+				<div class="inBd">
+					<ul><iframe id="fundInfoFrame" scrolling="no" frameborder="0" width="100%"></iframe></ul>
+					<ul><iframe id="fundFrame" scrolling="auto" frameborder="0" width="100%"></iframe></ul>
+					<ul><iframe id="reissueFrame" scrolling="auto" frameborder="0" width="100%"></iframe></ul>
+					<ul><iframe id="billFrame" scrolling="auto" frameborder="0" width="100%"></iframe></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	</#if>
+</div>
+</body>
+</html>

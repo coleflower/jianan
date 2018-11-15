@@ -1,0 +1,228 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.table-sort').dataTable({
+            "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "pading":false,
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {"orderable":false,"aTargets":[0,6]}// 不参与排序的列
+            ]
+        });
+    });
+
+    //弹出指定的操作窗口
+    function openOperation(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+
+	//弹出全屏操作窗口，关闭后回调刷新本页面
+	function fullOpenOperation(title,url){
+		var index = layer.open({
+			type: 2,
+			title: title,
+			content: url
+		});
+        layer.full(index);
+	}
+
+	//添加采购单
+	function procurement(count,productionMaterialId) {
+        layer.confirm('确定添加采购单吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        },function(index){
+            $.ajax({
+                type: 'POST',
+                url: 'procurement.htm?method=insertProcurement',
+                dataType: 'json',
+                contentType : "application/x-www-form-urlencoded",
+                data:{
+                    count:count,
+                    productionMaterialId:productionMaterialId
+                },
+                success: function(data){
+                    if(data.status == "success"){
+                        if(data.message == "200"){
+                            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+                            setTimeout(function(){
+                                top.layer.close(index);
+                                top.layer.msg("提交成功!",{time : 1500});
+                                layer.closeAll("iframe");
+                                //刷新父页面
+                                window.location.reload();
+                            },500);
+                            return false;
+                        }else{
+                            layer.alert(data.message, 1);
+                            return false;
+                        }
+                    }else{
+                        layer.alert(data.message, {
+                            icon: 4,
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                        return false;
+                    }
+                },
+                error:function(data) {
+                    layer.alert("修改失败，请重试！", 1);
+                    return false;
+                },
+            });
+        });
+    }
+
+    // 提交出库单
+	function initOutStorage(id,storageCount) {
+
+        if(storageCount == 0){
+            //说明没有库存
+            layer.alert('仓库没有库存了,请等待仓库添加', {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            });
+            return false;
+        }
+
+        layer.confirm('确定提交出库单吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        },function(index){
+            $.ajax({
+                type: 'POST',
+                url: 'productMaterials.htm?method=applyOutStorage',
+                dataType: 'json',
+                contentType : "application/x-www-form-urlencoded",
+                data:{
+                    id:id,
+                    storageCount:storageCount
+                },
+                success: function(data){
+                    if(data.status == "success"){
+                        if(data.message == "200"){
+                            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+                            setTimeout(function(){
+                                top.layer.close(index);
+                                top.layer.msg("提交成功,请等待库管确认",{time : 1500});
+                                layer.closeAll("iframe");
+                                //刷新父页面
+                                window.location.reload();
+                            },500);
+                            return false;
+                        }else{
+                            layer.alert(data.message, 1);
+                            return false;
+                        }
+                    }else{
+                        layer.alert(data.message, {
+                            icon: 4,
+                            skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+                        });
+                        return false;
+                    }
+                },
+                error:function(data) {
+                    layer.alert("修改失败，请重试！", 1);
+                    return false;
+                },
+            });
+        });
+    }
+
+</script>
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 生产中心 <span class="c-gray en">&gt;</span> 生产工单管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="mt-20">
+
+		<table id="test" class="table table-border table-bordered table-bg table-hover table-sort ">
+			<thead>
+				<tr class="text-c">
+					<th width="25"><input type="checkbox" id="checkAll"></th>
+					<th width="100">类型</th>
+					<th width="100">名称规格</th>
+					<th width="100">材料</th>
+					<th width="100">标准代号</th>
+					<th width="100">需要数量</th>
+					<th width="100">已出库</th>
+					<th width="100">库存数量</th>
+					<th width="100">状态</th>
+					<th width="120">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#if productionMaterialVOList?exists>
+				<#list productionMaterialVOList as productionMaterialVO>
+					<tr class="text-c">
+						<td><input type="checkbox" value="${productionMaterialVO.productionMaterialId}" name="subbox"></td>
+						<td>${productionMaterialVO.type}</td>
+						<td>${productionMaterialVO.name}</td>
+						<td>${productionMaterialVO.material}</td>
+						<td>${productionMaterialVO.codeName}</td>
+						<td>${productionMaterialVO.count}</td>
+						<td>${productionMaterialVO.hasOutStorageCount}</td>
+						<td>${productionMaterialVO.storageCount}</td>
+						<td class="td-status">
+							<#if productionMaterialVO.status == 3><span style="background-color:lightgreen" class="label label-success radius">有货</span></#if>
+							<#if productionMaterialVO.status == 1><span style="background-color: orangered" class="label label-success radius">缺货</span></#if>
+							<#if productionMaterialVO.status == 2><span style="background-color: cornflowerblue" class="label label-success radius">申请采购中</span></#if>
+							<#if productionMaterialVO.status == 4><span style="background-color: orangered" class="label label-success radius">采购拒绝</span> &nbsp;<a style="text-decoration:none" onclick="openOperation('详情','procurement.htm?method=refuseDetail&id=${productionMaterialVO.productionMaterialId}')" href="javascript:;" title="详情">详情</a></#if>
+							<#if productionMaterialVO.status == 5><span style="background-color: red" class="label label-success radius">申请出库中</span></#if>
+							<#if productionMaterialVO.status == 6><span style="background-color: red" class="label label-success radius">申请部分出库中</span></#if>
+							<#if productionMaterialVO.status == 7><span style="background-color: red" class="label label-success radius">已出库</span></#if>
+							<#if productionMaterialVO.status == 8><span style="background-color: red" class="label label-success radius">部分已出库</span></#if>
+							<#if productionMaterialVO.status == 9><span style="background-color: red" class="label label-success radius">拒绝出库</span>&nbsp;<a style="text-decoration:none" onclick="openOperation('详情','productMaterials.htm?method=outStorageRefuseDetail&id=${productionMaterialVO.productionMaterialId}')" href="javascript:;" title="详情">详情</a></#if>
+						</td>
+						<td class="f-14 td-manage">
+							<#if productionMaterialVO.status == 1 || productionMaterialVO.status == 8>
+							<a style="text-decoration:none" onClick="procurement('${productionMaterialVO.count-productionMaterialVO.storageCount}','${productionMaterialVO.productionMaterialId}')" href="javascript:;" title="申请采购"><i class="Hui-iconfont ">&#xe644;</i></a>&nbsp;&nbsp;
+							</#if>
+							<#if productionMaterialVO.status == 4>
+							<a style="text-decoration:none" onClick="fullOpenOperation('重新处理','production.htm?method=rehandle&id=${productionMaterialVO.productionMaterialId}')" href="javascript:;" title="重新处理"><i class="Hui-iconfont ">&#xe644;</i></a>&nbsp;&nbsp;
+							</#if>
+							<#if productionMaterialVO.status == 3 || productionMaterialVO.status == 1 || productionMaterialVO.status == 9 || productionMaterialVO.status == 8>
+							<a style="text-decoration:none" onClick="initOutStorage('${productionMaterialVO.productionMaterialId}','${productionMaterialVO.storageCount}')" href="javascript:;" title="申请出库"><i class="Hui-iconfont ">&#xe63c;</i></a>&nbsp;&nbsp;
+							</#if>
+						</td>
+					</tr>
+				</#list>
+				</#if>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

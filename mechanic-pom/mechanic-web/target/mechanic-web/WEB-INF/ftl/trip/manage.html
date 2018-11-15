@@ -1,0 +1,327 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.cxSelect/1.4.1/jquery.cxselect.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	// 联动初始化
+	$("#departmentToEmployee").cxSelect({
+	  selects: ['departmentCode', 'employeeCode'],
+	  <#if canSee == "1">
+	  firstTitle : '全体',
+	  firstValue : 'all',
+	  </#if>
+	  jsonName: 'name',
+	  jsonValue: 'employeeCode'
+	});
+	
+	// 初始化隐藏详细信息TAB
+	$(".outBox .hd .details").hide();
+	$(".inBox").hide();
+	
+	// 点击列表和详细信息TAB切换效果
+	$(".outBox .hd .list").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".Box").show();
+		$(".Box").siblings().hide();
+	});
+	
+	$(".outBox .hd .details").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".inBox").show();
+		$(".inBox").siblings().hide();
+	});
+	
+	// 信息列表选中背景效果
+	$(".Box tr").click(function() {
+		$(this).css({
+			"background" : "#FAF3D6"
+		}).siblings().css({
+			"background" : "#fff"
+		});
+	});
+	
+	// 子TAB切换效果
+	/**jQuery(".inBox").slide({
+		titCell : ".inHd li",
+		mainCell : ".inBd",
+		trigger : "click"
+	});*/
+	
+	$(".Box tr .con").click(function() {
+		$(".outBox .hd .details").show();
+		$(".inBox").show();
+		$(".Box,.outBox .hd .list").removeClass("on");
+		$(".Box").hide();
+		$(".Box,.outBox .hd .details").addClass("on");
+		$(".outBox .bd div").eq(1).show().siblings().hide();
+		
+		var code = $(this).parent().find('input').val();
+		
+		$('#tripItemTab').off().on('click',function(){$('#tripItemFrame').attr('src','trip.htm?method=getTripItems&planCode='+code);});
+		
+		$(".inBox .inHd li").eq(0).addClass("on").siblings().removeClass("on");
+		$(".inBox .inBd ul").eq(0).show().siblings().hide();
+		$('#tripItemFrame').attr('src','trip.htm?method=getTripItems&planCode='+code);
+
+		jQuery(".inBox").off().slide({
+			titCell : ".inHd li",
+			mainCell : ".inBd",
+			trigger : "click"
+		});
+	});
+	
+	/**$("#test1").load(function(){ 
+        $(this).height(0); //用于每次刷新时控制IFRAME高度初始化 
+        var height = $(this).contents().find("body").height(); 
+        alert(height);
+        $(this).height( height < 500 ? 500 : height ); 
+      }); 
+	
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": false,//控制顶部显示条数 
+		"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": false, //分页
+		"bInfo": false,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[4]}// 不参与排序的列
+		]
+	});*/
+});
+
+//删除
+function cancel(planCode){
+	layer.confirm('确认要作废该出差计划吗？',function(index){
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "trip.htm?method=cancel",
+			data : {
+				planCode : planCode
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						layer.alert("作废成功！",  {icon: 1}, function(index){
+							$("form").submit();
+						});
+					} else {
+						layer.msg(data.message,{icon:2,time:3000});
+					}
+				} else {
+					layer.msg("操作失败，请重试！",{icon:2,time:3000});
+				}
+			},
+			error : function() {
+				layer.msg("系统繁忙，请稍后再试！",{icon:2,time:3000});
+			}
+		});
+	});
+}
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 销售中心 <span class="c-gray en">&gt;</span> 出差计划管理<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<#if err?exists>
+<span class="c-red">${err}</span>
+<#else>
+<div class="page-container">
+	<form action="trip.htm?method=query" method="post" class="form form-horizontal" id="form-member-add">
+	<div>
+		<div class="guanli"> 
+			<span><a href="javascript:;">出差计划管理</a></span>
+		</div>
+		<table class="table table-border table-bordered table-bg dataTable">
+			<tr id="departmentToEmployee">
+				<td class="text-c sorting_1" width="80">所在部门</td>
+				<td class="formControls">
+				<span class="select-box">
+				<select name="departmentCode" class="departmentCode select">
+					<#list departments as department>
+					<#assign offsetNode = "&nbsp;&nbsp;"/>
+					<#assign linkNode = "&nbsp;&nbsp;"/>
+					<#assign childNode = "├&nbsp;"/>
+					<#assign endNode = "└&nbsp;"/>
+					<option value="${department.departmentCode}" <#if (query.departmentCode == department.departmentCode)>selected</#if>>
+					<#if (department.depth > 0)>
+					<#list 1..department.depth as m>
+						<#assign showInfo = showInfo+offsetNode />
+						<#if (m == department.depth)>
+							<#if (department.nextId > 0)>
+								<#assign showInfo = showInfo+childNode />
+							<#else>
+								<#assign showInfo = showInfo+endNode />
+							</#if>
+						<#else>
+							<#assign showInfo = showInfo+linkNode />
+						</#if>
+					</#list>
+					</#if>
+					${showInfo+department.departmentName}
+					</option>
+					<#assign showInfo = "" />
+					</#list>
+				</select>
+				</span> 
+				</td>
+				<td class="text-c sorting_1" width="80">所属员工</td>
+				<td class="formControls">
+				<span class="select-box">
+				<select name="employeeCode" class="employeeCode select" data-url="employee.htm?method=getJsonEmployeeByDepartment" data-json-space="employees">
+				<#if canSee == "1">
+					<option value="all" <#if query.employeeCode=="all">selected</#if>>全体</option>
+				</#if>
+				<#list employees as employee>
+					<#if canSee == "1">
+					<option value="${employee.employeeCode}" <#if query.employeeCode==employee.employeeCode>selected="true"</#if>>${employee.name}</option>
+					<#elseif query.employeeCode == employee.employeeCode>
+					<option value="${employee.employeeCode}" selected="true">${employee.name}</option>
+					</#if>
+				</#list>
+				</select>
+				</span>
+				</td>
+				<td class="text-c sorting_1" width="80">提交日期</td>
+				<td width="260">
+				<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})" name="startDate" id="startDate" value="${query.startDate}" class="input-text Wdate" style="width:120px;">
+				-
+				<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'%y-%M-%d'})" name="endDate" id="endDate" value="${query.endDate}" class="input-text Wdate" style="width:120px;"> 
+				</td>
+				<td class="text-c sorting_1" width="80">审批类型</td>
+				<td class="formControls">
+				<span class="select-box">
+				<select name="state" class="select">
+					<option value="" selected>不限定</option>
+				<#list tripState?keys as key>
+					<option value="${key}" <#if query.state==key>selected="true"</#if>>${tripState[key]}</option>
+				</#list>
+				</select>
+				</span>
+				</td>
+			</tr>
+			<tr class="cha-xun">
+				<td colspan="8" class="text-r">
+				<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button><#if error?exists><span class="c-red">${error}</span></#if>
+				</td>
+			</tr>
+		</table>
+	</div>
+	</form>
+	<#if !(tripPlans?exists)>
+	<#else>
+	<div class="outBox">
+		<div class="hd">
+			<ul>
+				<li class="list on"><span>计划列表</span></li>
+				<li class="details"><span>详细信息</span></li>
+			</ul>
+		</div>
+		<div class="bd">
+			<!-- inBox S -->
+			<div class="Box" style="display: block;">
+				<div class="inBd">
+					<ul>
+						<table class="table table-border table-bordered table-bg table-hover table-sort dataTable no-footer" id="">
+							<thead>
+								<tr class="text-c" role="row">
+									<th width="150">计划编码</th>
+									<th width="100">出差天数</th>
+									<th>出差事由</th>
+									<th width="100">预估费用</th>
+									<th width="80">审批状态</th>
+									<th width="80">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<#list tripPlans as tripPlan>
+								<tr class="text-c">
+									<input type="hidden" name="planCode" value="${tripPlan.planCode}">
+									<td class="con text-l">${tripPlan.planCode}</td>
+									<td class="con text-l">${tripPlan.days}</td>
+									<td class="con text-l">${tripPlan.cause}</td>
+									<td class="con text-l">${tripPlan.cost}</td>
+									<td class="con text-l">${tripState[tripPlan.state]}</td>
+									<td class="td-manage">
+									<#if tripPlan.state != "to">
+									<i class="Hui-iconfont f-20 ml-5 c-red " title="不可操作">&#xe6e2;</i>
+									<#else>
+									<a style="text-decoration:none" class="ml-5" onClick="cancel('${tripPlan.planCode}')" href="javascript:;" title="作废"><i class="Hui-iconfont f-20">&#xe6e2;</i></a>
+									</#if>
+									</td>
+								</tr>
+								</#list>
+							</tbody>
+						</table>
+						<#if page!=null>
+							<#assign baseUrl = base + '/trip.htm?method=query&state=' + query.state + '&departmentCode=' + query.departmentCode + '&employeeCode=' + query.employeeCode + '&startDate=' + query.startDate + '&endDate=' + query.endDate />
+							<#include "/common/page.html">
+						</#if> 
+						<!-- <div class="dataTables_wrapper no-footer">
+							<div class="dataTables_info" id="">共2条记录，共 1 页，当前显示第1页</div>
+							<div class="dataTables_paginate paging_simple_numbers" id="">
+								<a class="paginate_button previous disabled" tabindex="0" id="">首页</a> <a class="paginate_button previous disabled" tabindex="0" id="">上一页</a>
+								<span><a class="paginate_button current" tabindex="0">1</a></span> <a class="paginate_button next disabled" tabindex="0" id="">下一页</a> <a
+									class="paginate_button previous disabled" tabindex="0" id="">末页</a>
+							</div>
+						</div> -->
+					</ul>
+				</div>
+			</div>
+			<div class="inBox">
+				<div class="inHd">
+					<ul>
+						<li><span id="tripItemTab">行程明细</span></li>
+					</ul>
+				</div>
+				<div class="inBd">
+					<ul><iframe id="tripItemFrame" scrolling="auto" frameborder="0" width="100%" ></iframe></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	</#if>
+</div>
+</#if>
+</body>
+</html>

@@ -1,0 +1,375 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico">
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/css/query.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.SuperSlide/2.1.1/jquery.SuperSlide.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.cxSelect/1.4.1/jquery.cxselect.min.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $('.table-sort').dataTable({
+            "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "pading":false,
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {"orderable":false,"aTargets":[0,4]}// 不参与排序的列
+            ]
+        });
+
+    });
+
+
+$(function(){
+
+	// 初始化隐藏详细信息TAB
+	$(".outBox .hd .details").hide();
+	$(".inBox").hide();
+	
+	// 点击列表和详细信息TAB切换效果
+	$(".outBox .hd .list").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".Box").show();
+		$(".Box").siblings().hide();
+	});
+	
+	$(".outBox .hd .details").click(function() {
+		$(this).addClass("on").siblings().removeClass("on");
+		$(".inBox").show();
+		$(".inBox").siblings().hide();
+	});
+	
+	// 信息列表选中背景效果
+	$(".Box tr").click(function() {
+		$(this).css({
+			"background" : "#FAF3D6"
+		}).siblings().css({
+			"background" : "#fff"
+		});
+	});
+	
+	// 子TAB切换效果
+	/**jQuery(".inBox").slide({
+		titCell : ".inHd li",
+		mainCell : ".inBd",
+		trigger : "click"
+	});*/
+	
+	$(".Box tr .con").click(function() {
+		$(".outBox .hd .details").show();
+		$(".inBox").show();
+		$(".Box,.outBox .hd .list").removeClass("on");
+		$(".Box").hide();
+		$(".Box,.outBox .hd .details").addClass("on");
+		$(".outBox .bd div").eq(1).show().siblings().hide();
+		
+		var code = $(this).parent().find('input').val();
+		
+		$('#infoTab').off().on('click',function(){$('#infoFrame').attr('src','customerInfo.htm?method=getCusomerInfo&customerCode='+code);});
+		$('#productTab').off().on('click',function(){$('#productFrame').attr('src','customerProduct.htm?method=getCustomerProduct&customerCode='+code);});
+		$('#contactsTab').off().on('click',function(){$('#contactsFrame').attr('src','customerContacts.htm?method=getContacts&customerCode='+code);});
+		$('#recordTab').off().on('click',function(){$('#recordFrame').attr('src','customerLink.htm?method=getRecords&customerCode='+code+'&contactsCode=');});
+		$('#demandTab').off().on('click',function(){$('#demandFrame').attr('src','customerDemand.htm?method=getCustomerDemand&customerCode='+code);});
+		$('#summaryTab').off().on('click',function(){$('#summaryFrame').attr('src','customerSummary.htm?method=getCustomerSummary&customerCode='+code);});
+		
+		$(".inBox .inHd li").eq(0).addClass("on").siblings().removeClass("on");
+		$(".inBox .inBd ul").eq(0).show().siblings().hide();
+		$('#infoFrame').attr('src','customerInfo.htm?method=getCusomerInfo&customerCode='+code);
+
+		jQuery(".inBox").off().slide({
+			titCell : ".inHd li",
+			mainCell : ".inBd",
+			trigger : "click"
+		});
+	});
+	
+	/**$("#test1").load(function(){ 
+        $(this).height(0); //用于每次刷新时控制IFRAME高度初始化 
+        var height = $(this).contents().find("body").height(); 
+        alert(height);
+        $(this).height( height < 500 ? 500 : height ); 
+      }); 
+	
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": false,//控制顶部显示条数 
+		"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": false, //分页
+		"bInfo": false,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[4]}// 不参与排序的列
+		]
+	});*/
+});
+
+function select() {
+    var departmentCode = $("#departmentCode").val();
+    $("#handler").empty();
+    $.ajax({
+        type: 'POST',
+        url: 'procurement.htm?method=selectEmployee',
+        data: {departmentCode:departmentCode},
+        dataType: 'json',
+        success: function (data) {
+            $.each(data.message,function(key,val) {
+                $('#handler').append("<option value="+val.employeeCode+">"+val.name+"</option>");
+            })
+            return false;
+        },
+        error: function () {
+            layer.alert("系统繁忙!请重试");
+            return false;
+        }
+    });
+}
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+    layer_show(title,url,w,h);
+}
+
+//删除
+function del(customerCode){
+	layer.confirm('确认要删除该客户信息吗？',function(index){
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "customer.htm?method=del",
+			data : {
+				customerCode : customerCode
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						layer.alert("删除成功！",  {icon: 1}, function(index){
+							$("form").submit();
+						});
+					} else {
+						layer.msg(data.message,{icon:2,time:3000});
+					}
+				} else {
+					layer.msg("删除失败，请重试！",{icon:2,time:3000});
+				}
+			},
+			error : function() {
+				layer.msg("系统繁忙，请稍后再试！",{icon:2,time:3000});
+			}
+		});
+	});
+}
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 客户中心 <span class="c-gray en">&gt;</span> 客户管理<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace('http://localhost:8080/mechanic/bill.htm?method=myBill');" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<#if err?exists>
+<span class="c-red">${err}</span>
+<#else>
+<div class="page-container">
+	<form action="bill.htm?method=selectBill" method="post" class="form form-horizontal" id="form-member-add">
+	<div>
+		<div class="guanli"> 
+			<span><a href="javascript:;">开票申请管理</a></span>
+		</div>
+		<table class="table table-border table-bordered table-bg dataTable">
+			<tr id="departmentToEmployee">
+				<td class="text-c sorting_1" width="80">所在部门</td>
+				<td class="formControls">
+				<span class="select-box">
+				<select name="departmentCode" id="departmentCode" class="departmentCode select" onchange="select()">
+					<#list departments as department>
+					<#assign offsetNode = "&nbsp;&nbsp;"/>
+					<#assign linkNode = "&nbsp;&nbsp;"/>
+					<#assign childNode = "├&nbsp;"/>
+					<#assign endNode = "└&nbsp;"/>
+					<option value="${department.departmentCode}" <#if (employeeDTO.departmentCode == department.departmentCode)>selected</#if>>
+					<#if (department.depth > 0)>
+					<#list 1..department.depth as m>
+						<#assign showInfo = showInfo+offsetNode />
+						<#if (m == department.depth)>
+							<#if (department.nextId > 0)>
+								<#assign showInfo = showInfo+childNode />
+							<#else>
+								<#assign showInfo = showInfo+endNode />
+							</#if>
+						<#else>
+							<#assign showInfo = showInfo+linkNode />
+						</#if>
+					</#list>
+					</#if>
+					${showInfo+department.departmentName}
+					</option>
+					<#assign showInfo = "" />
+					</#list>
+				</select>
+				</span> 
+				</td>
+
+				<td class="text-c sorting_1" width="80">归属员工</td>
+				<td class="formControls">
+				<span class="select-box inline" style="width:100px;">
+				<select name="employeeCode" class="select" id="handler" size="1" >
+					<option value="" selected>请选择</option>
+					<#if employeeDTOList?exists>
+					<#list employeeDTOList as employee>
+					<option value="${employee.employeeCode}" <#if employeeDTO.employeeCode == employee.employeeCode>selected</#if> >${employee.name}</option>
+					</#list>
+					</#if>
+				</select>
+				</span>
+				</td>
+
+				<td class="text-c sorting_1" width="80">开票状态</td>
+				<td class="formControls">
+						<span class="select-box">
+						<select name="status" id="status" class="select">
+							<option value="" selected>所有状态</option>
+							<option value="已开票" >已开票</option>
+							<option value="待开票" >待开票</option>
+							<option value="作废" >作废</option>
+							<option value="开票拒绝" >开票拒绝</option>
+					</select>
+					</span>
+				</td>
+
+				<td class="text-c sorting_1" width="80">查询日期</td>
+				<td width="260">
+				<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endDate\')||\'%y-%M-%d\'}'})" name="startTime" id="startDate" value="${startTime}" class="input-text Wdate" style="width:120px;">
+				-
+				<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startDate\')}',maxDate:'%y-%M-%d'})" name="endTime" id="endDate" value="${endTime}" class="input-text Wdate" style="width:120px;">
+				</td>
+			</tr>
+
+			<tr class="cha-xun">
+				<td colspan="9" class="text-r">
+				<button name="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	</form>
+	<#if !(financeBillDTOList?exists)>
+	<#else>
+	<div class="outBox">
+		<div class="hd">
+			<ul>
+				<li class="list on"><span>开票列表</span></li>
+				<li class="details"><span>详细信息</span></li>
+			</ul>
+		</div>
+		<div class="bd" style="margin-top: 10px">
+			<!-- inBox S -->
+			<div class="Box" style="display: block;">
+				<div class="inBd">
+					<ul>
+						<table id="test" class="table table-border table-bordered table-bg table-hover table-sort" >
+							<thead>
+								<tr class="text-c" role="row">
+									<th width="80">合同编号</th>
+									<th width="80">客户编号</th>
+									<th width="80">发票类型</th>
+									<th width="80">发票抬头</th>
+									<th width="40">申请人</th>
+									<th width="40">当前审核人</th>
+									<th width="20">金额</th>
+									<th width="20">视频</th>
+									<th width="20">状态</th>
+									<th width="40">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+							<#if financeBillDTOList?exists>
+							<#list financeBillDTOList as financeBill>
+								<tr class="text-c">
+									<td >${financeBill.contractCode}</td>
+									<td >${financeBill.customerCode}</td>
+									<td >${financeBill.billType}</td>
+									<td >${financeBill.billTitle}</td>
+									<td >${financeBill.proposerName}</td>
+									<td >${financeBill.employeeName}</td>
+									<td >${financeBill.money}</td>
+									<td >
+										<#if financeBill.icon??>
+										<a onclick="openOperation('开票视频','bill.htm?method=lookMovie&icon=${financeBill.icon}')">点击观看</a>
+										</#if>
+									</td>
+									<td >
+										<#if financeBill.status == '待开票'>
+										<span  style="background-color:grey" class="label label-success radius">${financeBill.status}</span>
+										</#if>
+
+										<#if financeBill.status == '已开票'>
+										<span  class="label label-success radius">${financeBill.status}</span>
+										</#if>
+
+										<#if financeBill.status == '申请不通过'>
+										<span  style="background-color:orangered" class="label label-success radius">${financeBill.status}</span>
+										</#if>
+
+										<#if financeBill.status == '作废'>
+										<span  style="background-color:#ef392b" class="label label-success radius">${financeBill.status}</span>
+										</#if>
+									</td>
+
+
+									<td class="f-14 td-manage">
+										<#if financeBill.status == '申请不通过'>
+										<a style="text-decoration:none" onClick="fullOpenOperation('编辑','bill.htm?method=initEdit&id=${financeBill.id}')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a>
+										<#else>
+
+										</#if>
+									</td>
+								</tr>
+							</#list>
+							</#if>
+							</tbody>
+						</table>
+					</ul>
+				</div>
+			</div>
+
+
+		</div>
+	</div>
+	</#if>
+</div>
+</#if>
+</body>
+</html>

@@ -1,0 +1,154 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": false,//控制顶部显示条数 
+		//"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": false, //分页
+		"bInfo": false,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[7]}// 不参与排序的列
+		]
+	});
+});
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+//弹出全屏操作窗口，关闭后回调刷新本页面
+function fullOpenOperation(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url,
+		cancel: function(){ 
+		    //右上角关闭回调
+		    $("form").submit();
+		}
+	});
+	layer.full(index);
+}
+
+// 出差计划审批
+function approval(planCode, newState) {
+
+	if (planCode == "" && newState == "") {
+		layer.alert("出差计划参数不完整，请确认后重试！", 1);
+		return false;
+	}
+
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "trip.htm?method=approval",
+		data : {
+			planCode : planCode,
+			state : newState
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("出差计划审批成功！",  {icon: 1}, function(index){
+						location.replace(location.href);
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("出差计划审批失败，请稍后重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 销售中心 <span class="c-gray en">&gt;</span> 出差审批 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="140">计划编号</th>
+					<th width="60">姓名</th>
+					<th width="60">所在部门</th>
+					<th width="60">职位</th>
+					<th width="60">出差天数</th>
+					<th width="80">预估费用</th>
+					<th>出差事由及行程</th>
+					<th width="60">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#if trips?exists>
+				<#list trips as trip>
+					<tr class="text-c">
+						<td class="text-l">${trip.tripPlan.planCode}</td>
+						<td class="text-l">${trip.name}</td>
+						<td class="text-l">${trip.departmentName}</td>
+						<td class="text-l">${trip.positionName}</td>
+						<td class="text-l">${trip.tripPlan.days}</td>
+						<td class="text-l">${trip.tripPlan.cost}</td>
+						<td class="text-l">
+						${trip.tripPlan.cause}<br>
+						<#list trip.tripItems as item>
+						<div class="c-999 f-12">
+							<u>行程 ${item_index+1} </u>
+							<time>${item.startTime?date}</time>到<time>${item.endTime?date}</time>
+							<span class="ml-5">目的地：${item.destination}</span>
+							<span class="ml-5">${item.remarks}</span>
+						</div>
+						</#list>
+						</td>
+						<td class="f-14 td-manage">
+						<a style="text-decoration:none" class="ml-5" onClick="approval('${trip.tripPlan.planCode}','pass')" href="javascript:;" title="审批通过"><i class="Hui-iconfont c-blue f-20">&#xe6e1;</i></a> 
+						<a style="text-decoration:none" class="ml-5" onClick="approval('${trip.tripPlan.planCode}','refuse')" href="javascript:;" title="审批拒绝"><i class="Hui-iconfont c-red f-20">&#xe6dd;</i></a> 
+						</td>
+					</tr>
+				</#list>
+				</#if>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

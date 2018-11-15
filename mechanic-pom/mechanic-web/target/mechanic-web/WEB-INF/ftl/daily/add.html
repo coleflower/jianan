@@ -1,0 +1,202 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.validation/1.14.0/messages_zh.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+
+    //今日总结字数提示
+    $('#summary').on("keyup",function(){
+        $('#textNum').text($('#summary').val().length);//这句是在键盘按下时，实时的显示字数
+        if($('#summary').val().length > 500){
+            $('#textNum').text(500);//长度大于100时0处显示的也只是100
+            $('#summary').val($('#summary').val().substring(0,500));//长度大于100时截取钱100个字符
+            layer.alert('内容已超过限制', {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            })
+        }
+    })
+    $('#textNum').text($('#summary').val().length);//这句是在刷新的时候仍然显示字数
+
+    //明日计划字数提示
+    $('#plan').on("keyup",function(){
+        $('#textNum1').text($('#plan').val().length);//这句是在键盘按下时，实时的显示字数
+        if($('#plan').val().length > 500){
+            $('#textNum1').text(500);//长度大于100时0处显示的也只是100
+            $('#plan').val($('#plan').val().substring(0,500));//长度大于100时截取钱100个字符
+            layer.alert('内容已超过限制', {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            })
+        }
+    })
+    $('#textNum1').text($('#plan').val().length);//这句是在刷新的时候仍然显示字数
+
+    //工作心得字数提示
+    $('#felling').on("keyup",function(){
+        $('#textNum2').text($('#felling').val().length);//这句是在键盘按下时，实时的显示字数
+        if($('#felling').val().length > 500){
+            $('#textNum2').text(500);//长度大于100时0处显示的也只是100
+            $('#felling').val($('#felling').val().substring(0,500));//长度大于100时截取钱100个字符
+            layer.alert('内容已超过限制', {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            })
+        }
+    })
+    $('#textNum2   ').text($('#felling').val().length);//这句是在刷新的时候仍然显示字数
+
+
+	$('#modify').on('click', function() {
+
+		var summary = $("#summary").val();
+		var plan = $("#plan").val();
+		var felling = $("#felling").val();
+
+        if (summary.trim() == "" || summary == null) {
+            layer.alert("请输入今日总结!", {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            });
+            return false;
+        }
+
+        if (plan.trim() == "" || plan == null) {
+            layer.alert("请输入明日计划!", {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            });
+            return false;
+        }
+
+        if (felling.trim() == "" || felling == null) {
+            layer.alert("请输入工作心得!", {
+                icon: 2,
+                skin: 'layer-ext-moon' //该皮肤由layer.seaning.com友情扩展。关于皮肤的扩展规则，去这里查阅
+            });
+            return false;
+        }
+
+        layer.confirm('确认要提交吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        }, function(index) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded",//"application/json; charset=utf-8"
+                url: "daily.htm?method=add",
+                data: {
+                    summary: summary,
+                    plan: plan,
+                    felling: felling
+                },
+                success: function (data) {
+                    if (data.status == "success") {
+                        if (data.message == "200") {
+
+                            var index = top.layer.msg('数据提交中，请稍候', {icon: 16, time: false, shade: 0.8});
+                            setTimeout(function () {
+                                top.layer.close(index);
+                                top.layer.msg("提交成功!");
+                                //刷新父页面
+                                window.location.reload();
+                            }, 500);
+
+                            return false;
+                        } else {
+                            layer.alert(data.message, 1);
+                            return false;
+                        }
+                    } else {
+                        layer.alert("提交失败，请重试！", 1);
+                        return false;
+                    }
+                },
+                error: function () {
+                    layer.alert("系统繁忙，请稍后再试！", 1);
+                }
+            });
+            return false;
+        })
+	});
+
+});
+</script>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">今日总结：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="summary" id="summary" style="height: 200px" cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内">${afterServiceDTO.remark}</textarea>
+				<p class="textarea-numberbar"><em class="textarea-length" id="textNum">0</em>/500</p>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">明日计划：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="plan" id="plan" style="height: 200px" cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内">${afterServiceDTO.remark}</textarea>
+				<p class="textarea-numberbar"><em class="textarea-length" id="textNum1">0</em>/500</p>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">工作心得：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="felling" id="felling" style="height: 200px" cols="" rows="" class="textarea"  placeholder="说点什么...500个字符以内">${afterServiceDTO.remark}</textarea>
+				<p class="textarea-numberbar"><em class="textarea-length" id="textNum2">0</em>/500</p>
+			</div>
+		</div>
+
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input id="modify" class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+
+	</form>
+</article>
+</body>
+</html>

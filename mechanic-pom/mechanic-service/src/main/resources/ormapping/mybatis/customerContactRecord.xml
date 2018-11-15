@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.customer.ICustomerContactRecordDAO">
+	<resultMap id="customerContactRecordResultMapper" type="com.cubicpark.mechanic.domain.dto.customer.CustomerContactRecordDTO">
+		<id column="id" property="id" />
+		<result column="customercode" property="customerCode" />
+		<result column="contactscode" property="contactsCode" />
+		<result column="contactsname" property="contactsName" />
+		<result column="connectionway" property="connectionWay" />
+		<result column="communicatetype" property="communicateType" />
+		<result column="contents" property="contents" />
+		<result column="contactdate" property="contactDate" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addContactRecord" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerContactRecordDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_customer_contactrecord (
+		customercode, contactscode, connectionway, 
+		communicatetype, contents, contactdate, 
+		infostate, createdate, updatedate
+		) values (
+		#{customerCode}, #{contactsCode}, #{connectionWay}, 
+		#{communicateType}, #{contents}, #{contactDate}, 
+		#{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyContactRecord" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerContactRecordDTO">
+		<![CDATA[update t_customer_contactrecord ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="connectionWay != null and connectionWay != '' ">  
+				<![CDATA[connectionway = #{connectionWay},]]>
+			</if>
+			<if test="communicateType != null and communicateType != '' ">  
+				<![CDATA[communicatetype = #{communicateType},]]>
+			</if>
+			<if test="contents != null and contents != '' ">  
+				<![CDATA[contents = #{contents},]]>
+			</if>
+			<if test="contactDate != null and contactDate != '' ">  
+				<![CDATA[contactdate = #{contactDate},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+	
+	<select id="getContactRecordByCustomerCodeAndContactsCode" resultMap="customerContactRecordResultMapper">
+		<![CDATA[SELECT r.*, c.contactsname FROM t_customer_contactrecord r left join t_customer_contacts c on r.contactscode = c.contactscode where r.customercode = #{customerCode} and r.contactscode = #{contactsCode}]]>
+	</select>
+	
+	<select id="getContactRecordById" parameterType="int" resultMap="customerContactRecordResultMapper">
+		<![CDATA[SELECT r.*, c.contactsname FROM t_customer_contactrecord r left join t_customer_contacts c on r.contactscode = c.contactscode where r.id = #{id}]]>
+	</select>
+	
+	<delete id="delCustomerContactRecordById" parameterType="int">
+		<![CDATA[delete from t_customer_contactrecord where id = #{id} and infostate = '0']]>
+	</delete>
+	
+</mapper>

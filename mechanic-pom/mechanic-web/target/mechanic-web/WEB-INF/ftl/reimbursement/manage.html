@@ -1,0 +1,171 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+
+$(document).ready(function() {
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+        "bStateSave": true,//状态保存
+        "pading":false,
+        "aoColumnDefs": [
+            //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+            {"orderable":false,"aTargets":[0,5]}// 不参与排序的列
+        ]
+    });
+
+});
+
+
+//弹出全屏操作窗口，关闭后回调刷新本页面
+function fullOpenOperation(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+    layer.full(index);
+}
+
+//查询相似的code
+function searchCode() {
+    var code = $("#expressCode").val();
+    $.ajax({
+        type : "POST",
+        dataType : "json",
+        contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8"
+        url : "reimbursement.htm?method=search",
+        data : {
+            code : code
+        },
+        success : function(data) {
+            if(data.status == "success") {
+                if(data.message == null){
+                    return false;
+				}
+                var con;
+                $.each(data.message,function(key,val) {
+                    con+="<datalist id=\"asd\"><option value="+val+"/></datalist>"
+                    $("#asd option").html(con);
+                });
+                return false;
+            } else {
+                layer.alert("修改失败，请重试！", 1);
+                return false;
+            }
+        },
+        error : function() {
+            layer.alert("系统繁忙，请稍后再试！", 1);
+        }
+    });
+}
+
+function getStatus() {
+    var status = $("#status").val();
+    $("#statusValue").attr("value",status);
+}
+
+
+</script>
+</head>
+
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 物流中心 <span class="c-gray en">&gt;</span> 物流管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<form action="reimbursement.htm?method=select" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="text-c">
+			<input type="text" value="${codeLike}" onkeyup="searchCode()" list="asd" name="codeLike" id="expressCode" placeholder=" 调试工单编号" style="width:180px" class="input-text">
+			<datalist id="asd">
+				<option value="" />
+			</datalist>
+			<span class="select-box inline" />
+			<select name="accountStatus" class="select" onchange="getStatus()" id="status">
+				<option value=""  selected>所有状态</option>
+				<option value="0" <#if status=='0'>selected</#if>>待处理</option>
+				<option value="申请成功" <#if status=='申请成功'>selected</#if>>申请成功</option>
+				<option value="申请拒绝" <#if status=='申请拒绝'>selected</#if>>申请拒绝</option>
+			</select>
+			</span>
+			<input name="status" id="statusValue" type="hidden" value="">
+			日期：
+			<input type="text" value="${startEntryDate}" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" name="startEntryDate" id="startEntryDate" class="input-text Wdate" style="width:165px;">
+			-
+			<input type="text" value="${endEntryDate}" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })" name="endEntryDate" id="endEntryDate" class="input-text Wdate" style="width:165px;">
+			<!--<button name="" id="query" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button><#if error?exists><span class="c-red">${error}</span></#if>-->
+			<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+		</div>
+	</form>
+	<div class="mt-20" align="center">
+		<table id="test" class="table table-border table-bordered table-bg table-hover table-sort" align="center">
+			<thead>
+				<tr class="text-c">
+					<th width="100">流水编号</th>
+					<th width="100">申请人</th>
+					<th width="100">报销类型</th>
+					<th width="120">所属业务编号</th>
+					<th width="120">总金额(元)</th>
+					<th width="120">状态</th>
+					<th width="120">审批人</th>
+					<th width="160">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#if reimbursementDTOList?exists>
+				<#list reimbursementDTOList as reimbursement>
+				<tr class="text-c">
+					<td class="text-c" >${reimbursement.applyNo}</td>
+					<td class="text-c" >${reimbursement.employeeCode}</td>
+					<td class="text-c">${reimbursement.mold}</td>
+					<td class="text-c">${reimbursement.code}</td>
+					<td class="text-c">${reimbursement.cost}</td>
+					<td class="td-status">
+					<#if reimbursement.state==0><span style="background-color:grey" class="label label-success radius">待处理</span></#if>
+					<#if reimbursement.state=='申请拒绝'><span style="background-color: orangered" class="label label-success radius">申请拒绝</span></#if>
+					<#if reimbursement.state=='申请成功'><span class="label label-success radius">申请成功</span></#if>
+					</td>
+					<td class="text-c">${reimbursement.approver}</td>
+					<td class="f-14 td-manage">
+						<a style="text-decoration:none"  onClick="fullOpenOperation('详情','reimbursementItem.htm?method=index&applyNo=${reimbursement.applyNo}')" href="javascript:;" title="详情"><i class="Hui-iconfont">&#xe616;</i></a>&nbsp;&nbsp;
+						<#if reimbursement.approver==null>
+						<a style="text-decoration:none" onClick="fullOpenOperation('处理确认','reimbursement.htm?method=initdebug&id=${reimbursement.id}')" href="javascript:;" title="我来处理"><i class="Hui-iconfont">&#xe63c;</i></a>&nbsp;&nbsp;
+						</#if>
+						<a style="text-decoration:none"  onClick="fullOpenOperation('编辑','reimbursement.htm?method=initModify&id=${reimbursement.id}')" href="javascript:;" title="编辑"><i class="Hui-iconfont">&#xe6df;</i></a>
+					</td>
+				</tr>
+				</#list>
+				</#if>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

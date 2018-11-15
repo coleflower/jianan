@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	default-lazy-init="false">
+
+	<!-- 新增合同款项规则引擎 -->
+	<bean id="addContractFundEngine" class="com.cubicpark.mechanic.domain.ruleengine.engine.RuleEngine">
+		<property name="firstStep">
+			<ref bean="addContractStateIsEffectiveRule"/>
+		</property>
+	</bean>
+	
+	<!-- 合同状态有效性检测规则 -->
+	<bean id="addContractStateIsEffectiveRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractStateIsEffectiveRule">
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="addContractFundInfoIsAllCommitRule"/>
+		</property>
+		<property name="messageCode" value="contractStateIsNoEffectiveError" />
+	</bean>
+	
+	<!-- 合同下所有款项条目信息是否提交检测规则 -->
+	<bean id="addContractFundInfoIsAllCommitRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundInfoIsAllCommitRule">
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="addContractFundInfoStateRule"/>
+		</property>
+		<property name="messageCode" value="contractFundInfoIsNoAllCommitError" />
+	</bean>
+	
+	<!-- 款项信息状态规则 -->
+	<bean id="addContractFundInfoStateRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundInfoStateRule">
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundFullAndAllPayRule"/>
+		</property>
+		<property name="messageCode" value="contractFundInfoStateIsNoClearError" />
+	</bean>
+
+	<!-- 修改合同款项规则引擎 -->
+	<bean id="modifyContractFundEngine" class="com.cubicpark.mechanic.domain.ruleengine.engine.RuleEngine">
+		<property name="firstStep">
+			<ref bean="modifyContractStateIsEffectiveRule"/>
+		</property>
+	</bean>
+	
+	<!-- 合同状态有效性检测规则 -->
+	<bean id="modifyContractStateIsEffectiveRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractStateIsEffectiveRule">
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="modifyContractFundInfoStateRule"/>
+		</property>
+		<property name="messageCode" value="contractStateIsNoEffectiveError" />
+	</bean>
+	
+	<!-- 款项信息状态规则 -->
+	<bean id="modifyContractFundInfoStateRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundInfoStateRule">
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundFullAndAllPayRule"/>
+		</property>
+		<property name="messageCode" value="contractFundInfoStateIsNoClearError" />
+	</bean>
+	
+	<!-- 款项条目和合同款项状态业务规则 -->
+	<!-- 预付款比例100%， 合同款项状态为非未付款规则 -->
+	<bean id="contractFundFullAndAllPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundFullAndAllPayRule">
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundFullAndNoPayRule"/>
+		</property>
+		<property name="messageCode" value="allPayButUnnotPayError" />
+	</bean>
+	
+	<!-- 预付款比例100% 合同款项状态为未付款规则 -->
+	<bean id="contractFundFullAndNoPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundFullAndNoPayRule">
+		<property name="contractService">
+			<ref bean="contractService"/>
+		</property>
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundAdvanceAndEndPayRule"/>
+		</property>
+		<property name="messageCode" value="setainageAndFundIsNotSameOrSettleDateIsNullError" />
+	</bean>
+	
+	<!-- 预付款比例非100%， 合同款项状态为已尾款已结清规则 -->
+	<bean id="contractFundAdvanceAndEndPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundAdvanceAndEndPayRule">
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundAdvanceAndNoFirstPayRule"/>
+		</property>
+		<property name="messageCode" value="installmentButIsSettlementError" />
+	</bean>
+	
+	<!-- 预付款比例非100%， 合同款项状态为未首付规则 -->
+	<bean id="contractFundAdvanceAndNoFirstPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundAdvanceAndNoFirstPayRule">
+		<property name="contractService">
+			<ref bean="contractService"/>
+		</property>
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundAdvanceAndFirstPayRule"/>
+		</property>
+		<property name="messageCode" value="installmentPayTypeIsNoFirstPayOrFundIsNotSameError" />
+	</bean>
+	
+	<!-- 预付款比例非100%， 合同款项状态为已首付待回款规则 -->
+	<bean id="contractFundAdvanceAndFirstPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundAdvanceAndFirstPayRule">
+		<property name="contractService">
+			<ref bean="contractService"/>
+		</property>
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundAdvanceAndBackFirstPayRule"/>
+		</property>
+		<property name="messageCode" value="installmentPayTypeIsNobackPayOrAllPayGTTotalError" />
+	</bean>
+	
+	<!-- 预付款比例非100%， 合同款项状态为正常回款未结清，判断款项类型是否为首付款规则 -->
+	<bean id="contractFundAdvanceAndBackFirstPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundAdvanceAndBackFirstPayRule">
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundAdvanceAndBackPayRule"/>
+		</property>
+		<property name="messageCode" value="installmentPayTypeIsFirstPayError" />
+	</bean>
+	
+	<!-- 预付款比例非100%， 合同款项状态为正常回款未结清，判断款项类型是否为正常回款规则 -->
+	<bean id="contractFundAdvanceAndBackPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundAdvanceAndBackPayRule">
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="contractFundAdvanceAndBackEndPayRule"/>
+		</property>
+		<property name="messageCode" value="installmentPayTypeIsBackPayAllPayGTTotalError" />
+	</bean>
+	
+	<!-- 预付款比例非100%， 合同款项状态为正常回款未结清，款项类型为尾款规则 -->
+	<bean id="contractFundAdvanceAndBackEndPayRule" class="com.cubicpark.mechanic.domain.ruleengine.rule.contract.ContractFundAdvanceAndBackEndPayRule">
+		<property name="contractService">
+			<ref bean="contractService"/>
+		</property>
+		<property name="contractFundService">
+			<ref bean="contractFundService"/>
+		</property>
+		<property name="negativeOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="positiveOutcomeStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+		<property name="messageCode" value="installmentPayTypeIsEndPayAllPayGTTotalSettleDateIsNullError" />
+	</bean>
+	
+</beans>

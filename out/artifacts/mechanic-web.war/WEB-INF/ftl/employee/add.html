@@ -1,0 +1,323 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+
+    $("#extension").keydown(function(event) { 
+        var keyCode = event.which; 
+        if (keyCode == 8 || keyCode == 46 || (keyCode >= 48 && keyCode <=57)) 
+            return true; 
+        else 
+            return false; 
+    }).focus(function() { 
+        this.style.imeMode='disabled'; 
+    }); 
+	
+    $("#telephone").keydown(function(event) { 
+        var keyCode = event.which; 
+        if (keyCode == 8 || keyCode == 46 || (keyCode >= 48 && keyCode <=57)) 
+            return true; 
+        else 
+            return false; 
+    }).focus(function() { 
+        this.style.imeMode='disabled'; 
+    }); 
+    
+	$('#add').on('click', function() {
+		var mobileRex = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+		var numreg = /^[0-9]*$/;  
+		
+		var employeeCode = $("#employeeCode").val();
+		var departmentCode = $("#departmentCode option:selected").attr("value");
+		var positionCode = $("#positionCode option:selected").attr("value");
+		var name = $("#name").val();
+		var sex = $("input[name='sex']:checked").val();
+		var education = $("#education option:selected").attr("value");
+		var college = $("#college").val();
+		var extension = $("#extension").val();
+		var telephone = $("#telephone").val();
+		var entryDate = $("#entryDate").val();
+		
+		if (employeeCode == "") {
+			layer.tips('请输入员工编号！', '#employeeCode');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (departmentCode == "") {
+			layer.tips('请选择所在部门！', '#departmentCode');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (positionCode == "") {
+			layer.tips('请选择职位！', '#positionCode');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (name == "") {
+			layer.tips('请输入姓名！', '#name');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (education == "") {
+			layer.tips('请选择最高学历！', '#education');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (college == "") {
+			layer.tips('请输入毕业院校！', '#college');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if(extension != "" && extension.match(numreg)) {
+			layer.tips('分机号码不正确，请重新输入！', '#extension');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (telephone == "") {
+			layer.tips('请输入联系手机！', '#telephone');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if(!(telephone.length == 11 && telephone.match(mobileRex))) {
+			layer.tips('手机号码不正确，请重新输入！', '#telephone');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		if (entryDate == "") {
+			layer.tips('请选择入职日期！', '#entryDate');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+		
+		$.ajax({
+			type : "POST",
+			dataType : "json",
+			contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+			url : "employee.htm?method=add",
+			data : {
+				employeeCode : employeeCode,
+				departmentCode : departmentCode,
+				positionCode : positionCode,
+				name : name,
+				sex : sex,
+				education : education,
+				college : college,
+				extension : extension,
+				telephone : telephone,
+				employeeEntryDate : entryDate
+			},
+			success : function(data) {
+				if(data.status == "success") {
+					if (data.message == "200") {
+						layer.alert("新增员工成功！",  {icon: 1}, function(index){
+							location.replace(location.href);
+						});
+					} else {
+						layer.alert(data.message, 1);
+					}
+				} else {
+					layer.alert("新增失败，请重试！", 1);
+				}
+			},
+			error : function() {
+				layer.alert("系统繁忙，请稍后再试！", 1);
+			}
+		});
+	});
+});
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 员工中心 <span class="c-gray en">&gt;</span> 新增员工<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>员工编号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" value="" placeholder="" id="employeeCode" name="employeeCode">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所在部门：</label>
+			<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+				<select name="departmentCode" id="departmentCode" class="select" size="1">
+					<option value="" selected>请选择所在部门</option>
+					<#list allDepartment as department>
+					<#assign offsetNode = "&nbsp;&nbsp;"/>
+					<#assign linkNode = "&nbsp;&nbsp;"/>
+					<#assign childNode = "├&nbsp;"/>
+					<#assign endNode = "└&nbsp;"/>
+					<option value="${department.departmentCode}">
+					<#if (department.depth > 0)>
+					<#list 1..department.depth as m>
+						<#assign showInfo = showInfo+offsetNode />
+						<#if (m == department.depth)>
+							<#if (department.nextId > 0)>
+								<#assign showInfo = showInfo+childNode />
+							<#else>
+								<#assign showInfo = showInfo+endNode />
+							</#if>
+						<#else>
+							<#assign showInfo = showInfo+linkNode />
+						</#if>
+					</#list>
+					</#if>
+					${showInfo+department.departmentName}
+					</option>
+					<#assign showInfo = "" />
+					</#list>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位：</label>
+			<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+				<select name="positionCode" id="positionCode" class="select">
+					<option value="" selected>请选择所属职位</option>
+					<#list allPosition as position>
+					<#assign offsetNode = "&nbsp;&nbsp;"/>
+					<#assign linkNode = "&nbsp;&nbsp;"/>
+					<#assign childNode = "├&nbsp;"/>
+					<#assign endNode = "└&nbsp;"/>
+					<option value="${position.positionCode}">
+					<#if (position.depth > 0)>
+					<#list 1..position.depth as m>
+						<#assign showInfo = showInfo+offsetNode />
+						<#if (m == position.depth)>
+							<#if (position.nextId > 0)>
+								<#assign showInfo = showInfo+childNode />
+							<#else>
+								<#assign showInfo = showInfo+endNode />
+							</#if>
+						<#else>
+							<#assign showInfo = showInfo+linkNode />
+						</#if>
+					</#list>
+					</#if>
+					${showInfo+position.positionName}
+					</option>
+					<#assign showInfo = "" />
+					</#list>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>姓名：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="name" name="name" maxlength="10" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>性别：</label>
+			<div class="formControls col-xs-8 col-sm-6 skin-minimal">
+				<div class="radio-box">
+					<input type="radio" name="sex" value="m" checked>
+					<label for="sex-1">男</label>
+				</div>
+				<div class="radio-box">
+					<input type="radio" name="sex" value="f" >
+					<label for="sex-2">女</label>
+				</div>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>最高学历：</label>
+			<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+				<select class="select" size="1" name="education" id="education">
+					<option value="" selected>请选择</option>
+					<#list educationMap?keys as key>
+					<option value="${key}">${educationMap[key]}</option>
+					</#list>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>毕业院校：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" value="" placeholder="" id="college" name="college" maxlength="20">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">分机号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" value="" placeholder="" id="extension" name="extension" maxlength="10">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>联系手机：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" value="" placeholder="" id="telephone" name="telephone" maxlength="11">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>入职日期：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" onfocus="WdatePicker()" class="input-text Wdate" readonly="readonly" style="width:120px;" id="entryDate" name="entryDate">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<input id="add" class="btn btn-primary radius" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

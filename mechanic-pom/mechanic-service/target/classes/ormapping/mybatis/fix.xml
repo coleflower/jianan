@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.fix.IFixDAO" >
+  <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.fix.FixDTO" >
+    <id column="id" property="id"  />
+    <result column="debug_order_code" property="debugOrderCode"  />
+    <result column="contract_code" property="contractCode"  />
+    <result column="employee_code" property="employeeCode"  />
+    <result column="customer_code" property="customerCode"  />
+    <result column="fix_time" property="fixTime"  />
+    <result column="handler_code" property="handlerCode"  />
+    <result column="handler_name" property="handlerName"  />
+    <result column="remark" property="remark"  />
+    <result column="status" property="status"  />
+    <result column="version" property="version"  />
+    <result column="create_date" property="createDate"  />
+    <result column="update_date" property="updateDate"  />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, express_code,debug_order_code, contract_code,employee_code, customer_code,fix_time, handler_code,handler_name,remark, status,version,create_date, update_date
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_fix
+    where id = #{id}
+  </select>
+
+  <insert id="insertSelective" parameterType="com.cubicpark.mechanic.domain.dto.fix.FixDTO" >
+    insert into t_fix
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="expressCode != null" >
+        express_code,
+      </if>
+      <if test="debugOrderCode != null" >
+        debug_order_code,
+      </if>
+      <if test="contractCode != null" >
+        contract_code,
+      </if>
+      <if test="employeeCode != null" >
+        employee_code,
+      </if>
+      <if test="customerCode != null" >
+        customer_code,
+      </if>
+      <if test="fixTime != null" >
+        fix_time,
+      </if>
+      <if test="handlerCode != null" >
+        handler_code,
+      </if>
+      <if test="handlerName != null" >
+        handler_name,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="updateDate != null" >
+        update_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id},
+      </if>
+      <if test="expressCode != null" >
+        #{expressCode},
+      </if>
+      <if test="debugOrderCode != null" >
+        #{debugOrderCode},
+      </if>
+      <if test="contractCode != null" >
+        #{contractCode},
+      </if>
+      <if test="employeeCode != null" >
+        #{employeeCode},
+      </if>
+      <if test="customerCode != null" >
+        #{customerCode},
+      </if>
+      <if test="fixTime != null" >
+        #{fixTime},
+      </if>
+      <if test="handlerCode != null" >
+        #{handlerCode},
+      </if>
+      <if test="handlerName != null" >
+        #{handlerName},
+      </if>
+      <if test="remark != null" >
+        #{remark},
+      </if>
+      <if test="status != null" >
+        #{status},
+      </if>
+      <if test="createDate != null" >
+        #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        #{updateDate},
+      </if>
+    </trim>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.cubicpark.mechanic.domain.dto.fix.FixDTO" >
+    update t_fix
+    <set >
+      <if test="expressCode != null" >
+        express_code = #{expressCode},
+      </if>
+      <if test="debugOrderCode != null" >
+        debug_order_code = #{debugOrderCode},
+      </if>
+      <if test="contractCode != null" >
+        contract_code = #{contractCode},
+      </if>
+      <if test="employeeCode != null" >
+        employee_code = #{employeeCode},
+      </if>
+      <if test="customerCode != null" >
+        customer_code = #{customerCode},
+      </if>
+      <if test="fixTime != null" >
+        fix_time = #{fixTime},
+      </if>
+      <if test="handlerCode != null" >
+        handler_code = #{handlerCode},
+      </if>
+      <if test="handlerName != null" >
+        handler_name = #{handlerName},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark},
+      </if>
+      <if test="status != null" >
+        status = #{status},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate},
+      </if>
+      <if test="updateDate != null" >
+        update_date = #{updateDate},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+  <select id="selectByContractCode" resultMap="BaseResultMap" >
+    select <include refid="Base_Column_List" />
+    from t_fix
+    where contract_code = #{contractCode}
+  </select>
+
+  <select id="findOneMouseDebugOrder" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_fix
+    where create_date &gt;= #{oneMouseBefore}
+  </select>
+
+  <select id="findAll" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_fix
+  </select>
+
+  <update id="choiceDebugOrder" >
+    update t_fix
+    set employee_code = #{employeeCode},
+      update_date = #{now},
+      status = 1,
+      version = version + 1
+    where id = #{id}
+    and version = #{version}
+  </update>
+
+  <select id="selectByCodeOrStatusOrDate" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM t_fix
+    <where>
+      <if test="debugOrderCode != null and debugOrderCode != ''">
+        debug_order_code like concat("%", #{debugOrderCode},"%")
+      </if>
+      <if test="status != null">
+        and status = #{status}
+      </if>
+      <if test="createTime != null">
+        and create_date &gt;= #{createTime}
+      </if>
+      <if test="endTime != null">
+        and create_date &lt;= #{endTime}
+      </if>
+    </where>
+  </select>
+
+  <select id="searchDebugOrderCodeLike" resultType="string">
+    select debug_order_code
+    from t_fix
+    where debug_order_code like concat("%", #{code},"%")
+  </select>
+
+  <select id="selectByEmployeeCodeAndFixTime" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List" />
+    from t_fix
+    where handler_code = #{employeeCode}
+    and fix_time is null
+  </select>
+</mapper>

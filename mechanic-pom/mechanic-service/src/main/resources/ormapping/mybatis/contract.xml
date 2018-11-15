@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.contract.IContractDAO">
+	<resultMap id="contractResultMapper" type="com.cubicpark.mechanic.domain.dto.contract.ContractDTO">
+		<id column="id" property="id" />
+		<result column="customercode" property="customerCode" />
+		<result column="projectcode" property="projectCode" />
+		<result column="parentcontractcode" property="parentContractCode" />
+		<result column="contractcode" property="contractCode" />
+		<result column="employeecode" property="employeeCode" />
+		<result column="contractname" property="contractName" />
+		<result column="recordnumber" property="recordNumber" />
+		<result column="dealdate" property="dealDate" />
+		<result column="deliverydate" property="deliveryDate" />
+		<result column="deliveryinfo" property="deliveryInfo" />
+		<result column="contacts" property="contacts" />
+		<result column="deliveryadr" property="deliveryAdr" />
+		<result column="paymethod" property="payMethod" />
+		<result column="total" property="total" />
+		<result column="advanceratio" property="advanceRatio" />
+		<result column="contractstate" property="contractState" />
+		<result column="fundstate" property="fundState" />
+		<result column="settledate" property="settleDate" />
+		<result column="remarks" property="remarks" />
+		<result column="producttype" property="productType" />
+		<result column="productname" property="productName" />
+		<result column="productcount" property="productCount" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addContract" parameterType="com.cubicpark.mechanic.domain.dto.contract.ContractDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_contract (
+		parentcontractcode,projectcode,customercode, contractcode, employeecode, contractname,
+		recordnumber, dealdate, deliverydate, deliveryinfo, contacts, 
+		deliveryadr, paymethod, total, advanceratio, contractstate,
+		fundstate, settledate, remarks,producttype,productname,productcount,
+		createdate, updatedate
+		) values (
+		#{parentContractCode},#{projectCode},#{customerCode}, #{contractCode}, #{employeeCode}, #{contractName},
+		#{recordNumber}, #{dealDate}, #{deliveryDate}, #{deliveryInfo}, #{contacts}, 
+		#{deliveryAdr}, #{payMethod}, #{total}, #{advanceRatio}, #{contractState}, 
+		#{fundState}, #{settleDate}, #{remarks}, #{productType},#{productName},#{productCount},
+		#{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyContract" parameterType="com.cubicpark.mechanic.domain.dto.contract.ContractDTO">
+		<![CDATA[update t_contract ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<!-- <if test="projectCode != null and projectCode != '' ">  
+				<![CDATA[projectcode = #{projectCode},]]>
+			</if>
+			<if test="contractCode != null and contractCode != '' ">  
+				<![CDATA[contractcode = #{contractCode},]]>
+			</if>
+			<if test="contractName != null and contractName != '' ">  
+				<![CDATA[contractname = #{contractName},]]>
+			</if>
+			<if test="dealDate != null and dealDate != '' ">  
+				<![CDATA[dealdate = #{dealDate},]]>
+			</if> -->
+			<if test="deliveryDate != null">
+				<![CDATA[deliverydate = #{deliveryDate},]]>
+			</if>
+			<if test="deliveryInfo != null and deliveryInfo != '' ">  
+				<![CDATA[deliveryinfo = #{deliveryInfo},]]>
+			</if>
+			<if test="contacts != null and contacts != '' ">  
+				<![CDATA[contacts = #{contacts},]]>
+			</if>
+			<if test="deliveryAdr != null and deliveryAdr != '' ">  
+				<![CDATA[deliveryadr = #{deliveryAdr},]]>
+			</if>
+			<if test="payMethod != null and payMethod != '' ">  
+				<![CDATA[paymethod = #{payMethod},]]>
+			</if>
+			<if test="total != null and total != '' ">  
+				<![CDATA[total = #{total},]]>
+			</if>
+			<if test="advanceRatio != null and advanceRatio != '' ">  
+				<![CDATA[advanceratio = #{advanceRatio},]]>
+			</if>
+			<if test="contractState != null and contractState != '' ">  
+				<![CDATA[contractstate = #{contractState},]]>
+			</if>
+			<if test="fundState != null and fundState != '' ">  
+				<![CDATA[fundstate = #{fundState},]]>
+			</if>
+			<!-- <if test="settledate != null and settledate != '' ">  
+				<![CDATA[settledate = #{settledate},]]>
+			</if> -->
+			<if test="remarks != null and remarks != '' ">  
+				<![CDATA[remarks = #{remarks},]]>
+			</if>
+			<if test="updateDate != null ">
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+
+	<update id="setContractState" >
+		<![CDATA[update t_contract set contractstate = #{state} where contractcode = #{contractCode} and contractstate = #{currentState}]]>
+	</update>
+	
+	<update id="setFundState" parameterType="com.cubicpark.mechanic.domain.dto.contract.ContractDTO">
+		<![CDATA[update t_contract ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<![CDATA[fundstate = #{state},]]>
+			<if test="settleDate != null and settleDate != '' ">  
+				<![CDATA[settledate = #{settleDate},]]>
+			</if>
+			<![CDATA[updatedate = now(),]]>
+		</trim>
+		<![CDATA[where contractcode = #{contractCode} and fundstate = #{currentState}]]>
+	</update>
+	
+	<select id="getContractByContractCode" parameterType="String" resultMap="contractResultMapper">
+		<![CDATA[SELECT * FROM t_contract where contractcode = #{contractCode}]]>
+	</select>
+
+	<select id="getReissueContractByContractCode" parameterType="String" resultMap="contractResultMapper">
+		SELECT * FROM t_contract where parentcontractcode = #{contractCode}
+	</select>
+	
+	<select id="getContractByProjectAndContractState" resultMap="contractResultMapper">
+		<![CDATA[SELECT * FROM t_contract where projectcode = #{projectCode} and contractstate = #{state}]]>
+	</select>
+	
+	<select id="queryContract" parameterType="com.cubicpark.mechanic.domain.dto.contract.ContractQueryDTO" resultMap="contractResultMapper">
+		<![CDATA[SELECT * FROM t_contract where 1=1]]>
+		 <if test="contractName !=null and contractName !=''">
+		 	<![CDATA[ and contractname like CONCAT('%',#{contractName},'%')]]>
+		 </if>
+		 <if test="contractState !=null and contractState !=''">
+		 	<![CDATA[ and contractstate = #{contractState}]]>
+		 </if>
+		 <if test="startDealDate !=null and startDealDate != '' and endDealDate != null and endDealDate != ''">
+		 	<![CDATA[ and dealdate >= #{startDealDate} and dealdate <= #{endDealDate}]]>
+		 </if>
+	</select>
+	
+	<select id="getContractByRecordNumber" parameterType="String" resultMap="contractResultMapper">
+		<![CDATA[SELECT * FROM t_contract where recordnumber = #{recordNumber}]]>
+	</select>
+
+	<select id="selectContractCodeByEmployeeCode" resultType="String">
+		<![CDATA[SELECT contractcode FROM t_contract where employeecode = #{employeeCode}]]>
+	</select>
+
+	<select id="selectContractByCustomerCode" parameterType="String" resultMap="contractResultMapper">
+		<![CDATA[SELECT * FROM t_contract where customercode = #{customerCode}]]>
+	</select>
+
+	<select id="selectContractByContractNameLike" parameterType="String" resultMap="contractResultMapper">
+		SELECT *
+		FROM t_contract
+		<where>
+			1 = 1
+			<if test="contractName != null and contractName != ''">
+			and	contractname like concat("%", #{contractName},"%")
+			</if>
+		</where>
+	</select>
+
+</mapper>

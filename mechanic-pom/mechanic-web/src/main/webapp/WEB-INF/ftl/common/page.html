@@ -1,0 +1,52 @@
+<#if (page.pageCount > 0)>
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/layer/layerui/layui.css" />
+<div class="layui-box layui-laypage layui-laypage-molv" >
+<a href="<#if (page.pageNumber > 1)>${baseUrl}&page=${page.pageNumber - 1}<#else>javascript:;</#if>" class="layui-laypage-prev <#if page.pageNumber == 1>layui-disabled</#if>">上一页</a>
+<#if page.pageCount == 1>
+<span class="layui-laypage-curr"><em class="layui-laypage-em" style="background-color:#1E9FFF;"></em><em>1</em></span>
+<#elseif (page.pageCount > 1) && (page.pageCount < 6)>
+<#list 1..page.pageCount as p>
+<#if (p == page.pageNumber)>
+<span class="layui-laypage-curr"><em class="layui-laypage-em" style="background-color:#1E9FFF;"></em><em>${p}</em></span>
+<#else>
+<a href="${baseUrl}&page=${p}">${p}</a>
+</#if>
+</#list>
+<#else>
+<#if (page.pageNumber < 5)>
+<#list 1..5 as p>
+<#if (p == page.pageNumber)>
+<span class="layui-laypage-curr"><em class="layui-laypage-em" style="background-color:#1E9FFF;"></em><em>${p}</em></span>
+<#else>
+<a href="${baseUrl}&page=${p}">${p}</a>
+</#if>
+</#list>
+<span class="layui-laypage-spr">…</span>
+<a href="${baseUrl}&page=${page.pageCount}">${page.pageCount}</a>
+<#elseif (page.pageNumber > 4) && (page.pageNumber < (page.pageCount-2))>
+<a href="${baseUrl}&page=1">1</a>
+<span class="layui-laypage-spr">…</span>
+<#list (page.pageNumber-2)..(page.pageNumber+2) as p>
+<#if (p == page.pageNumber)>
+<span class="layui-laypage-curr"><em class="layui-laypage-em" style="background-color:#1E9FFF;"></em><em>${p}</em></span>
+<#else>
+<a href="${baseUrl}&page=${p}">${p}</a>
+</#if>
+</#list>
+<span class="layui-laypage-spr">…</span>
+<a href="${baseUrl}&page=${page.pageCount}">${page.pageCount}</a>
+<#else>
+<a href="${baseUrl}&page=1">1</a>
+<span class="layui-laypage-spr">…</span>
+<#list (page.pageCount-4)..page.pageCount as p>
+<#if (p == page.pageNumber)>
+<span class="layui-laypage-curr"><em class="layui-laypage-em" style="background-color:#1E9FFF;"></em><em>${p}</em></span>
+<#else>
+<a href="${baseUrl}&page=${p}">${p}</a>
+</#if>
+</#list>
+</#if>
+</#if>
+<a href="<#if (page.pageNumber < page.pageCount)>${baseUrl}&page=${page.pageNumber + 1}<#else>javascript:;</#if>" class="layui-laypage-next <#if (page.pageNumber == page.pageCount)>layui-disabled</#if>">下一页</a>
+</div>
+</#if>

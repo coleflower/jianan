@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.customer.ICustomerDAO">
+	<resultMap id="customerInfoResultMapper" type="com.cubicpark.mechanic.domain.dto.customer.CustomerInfoDTO">
+		<id column="id" property="id" />
+		<result column="employeecode" property="employeeCode" />
+		<result column="areacode" property="areaCode" />
+		<result column="customercode" property="customerCode" />
+		<result column="customername" property="customerName" />
+		<result column="legalperson" property="legalPerson" />
+		<result column="switchboard" property="switchBoard" />
+		<result column="fax" property="fax" />
+		<result column="address" property="address" />
+		<result column="postcode" property="postCode" />
+		<result column="industry" property="industry" />
+		<result column="businessscope" property="businessScope" />
+		<result column="grade" property="grade" />
+		<result column="remarks" property="remarks" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<select id="queryCustomerTotal" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerQueryDTO" resultType="int">
+		<![CDATA[SELECT count(0) FROM t_customer_info where customertype='normal']]>
+		<if test="customerName !=null and customerName !=''">
+		 	<![CDATA[ and customername like CONCAT('%',#{customerName},'%')]]>
+		</if>
+		<if test="grade !=null and grade !=''">
+		 	<![CDATA[ and grade = #{grade}]]>
+		</if>
+		<if test="employeeList !=null and employeeList.size > 0">
+		 	<![CDATA[ and employeecode in]]>
+			<foreach item="item" index="index" collection="employeeList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		<if test="startDate !=null and startDate != '' and endDate != null and endDate != ''">
+		 	<![CDATA[ and createdate >= #{startDate} and createdate <= #{endDate}]]>
+		</if>
+		<![CDATA[ order by createdate DESC]]>
+	</select>
+	
+	<!-- DOTO -->
+	<select id="queryCustomer" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerQueryDTO" resultMap="customerInfoResultMapper">
+		<![CDATA[SELECT * FROM t_customer_info where 1=1]]>
+		 <if test="customerName !=null and customerName !=''">
+		 	<![CDATA[ and customername like CONCAT('%',#{customerName},'%')]]>
+		 </if>
+		 <if test="grade !=null and grade !=''">
+		 	<![CDATA[ and grade = #{grade}]]>
+		 </if>
+		 <if test="employeeList !=null and employeeList.size() > 0">
+		 	<![CDATA[ and employeecode in]]>
+			<foreach item="item" index="index" collection="employeeList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+		 <if test="startDate !=null and startDate != '' and endDate != null and endDate != ''">
+		 	<![CDATA[ and createdate >= #{startDate} and createdate <= #{endDate}]]>
+		 </if>
+		<![CDATA[ order by createdate DESC]]>
+		<if test="pageSize != 0">
+		 <![CDATA[ LIMIT #{startIndex},#{pageSize}]]>
+		 </if>
+	</select>
+	
+	<!-- 客户公海 -->
+	<select id="queryCustomerSeaTotal" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerSeaQueryDTO" resultType="int">
+		<![CDATA[SELECT count(0) FROM t_customer_info where customertype='handle']]>
+		<if test="startDate !=null and startDate != '' and endDate != null and endDate != ''">
+		 	<![CDATA[ and updatedate >= #{startDate} and updatedate <= #{endDate}]]>
+		</if>
+		<![CDATA[ order by updatedate ASC]]>
+	</select>
+	
+	<select id="queryCustomerSea" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerSeaQueryDTO" resultMap="customerInfoResultMapper">
+		<![CDATA[SELECT * FROM t_customer_info where customertype='handle']]>
+		 <if test="startDate !=null and startDate != '' and endDate != null and endDate != ''">
+		 	<![CDATA[ and updatedate >= #{startDate} and updatedate <= #{endDate}]]>
+		 </if>
+		<![CDATA[ order by updatedate ASC]]>
+		<if test="pageSize != 0">
+		 <![CDATA[ LIMIT #{startIndex},#{pageSize}]]>
+		 </if>
+	</select>
+
+	<select id="selectCustomer" resultMap="customerInfoResultMapper">
+		SELECT *
+		FROM t_customer_info
+		<where>
+			<if test="customerName != null and customerName != ''">
+				customername like concat("%", #{customerName},"%")
+			</if>
+			<if test="employeeCode != null and employeeCode != ''">
+				and employeecode = #{employeeCode}
+			</if>
+		</where>
+	</select>
+	
+</mapper>

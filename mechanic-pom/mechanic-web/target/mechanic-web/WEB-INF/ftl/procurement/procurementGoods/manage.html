@@ -1,0 +1,161 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.table-sort').dataTable({
+            "aaSorting": [[ 1, "desc" ]],//默认第几个排序
+            "bStateSave": true,//状态保存
+            "pading":false,
+            "aoColumnDefs": [
+                //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+                {"orderable":false,"aTargets":[0,3]}// 不参与排序的列
+            ]
+        });
+    });
+
+    //弹出指定的操作窗口
+    function openOperation(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+
+	//弹出全屏操作窗口，关闭后回调刷新本页面
+	function fullOpenOperation(title,url){
+		var index = layer.open({
+			type: 2,
+			title: title,
+			content: url
+		});
+        layer.full(index);
+	}
+
+    //财务拨款操作
+    function appropriation(procurementGoodsCode){
+        layer.confirm('确定拨款吗？', {
+            btn : [ '确定', '取消' ]//按钮
+        },function(index) {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded",//"application/json; charset=utf-8"
+                url: "procurement.htm?method=appropriation",
+                data: {
+                    procurementGoodsCode: procurementGoodsCode
+                },
+                success: function (data) {
+                    if (data.status == "success") {
+                        var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+                        setTimeout(function(){
+                            top.layer.close(index);
+                            top.layer.msg("提交成功!",{time : 1500});
+                            layer.closeAll("iframe");
+                            //刷新父页面
+                            window.location.reload();
+                        },500);
+                        return false;
+                    } else {
+                        layer.alert("提交失败，请重试！", 1);
+                        return false;
+                    }
+                },
+                error: function () {
+                    layer.alert("系统繁忙，请稍后再试！", 1);
+                }
+            });
+        })
+    }
+
+</script>
+
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 采购中心 <span class="c-gray en">&gt;</span> 采购工单列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+
+	<form action="procurement.htm?method=selectByStatusAndDate" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="text-c">
+
+			<span class="select-box inline" />
+			<select name="status" id="status" class="select" id="status">
+				<option value=""  selected>所有状态</option>
+				<option value="0" <#if status==0>selected</#if>>待处理</option>
+				<option value="1" <#if status==1>selected</#if>>待财务处理</option>
+				<option value="2" <#if status==2>selected</#if>>已拨款</option>
+			</select>
+			</span>
+
+			日期：
+			<input type="text" value="${startDate}" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" name="startDate" id="startDate" class="input-text Wdate" style="width:165px;">
+			-
+			<input type="text" value="${endDate}" onfocus="WdatePicker({ dateFmt: 'yyyy-MM-dd' })" name="endDate" id="endDate" class="input-text Wdate" style="width:165px;">
+			<input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+		</div>
+	</form>
+
+	<div class="mt-20">
+		<table id="test" class="table table-border table-bordered table-bg table-hover table-sort ">
+			<thead>
+				<tr class="text-c">
+					<th width="100">采购清单编号</th>
+					<th width="100">日期</th>
+					<th width="100">状态</th>
+					<th width="100">处理人</th>
+					<th width="120">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#if procurementGoodsDTOList?exists>
+				<#list procurementGoodsDTOList as procurementGoods>
+					<tr class="text-c">
+						<td>${procurementGoods.procurementGoodsCode}</td>
+						<td>${procurementGoods.createTime?string('yyyy-MM-dd')}</td>
+						<td class="td-status">
+							<#if procurementGoods.status == 0><span style="background-color:grey" class="label label-success radius">待处理</span></#if>
+							<#if procurementGoods.status == 1><span style="background-color:orangered" class="label label-success radius">待财务处理</span></#if>
+							<#if procurementGoods.status == 2><span style="background-color:limegreen" class="label label-success radius">已拨款</span></#if>
+						</td>
+						<td>${procurementGoods.employeeName!''}</td>
+						<td class="f-14 td-manage">
+							<a style="text-decoration:none" onClick="fullOpenOperation('详情','procurement.htm?method=selectAllProcurementGoods&procurementGoodsCode=${procurementGoods.procurementGoodsCode}&function=${function}')" href="javascript:;" title="详情"><i class="Hui-iconfont ">&#xe627;</i></a>&nbsp;&nbsp;
+							<#if function == 'finance'>
+							<a style="text-decoration:none" onClick="appropriation('${procurementGoods.procurementGoodsCode}')" href="javascript:;" title="拨款"><i class="Hui-iconfont ">&#xe615;</i></a>&nbsp;&nbsp;
+							</#if>
+						</td>
+					</tr>
+				</#list>
+				</#if>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

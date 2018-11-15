@@ -1,0 +1,298 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="${resRoot}/favicon.ico" >
+<LINK rel="Shortcut Icon" href="${resRoot}/favicon.ico" />
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE-2.0beta1/PIE_IE678.js"></script>
+<![endif]-->
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script>
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<title>建安企业管理系统-园立方技术支持 v0.1</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<script type="text/javascript">
+$(document).ready(function() {
+	<#if accountStatus=="101">
+	openOperationS('修改密码','employee.htm?method=initModifyPassword&employeeCode=${loginEmployee.employeeCode}','500','300');
+	</#if>
+});
+
+//快捷添加通道
+function article_add(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url
+	});
+	layer.full(index);
+}
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+//自定义弹出页面
+function openOperationS(title,url,w,h){
+	if (title == null || title == '') {
+		title=false;
+	};
+	if (url == null || url == '') {
+		url="404.html";
+	};
+	if (w == null || w == '') {
+		w=800;
+	};
+	if (h == null || h == '') {
+		h=($(window).height() - 50);
+	};
+	layer.open({
+		type: 2,
+		area: [w+'px', h +'px'],
+		fix: false, //不固定
+		maxmin: true,
+		shade:0.4,
+		title: title,
+		content: url,
+		cancel: function(){ 
+			location.replace(location.href);
+		  }
+	});
+}
+</script>
+</head>
+<body>
+<header class="navbar-wrapper">
+	<div class="navbar navbar-fixed-top">
+		<div class="container-fluid cl"> <a class="logo navbar-logo f-l mr-10 hidden-xs" href="/aboutHui.shtml">建安企业管理系统</a> <a class="logo navbar-logo-m f-l mr-10 visible-xs" href="/aboutHui.shtml">H-ui</a> <span class="logo navbar-slogan f-l mr-10 hidden-xs">v0.1</span> <a aria-hidden="false" class="nav-toggle Hui-iconfont visible-xs" href="javascript:;">&#xe667;</a>
+			<nav class="nav navbar-nav">
+				<!-- <ul class="cl">
+					<li class="dropDown dropDown_hover"><a href="javascript:;" class="dropDown_A"><i class="Hui-iconfont">&#xe600;</i> 新增 <i class="Hui-iconfont">&#xe6d5;</i></a>
+						<ul class="dropDown-menu menu radius box-shadow">
+							<li><a href="javascript:;" onclick="fast_add('添加资讯','article-add.html')"><i class="Hui-iconfont">&#xe616;</i> 资讯</a></li>
+							<li><a href="javascript:;" onclick="fast_add('添加资讯','picture-add.html')"><i class="Hui-iconfont">&#xe613;</i> 图片</a></li>
+							<li><a href="javascript:;" onclick="fast_add('添加资讯','product-add.html')"><i class="Hui-iconfont">&#xe620;</i> 产品</a></li>
+							<li><a href="javascript:;" onclick="member_add('添加用户','member-add.html','','510')"><i class="Hui-iconfont">&#xe60d;</i> 用户</a></li>
+						</ul>
+					</li>
+				</ul> -->
+			</nav>
+			<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar hidden-xs">
+				<ul class="cl">
+					<li>${position.positionName}</li>
+					<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">${loginEmployee.name} <i class="Hui-iconfont">&#xe6d5;</i></a>
+						<ul class="dropDown-menu menu radius box-shadow">
+							<li><a href="javascript:;" onclick="openOperation('修改密码','employee.htm?method=initModifyPassword&employeeCode=${loginEmployee.employeeCode}','500','300')">修改密码</a></li>
+							<li><a href="${base}">切换账户</a></li>
+							<li><a href="${base}/logout.htm">退出</a></li>
+						</ul>
+					</li>
+					<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">2</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
+					<li id="Hui-skin" class="dropDown right dropDown_hover"> <a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
+						<ul class="dropDown-menu menu radius box-shadow">
+							<li><a href="javascript:;" data-val="default" title="默认（黑色）">默认（黑色）</a></li>
+							<li><a href="javascript:;" data-val="blue" title="蓝色">蓝色</a></li>
+							<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
+							<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
+							<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
+							<li><a href="javascript:;" data-val="orange" title="绿色">橙色</a></li>
+						</ul>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</header>
+<aside class="Hui-aside">
+	<input runat="server" id="divScrollValue" type="hidden" value="" />
+	<div class="menu_dropdown bk_2">
+		<#if permissions?? && permissions?seq_contains("menu001")>
+		<dl id="menu-system">
+			<dt><i class="Hui-iconfont">&#xe62e;</i> 系统设置<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="javascript:;" data-title="基础数据管理" href="javascript:void(0)">基础数据管理</a></li>
+					<li><a _href="department.htm?method=index" data-title="部门设置" href="javascript:void(0)">部门设置</a></li>
+					<li><a _href="position.htm?method=index" data-title="职位设置" href="javascript:void(0)">职位设置</a></li>
+					<li><a _href="employee.htm?method=initAdd" data-title="入职办理" href="javascript:void(0)">入职办理</a></li>
+					<li><a _href="employee.htm?method=index" data-title="员工管理" href="javascript:void(0)">员工管理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu002")>
+		<dl id="menu-member">
+			<dt><i class="Hui-iconfont">&#xe60d;</i> 销售中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="customerInfo.htm?method=initAdd" data-title="新增客户" href="javascript:void(0)">新增客户</a></li>
+					<li><a _href="customer.htm?method=index" data-title="客户管理" href="javascript:void(0)">客户管理</a></li>
+					<li><a _href="customer.htm?method=customerSea" data-title="客户公海" href="javascript:void(0)">客户公海</a></li>
+					<li><a _href="trip.htm?method=initAdd" data-title="创建出差计划" href="javascript:void(0)">创建出差计划</a></li>
+					<li><a _href="trip.htm?method=toApproval" data-title="出差审批" href="javascript:void(0)">出差审批</a></li>
+					<li><a _href="trip.htm?method=index" data-title="出差计划管理" href="javascript:void(0)">出差计划管理</a></li>
+					<li><a _href="contractInfo.htm?method=initAdd" data-title="新增合同" href="javascript:void(0)">新增合同</a></li>
+					<li><a _href="contract.htm?method=index" data-title="合同审批" href="javascript:void(0)">合同审批</a></li>
+					<li><a _href="contract.htm?method=index" data-title="合同管理" href="javascript:void(0)">合同管理</a></li>
+					<li><a _href="contractReissue.htm?method=reissue" data-title="补发配件" href="javascript:void(0)">补发配件</a></li>
+					<li><a _href="contractReissue.htm?method=reissue&bill=bill" data-title="新增开票申请" href="javascript:void(0)">新增开票申请</a></li>
+					<li><a _href="bill.htm?method=myBill" data-title="开票申请管理" href="javascript:void(0)">开票申请管理</a></li>
+					<li><a _href="daily.htm?method=initAdd" data-title="工作日报" href="javascript:void(0)">工作日报</a></li>
+					<li><a _href="daily.htm?method=self" data-title="日报管理" href="javascript:void(0)">日报管理</a></li>
+					<li><a _href="daily.htm?method=all" data-title="日报汇总" href="javascript:void(0)">日报汇总</a></li>
+					<li><a _href="debugorder.htm?method=selectMyFix" data-title="调试工单处理" href="javascript:void(0)">调试工单管理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu003")>
+		<dl id="menu-admin">
+			<dt><i class="Hui-iconfont">&#xe62d;</i> 技术中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<!--<li><a _href="design/list.htm" data-title="设计工单处理" href="javascript:void(0)">设计工单处理</a></li>-->
+					<li><a _href="${base}/design/list.htm" data-title="设计工单管理" href="javascript:void(0)">设计工单管理</a></li>
+					<li><a _href="${base}/review/list.htm" data-title="设计审核" href="javascript:void(0)">设计审核</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu004")>
+		<dl id="menu-product">
+			<dt><i class="Hui-iconfont">&#xe620;</i> 生产中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="production.htm?method=index&&function=dispose" data-title="生产工单处理" href="javascript:void(0)">生产工单处理</a></li>
+					<li><a _href="production.htm?method=index" data-title="生产工单管理" href="javascript:void(0)">生产工单管理</a></li>
+					<li><a _href="production.htm?method=index&&function=productMaterialsCheck" data-title="原料清单审批" href="javascript:void(0)">原料清单审批</a></li>
+					<li><a _href="productMaterials.htm?method=index" data-title="原料清单管理" href="javascript:void(0)">原料清单管理</a></li>
+					<li><a _href="production.htm?method=index&function=productionDispose" data-title="生产处理" href="javascript:void(0)">生产处理</a></li>
+					<li><a _href="production.htm?method=index&function=qualityTesting" data-title="质检处理" href="javascript:void(0)">质检处理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu005")>
+		<dl id="menu-comments">
+			<dt><i class="Hui-iconfont">&#xe639;</i> 采购中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="procurement.htm?method=index" data-title="采购处理" href="javascript:void(0)">采购处理</a></li>
+					<li><a _href="procurement.htm?method=initCheck" data-title="采购审批" href="javascript:void(0)">采购审批</a></li>
+					<li><a _href="procurement.htm?method=createProcurementGoods&function=fundApplication" data-title="采购资金申请" href="javascript:void(0)">采购资金申请</a></li>
+					<li><a _href="procurement.htm?method=createProcurementGoods" data-title="采购清单管理" href="javascript:void(0)">采购清单管理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu006")>
+		<dl id="menu-comments">
+			<dt><i class="Hui-iconfont">&#xe639;</i> 库管中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<!--<li><a _href="javascript:;" data-title="新增仓库" href="javascript:void(0)">新增仓库</a></li>-->
+					<li><a _href="${base}/storage/list.htm" data-title="仓库管理" href="javascript:void(0)">仓库管理</a></li>
+					<!--<li><a _href="javascript:;" data-title="新增堆货区/货架" href="javascript:void(0)">新增堆货区/货架</a></li>
+					<li><a _href="javascript:;" data-title="堆货区/货架管理" href="javascript:void(0)">堆货区/货架管理</a></li>-->
+					<li><a _href="javascript:;" data-title="库存查询" href="javascript:void(0)">库存查询</a></li>
+					<li><a _href="${base}/stock/preSave.htm?type=0" data-title="采购入库" href="javascript:void(0)">采购入库</a></li>
+					<li><a _href="${base}/stock/preSave.htm?type=1" data-title="生产出库" href="javascript:void(0)">生产出库</a></li>
+					<li><a _href="${base}/stock/preSave.htm?type=1" data-title="出库管理" href="javascript:void(0)">原料出库</a></li>
+					<li><a _href="productMaterials.htm?method=outStorage" data-title="出库管理" href="javascript:void(0)">原料出库</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu007")>
+		<dl id="menu-comments">
+			<dt><i class="Hui-iconfont">&#xe639;</i> 物流中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="express.htm?method=index" data-title="物流处理" href="javascript:void(0)">物流处理</a></li>
+					<li><a _href="express.htm?method=select" data-title="物流工单管理" href="javascript:void(0)">物流工单管理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu008")>
+		<dl id="menu-comments">
+			<dt><i class="Hui-iconfont">&#xe639;</i> 售后评价中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="debugorder.htm?method=index" data-title="服务工单处理" href="javascript:void(0)">服务工单处理</a></li>
+					<!--<li><a _href="javascript:;" data-title="服务工单管理" href="javascript:void(0)">物流工单管理</a></li>-->
+					<li><a _href="afterservice.htm?method=index" data-title="售后服务管理" href="javascript:void(0)">售后服务管理</a></li>
+					<li><a _href="productEvaluate.htm?method=index" data-title="评价管理" href="javascript:void(0)">评价管理<span class="badge badge-danger">2</span></a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+		<#if permissions?? && permissions?seq_contains("menu009")>
+		<dl id="menu-comments">
+			<dt><i class="Hui-iconfont">&#xe639;</i> 财务中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="javascript:;" data-title="新增报销" href="javascript:void(0)">新增报销</a></li>
+					<li><a _href="javascript:;" data-title="报销管理" href="javascript:void(0)">报销管理</a></li>
+					<li><a _href="reimbursement.htm?method=index" data-title="报销处理" href="javascript:void(0)">报销处理</a></li>
+					<li><a _href="bill.htm?method=index" data-title="开票处理" href="javascript:void(0)">开票处理</a></li>
+					<li><a _href="procurement.htm?method=createProcurementGoods&function=finance" data-title="采购处理" href="javascript:void(0)">采购处理</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+
+		<#if permissions?? && permissions?seq_contains("menu009")>
+		<dl id="menu-comments">
+			<dt><i class="Hui-iconfont">&#xe639;</i> 车辆中心<i class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
+			<dd>
+				<ul>
+					<li><a _href="car.htm?method=index" data-title="新增车辆" href="javascript:void(0)">新增车辆</a></li>
+					<li><a _href="carApplication.htm?method=borrowCar" data-title="借用车辆" href="javascript:void(0)">借用车辆</a></li>
+					<li><a _href="carApplication.htm?method=useList" data-title="我的车辆" href="javascript:void(0)">我的车辆</a></li>
+					<li><a _href="javascript:;" data-title="车辆审批" href="javascript:void(0)">车辆审批</a></li>
+				</ul>
+			</dd>
+		</dl>
+		</#if>
+
+	</div>
+</aside>
+<div class="dislpayArrow hidden-xs"><a class="pngfix" href="javascript:void(0);" onClick="displaynavbar(this)"></a></div>
+<section class="Hui-article-box">
+	<div id="Hui-tabNav" class="Hui-tabNav hidden-xs">
+		<div class="Hui-tabNav-wp">
+			<ul id="min_title_list" class="acrossTab cl">
+				<li class="active"><span title="我的桌面" data-href="${base}/portal.htm">我的桌面</span><em></em></li>
+			</ul>
+		</div>
+		<div class="Hui-tabNav-more btn-group"><a id="js-tabNav-prev" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d4;</i></a><a id="js-tabNav-next" class="btn radius btn-default size-S" href="javascript:;"><i class="Hui-iconfont">&#xe6d7;</i></a></div>
+	</div>
+	<div id="iframe_box" class="Hui-article">
+		<div class="show_iframe">
+			<div style="display:none" class="loading"></div>
+			<iframe scrolling="yes" frameborder="0" src="${base}/portal.htm"></iframe>
+		</div>
+	</div>
+</section>
+
+</body>
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+</html>

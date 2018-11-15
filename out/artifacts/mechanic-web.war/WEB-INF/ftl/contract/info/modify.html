@@ -1,0 +1,265 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/cityselect/jquery.cityselect.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	//注意：下面的代码是放在test.html调用,并且id跟test.html中的iframe的id要保持一致
+	$(window.parent.document).find("#fundInfoFrame").load(function(){
+	    var main = $(window.parent.document).find("#fundInfoFrame");
+	    var thisheight = $(document).height();
+	    main.height(thisheight);
+	});
+	
+	textarealength($("#remarks"), 500);
+	
+	<#if contractInfo.contractState != "effective">
+	$("#advanceRatio").change(function(){
+		if($("#advanceRatio").val() == 100) {
+			$("#fundState").html("<option value='' selected=''>请选择</option><option value='nopay'>未付款</option>");
+		} else {
+			$("#fundState").html("<option value='' selected=''>请选择</option><option value='nofirstpay'>未首付</option>");
+		}
+	});
+	</#if>
+});
+
+function modify(infoState) {
+	var total = $("#total").val();
+	var advanceRatio = $("#advanceRatio option:selected").attr("value");
+	var contractState = $("#contractState option:selected").attr("value");
+	var fundState = $("#fundState option:selected").attr("value");
+	var remarks = $("#remarks").val();
+	
+	if (total == "") {
+		layer.tips('请填写合同标的！', '#total');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (advanceRatio == "") {
+		layer.tips('请选择预付比例！', '#advanceRatio');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contractState == "") {
+		layer.tips('请选择合同状态！', '#contractState');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (fundState == "") {
+		layer.tips('请选择款项状态！', '#fundState');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if ((advanceRatio == 100 && fundState != "nopay") || (advanceRatio != 100 && fundState != "nofirstpay")) {
+		layer.tips('款项状态有误，请重新选择！', '#fundState');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contractState != "effective") {
+		layer.confirm('当前合同状态非有效，请确认是否提交？',function(){layer.closeAll('tips');});
+	}
+	
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "contractInfo.htm?method=modify",
+		data : {
+			id : ${contractInfo.id},
+			contractCode : "${contractInfo.contractCode}",
+			total : total,
+			advanceRatio : advanceRatio,
+			contractState : contractState,
+			fundState : fundState,
+			remarks : remarks
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("修改合同信息成功！",  {icon: 1}, function(index){
+						location.replace(location.href);
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("修改失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+
+function submitContractInfo(){
+	modify("1");
+}
+</script>
+</head>
+<body>
+<article>
+	<table class="table table-border table-bordered table-bg dataTable">
+		<tr class="text-c">
+			<td class="sorting_1">合同名称：</td>
+			<td class="text-l">${contractInfo.contractName}</td>
+			<td class="sorting_1">备案号：</td>
+			<td class="text-l">${contractInfo.recordNumber}</td>
+			<td class="sorting_1">所属项目：</td>
+			<td class="text-l">
+				<#list allProjectCategory as parentProjectCategory>
+					<#list 0..parentProjectCategory.depth as m>
+					<#if (parentProjectCategory.depth > 0)>
+					<#assign offsetNode = offsetNode+"&nbsp;&nbsp;&nbsp;" />
+					&nbsp;&nbsp;&nbsp;
+					</#if>
+					</#list>
+					<#if (parentProjectCategory.depth > 0)>
+					└&nbsp;
+					</#if>
+					${parentProjectCategory.projectCategoryName}<br>
+				</#list>
+				${offsetNode}└&nbsp;${project.projectName}
+			</td>
+		</tr>
+		<tr class="text-c">
+			<td class="sorting_1">所在部门：</td>
+			<td class="text-l">
+				<#list allParentDepartment as parentDepartment>
+					<#list 0..parentDepartment.depth as m>
+					<#if (parentDepartment.depth > 0)>
+					<#assign dOffsetNode = dOffsetNode+"&nbsp;&nbsp;&nbsp;" />
+					&nbsp;&nbsp;&nbsp;
+					</#if>
+					</#list>
+					<#if (parentDepartment.depth > 0)>
+					└&nbsp;
+					</#if>
+					${dOffsetNode}${parentDepartment.departmentName}<br>
+				</#list>
+			</td>
+			<td class="sorting_1">销售人员：</td>
+			<td class="text-l">${employee.name}</td>
+			<td class="sorting_1">客户名称：</td>
+			<td class="text-l">${customerInfo.customerName}</td>
+		</tr>
+		<tr class="text-c">
+			<td class="sorting_1">成交日期：</td>
+			<td class="text-l">${contractInfo.dealDate?date}</td>
+			<td class="sorting_1">合同标的：</td>
+			<td class="text-l"><#if contractInfo.contractState == "effective">${contractInfo.total}<#else><input type="text" class="input-text" placeholder="" id="total" name="total" value="${contractInfo.total}" maxlength="50" ></#if></td>
+			<td class="sorting_1">预付比例：</td>
+			<td class="text-l"><#if contractInfo.contractState == "effective">${contractInfo.advanceRatio}%<#else>
+				<span class="select-box">
+				<select class="select" size="1" name="advanceRatio" id="advanceRatio">
+					<option value="" selected>请选择</option>
+					<option value="5" <#if contractInfo.advanceRatio=="5">selected</#if>>5%</option>
+					<option value="10" <#if contractInfo.advanceRatio=="10">selected</#if>>10%</option>
+					<option value="15" <#if contractInfo.advanceRatio=="15">selected</#if>>15%</option>
+					<option value="20" <#if contractInfo.advanceRatio=="20">selected</#if>>20%</option>
+					<option value="25" <#if contractInfo.advanceRatio=="25">selected</#if>>25%</option>
+					<option value="30" <#if contractInfo.advanceRatio=="30">selected</#if>>30%</option>
+					<option value="35" <#if contractInfo.advanceRatio=="35">selected</#if>>35%</option>
+					<option value="40" <#if contractInfo.advanceRatio=="40">selected</#if>>40%</option>
+					<option value="45" <#if contractInfo.advanceRatio=="45">selected</#if>>45%</option>
+					<option value="50" <#if contractInfo.advanceRatio=="50">selected</#if>>50%</option>
+					<option value="55" <#if contractInfo.advanceRatio=="55">selected</#if>>55%</option>
+					<option value="60" <#if contractInfo.advanceRatio=="60">selected</#if>>60%</option>
+					<option value="65" <#if contractInfo.advanceRatio=="65">selected</#if>>65%</option>
+					<option value="70" <#if contractInfo.advanceRatio=="70">selected</#if>>70%</option>
+					<option value="75" <#if contractInfo.advanceRatio=="75">selected</#if>>75%</option>
+					<option value="80" <#if contractInfo.advanceRatio=="80">selected</#if>>80%</option>
+					<option value="85" <#if contractInfo.advanceRatio=="85">selected</#if>>85%</option>
+					<option value="90" <#if contractInfo.advanceRatio=="90">selected</#if>>90%</option>
+					<option value="95" <#if contractInfo.advanceRatio=="95">selected</#if>>95%</option>
+					<option value="100" <#if contractInfo.advanceRatio=="100">selected</#if>>100%</option>
+				</select>
+				</span>
+				</#if>
+			</td>
+		</tr>
+		<tr class="text-c">
+			<td class="sorting_1"><span class="c-red">*</span>合同状态：</td>
+			<td class="text-l"><#if contractInfo.contractState == "effective">${contractStates[contractInfo.contractState]}<#else>
+			<span class="select-box">
+				<select class="select" size="1" name="contractState" id="contractState">
+					<#list contractStates?keys as key>
+					<option value="${key}"  <#if contractInfo.contractState==key>selected</#if>>${contractStates[key]}</option>
+					</#list>
+				</select>
+			</span>
+			</#if>
+			</td>
+			<td class="sorting_1"><span class="c-red">*</span>款项状态：</td>
+			<td class="text-l"><#if contractInfo.contractState == "effective">${fundStates[contractInfo.fundState]}<#else>
+			<span class="select-box">
+				<select class="select" size="1" name="fundState" id="fundState">
+					<#if contractInfo.advanceRatio=="100">
+					<option value="nopay" <#if contractInfo.fundState=="nopay">selected</#if>>未付款</option>
+					<#else>
+					<option value="nofirstpay" <#if contractInfo.fundState=="nofirstpay">selected</#if>>未首付</option>
+					</#if>
+				</select>
+			</span>
+			</#if>
+			</td>
+			<td class="sorting_1">备注：</td>
+			<td class="text-l">
+			<div class="formControls">
+			<textarea name="remarks" id="remarks" cols="" rows="" class="textarea"  placeholder="客户备注...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)">${contractInfo.remarks}</textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+			</td>
+		</tr>
+		<#if contractInfo.contractState != "effective">
+		<tr class="text-c">
+			<td colspan="6" class="text-r">
+				<button onClick="submitContractInfo()" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 修改</button>
+			</td>
+		</tr>
+		</#if>
+	</table>
+</article>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.procurement.IProcurementGoodsDAO">
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.procurement.ProcurementGoodsDTO">
+        <id column="id" property="id"/>
+        <result column="procurement_goods_code" property="procurementGoodsCode"/>
+        <result column="name" property="name"/>
+        <result column="material" property="material"/>
+        <result column="standard_code" property="standardCode"/>
+        <result column="count" property="count"/>
+        <result column="status" property="status"/>
+        <result column="employee_code" property="employeeCode"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    id, procurement_goods_code, name, material, standard_code,count, status,employee_code,employee_name,create_time
+    </sql>
+
+    <select id="selectCodeDistinct" resultMap="BaseResultMap">
+        select DISTINCT procurement_goods_code , create_time,status,employee_name
+        from t_procurement_goods
+    </select>
+
+    <select id="selectCodeDistinctByStatus" resultMap="BaseResultMap">
+        select DISTINCT procurement_goods_code , create_time,status,employee_name
+        from t_procurement_goods
+        where status = #{status}
+    </select>
+
+    <select id="selectByStatusOrDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM t_procurement_goods
+        <where>
+            <if test="status != null and status != ''">
+                status = #{status}
+            </if>
+            <if test="startTime != null">
+                and create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+</mapper>

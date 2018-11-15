@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="mechanic-web:war">
+    <output-path>$PROJECT_DIR$/mechanic-web/target</output-path>
+    <root id="archive" name="mechanic-web.war">
+      <element id="artifact" artifact-name="mechanic-web:war exploded" />
+    </root>
+  </artifact>
+</component>

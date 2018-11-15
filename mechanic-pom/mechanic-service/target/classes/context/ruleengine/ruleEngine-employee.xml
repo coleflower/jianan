@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd"
+	default-lazy-init="false">
+	
+	<!-- 员工管理 员工离职交接规则引擎 -->
+	<bean id="employeeQuitEngine" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="人事部编码">
+					<ref bean="hrQuitEngine" />
+				</entry>
+				<entry key="电商部编码">
+					<ref bean="itQuitEngine" />
+				</entry>
+				<entry key="销售部编码">
+					<ref bean="salesQuitEngine" />
+				</entry>
+				<entry key="市场部编码">
+					<ref bean="marketQuitEngine" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<!-- 人事部离职交接规则引擎 -->
+	<bean id="hrQuitEngine" class="com.cubicpark.mechanic.domain.ruleengine.engine.RuleEngine">
+		<property name="firstStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+	</bean>
+	
+	<!-- 电商部离职交接规则引擎 -->
+	<bean id="itQuitEngine" class="com.cubicpark.mechanic.domain.ruleengine.engine.RuleEngine">
+		<property name="firstStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+	</bean>
+	
+	<!-- 销售部离职交接规则引擎 -->
+	<bean id="salesQuitEngine" class="com.cubicpark.mechanic.domain.ruleengine.engine.RuleEngine">
+		<property name="firstStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+	</bean>
+	
+	<!-- 市场部离职交接规则引擎 -->
+	<bean id="marketQuitEngine" class="com.cubicpark.mechanic.domain.ruleengine.engine.RuleEngine">
+		<property name="firstStep">
+			<ref bean="stopRuleEngine"/>
+		</property>
+	</bean>
+	
+	
+	
+</beans>

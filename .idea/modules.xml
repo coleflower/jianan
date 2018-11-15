@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/mechanic-pom/mechanic-pom.iml" filepath="$PROJECT_DIR$/mechanic-pom/mechanic-pom.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mechanic-pom/mechanic-service/mechanic-service.iml" filepath="$PROJECT_DIR$/mechanic-pom/mechanic-service/mechanic-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mechanic-pom/mechanic-web/mechanic-web.iml" filepath="$PROJECT_DIR$/mechanic-pom/mechanic-web/mechanic-web.iml" />
+    </modules>
+  </component>
+</project>

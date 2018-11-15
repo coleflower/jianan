@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Bean头部 -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:task="http://www.springframework.org/schema/task"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd              
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd ">
+
+	<!-- 启用spring mvc 注解 -->
+	<mvc:annotation-driven />
+	<context:component-scan base-package="com.cubicpark.mechanic.controller" />
+
+	<task:annotation-driven />
+
+	<!-- 扫描任务 -->
+	<context:component-scan base-package="com.cubicpark.mechanic.controller.procurement" />
+	
+	<!--<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename">
+			<value>messages</value>
+		</property>
+	</bean>
+
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+	</bean>
+
+	<bean id="paramResolver"
+		class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property name="paramName" value="method" />
+		<property name="defaultMethodName">
+			<value>index</value>
+		</property>
+	</bean>
+	
+	<bean name="mutiActionHander"
+		class="org.springframework.web.servlet.mvc.multiaction.MultiActionController">
+		<property name="methodNameResolver" ref="paramResolver" />
+	</bean>-->
+	
+	<!--<bean
+		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/plain;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>-->
+
+	<!--&lt;!&ndash;<mvc:annotation-driven>-->
+		<!--&lt;!&ndash; 处理responseBody 里面日期类型 &ndash;&gt;-->
+		<!--<mvc:message-converters>-->
+			<!--<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">-->
+				<!--<property name="objectMapper">-->
+					<!--<bean class="com.fasterxml.jackson.databind.ObjectMapper">-->
+						<!--<property name="dateFormat">-->
+							<!--<bean class="java.text.SimpleDateFormat">-->
+								<!--<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />-->
+							<!--</bean>-->
+						<!--</property>-->
+						<!--<property name="serializationInclusion">-->
+							<!--<value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>-->
+						<!--</property>-->
+					<!--</bean>-->
+				<!--</property>-->
+			<!--</bean>-->
+		<!--</mvc:message-converters>-->
+	<!--</mvc:annotation-driven>&ndash;&gt;-->
+
+	<!-- FastJson注入 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+			<!-- FastJson -->
+			<bean id="fastJsonHttpMessageConverter"
+				  class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<!-- 这里顺序不能反，一定先写text/html,不然ie下出现下载提示 -->
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json;charset=UTF-8</value>
+					</list>
+				</property>
+				<property name="features">
+					<array value-type="com.alibaba.fastjson.serializer.SerializerFeature">
+						<!-- 避免循环引用 -->
+						<value>DisableCircularReferenceDetect</value>
+						<!-- 是否输出值为null的字段 -->
+						<value>WriteMapNullValue</value>
+						<!-- 数值字段如果为null,输出为0,而非null -->
+						<value>WriteNullNumberAsZero</value>
+						<!-- 字符类型字段如果为null,输出为"",而非null  -->
+						<value>WriteNullStringAsEmpty</value>
+						<!-- List字段如果为null,输出为[],而非null -->
+						<value>WriteNullListAsEmpty</value>
+						<!-- Boolean字段如果为null,输出为false,而非null -->
+						<value>WriteNullBooleanAsFalse</value>
+					</array>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 加载配置文件 -->
+	<bean id="PropertyPlaceholderConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:properties/setting-web.properties</value>
+			</list>
+		</property>
+		<property name="placeholderPrefix" value="@{" />
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+	</bean>
+
+	<bean id="viewResolver" abstract="true">
+		<property name="attributes">
+			<props>
+				<prop key="base">@{base}</prop>
+				<prop key="resRoot">@{resRoot}</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!--  <bean id="jspViewResolver" parent="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="order" value="1" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="cache" value="false" />
+		<property name="contentType" value="text/html" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>-->
+	
+	 <!-- 配置FreeMark视图 -->
+    <bean id="freeMarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver" parent="viewResolver">
+        <property name="contentType" value="text/html;charset=UTF-8"/>      
+        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+        <property name="suffix" value=".html"/>
+        <property name="cache" value="true"/>
+        <property name="exposeSessionAttributes" value="true"/>
+        <property name="exposeRequestAttributes" value="true"/>     
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <!-- 在页面中使用${rc.contextPath}就可获得contextPath -->
+        <property name="requestContextAttribute" value="rc"/>
+        <property name="order" value="0"/>
+    </bean>
+	
+    <bean id="freemarkConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="location" value="classpath:properties/freemarker.properties"/>
+    </bean>
+
+	<bean id="fmXmlEscape" class="freemarker.template.utility.XmlEscape"/>
+	 
+	<bean id="FreeMarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+		<property name="freemarkerSettings" ref="freemarkConfig"/>
+        <property name="freemarkerVariables">
+            <map>
+                <entry key="xml_escape" value-ref="fmXmlEscape"/>
+            </map>
+        </property>
+    </bean>
+    
+	<!-- 文件上传配置注意:这里申明的id必须为multipartResolver -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+       	<property name="maxUploadSize">
+			<value>104857600</value>
+		</property>
+		<property name="maxInMemorySize">
+			<value>4096</value>
+		</property>
+    </bean>
+
+</beans>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.customer.ICustomerSummaryDAO">
+	<resultMap id="customerSummaryResultMapper" type="com.cubicpark.mechanic.domain.dto.customer.CustomerSummaryDTO">
+		<id column="id" property="id" />
+		<result column="customercode" property="customerCode" />
+		<result column="starttime" property="startTime" />
+		<result column="endtime" property="endTime" />
+		<result column="description" property="description" />
+		<result column="isreply" property="isReply" />
+		<result column="employeecode" property="employeeCode" />
+		<result column="replyinfo" property="replyInfo" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addSummary" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerSummaryDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_customer_summary (
+		customercode, starttime, endtime, 
+		description, isreply, infostate, createdate, updatedate
+		) values (
+		#{customerCode}, #{startTime}, #{endTime}, 
+		#{description}, #{isReply}, #{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifySummary" parameterType="com.cubicpark.mechanic.domain.dto.customer.CustomerSummaryDTO">
+		<![CDATA[update t_customer_summary ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="startTime != null and startTime != '' ">  
+				<![CDATA[starttime = #{startTime},]]>
+			</if>
+			<if test="endTime != null and endTime != '' ">  
+				<![CDATA[endtime = #{endTime},]]>
+			</if>
+			<if test="description != null and description != '' ">  
+				<![CDATA[description = #{description},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+	
+	<update id="replySummary" >
+		<![CDATA[update t_customer_summary set isreply = #{isreply}, employeecode = #{employeeCode}, replyinfo = #{replyInfo} where id = #{id}]]>
+	</update>
+	
+	<select id="getSummaryByCustomerCode" parameterType="String" resultMap="customerSummaryResultMapper">
+		<![CDATA[SELECT * FROM t_customer_summary where customercode = #{customerCode}]]>
+	</select>
+	
+	<select id="getSummaryById" parameterType="int" resultMap="customerSummaryResultMapper">
+		<![CDATA[SELECT * FROM t_customer_summary where id = #{id}]]>
+	</select>
+	
+	<delete id="delSummary" parameterType="int">
+		<![CDATA[delete from t_customer_summary where id = #{id} and infostate = '0']]>
+	</delete>
+	
+</mapper>

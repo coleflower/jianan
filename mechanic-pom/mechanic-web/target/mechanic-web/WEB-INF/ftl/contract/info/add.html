@@ -1,0 +1,446 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/jquery.cxSelect/1.4.1/jquery.cxselect.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#employAndCustomer').cxSelect({
+	  selects: ['departmentCode', 'employeeCode', 'customerCode']
+	});
+	
+	$("#advanceRatio").change(function(){
+		if($("#advanceRatio").val() == 100) {
+			$("#fundState").html("<option value='' selected=''>请选择</option><option value='nopay'>未付款</option>");
+		} else {
+			$("#fundState").html("<option value='' selected=''>请选择</option><option value='nofirstpay'>未首付</option>");
+		}
+	});
+
+	$("#submitButton").click(function() {
+		addCustomerInfo("1");
+	});
+});
+
+
+function addCustomerInfo(infoState) {
+    var contractCode =$("#contractCode").val();
+	var contractName = $("#contractName").val();
+	var recordNumber = $("#recordNumber").val();
+	var departmentCode = $("#departmentCode option:selected").attr("value");
+	var employeeCode = $("#employeeCode option:selected").attr("value");
+	var customerCode = $("#customerCode option:selected").attr("value");
+	var dealDate = $("#dealDate").val();
+	var deliveryDate = $("#deliveryDate").val();
+	var deliveryInfo = $("#deliveryInfo").val();
+	var contacts = $("#contacts").val();
+	var deliveryAdr = $("#deliveryAdr").val();
+	var payMethod = $("#payMethod").val();
+	var total = $("#total").val();
+	var advanceRatio = $("#advanceRatio option:selected").attr("value");
+	var contractState = $("#contractState option:selected").attr("value");
+	var fundState = $("#fundState option:selected").attr("value");
+	var remarks = $("#remarks").val();
+	var productType = $("#productType").val();
+    var productName = $("#productName").val();
+    var productCount = $("#productCount").val();
+
+	if (contractName == "") {
+		layer.tips('请输入完整的合同名称！', '#contractName');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (employeeCode == "") {
+		layer.tips('请选择销售员工！', '#employeeCode');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (customerCode == "") {
+		layer.tips('请选择合同所属客户！', '#customerCode');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+
+    if (productType == "") {
+        layer.tips('请选择合同成交日期！', '#productType');
+        return false;
+    } else {
+        layer.closeAll('tips');
+    }
+
+    if (productName == "") {
+        layer.tips('请选择合同成交日期！', '#productName');
+        return false;
+    } else {
+        layer.closeAll('tips');
+    }
+
+    if (productCount == "") {
+        layer.tips('请选择合同成交日期！', '#productCount');
+        return false;
+    } else {
+        layer.closeAll('tips');
+    }
+	
+	if (dealDate == "") {
+		layer.tips('请选择合同成交日期！', '#dealDate');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (deliveryDate == "") {
+		layer.tips('请选择交货日期！', '#deliveryDate');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (deliveryInfo == "") {
+		layer.tips('请输入交货内容！', '#deliveryInfo');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contacts == "") {
+		layer.tips('请输入联系人！', '#contacts');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (deliveryAdr == "") {
+		layer.tips('请输入送货地址！', '#deliveryAdr');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (payMethod == "") {
+		layer.tips('请输入付款方式！', '#payMethod');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (total == "") {
+		layer.tips('请填写合同标的！', '#total');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (advanceRatio == "") {
+		layer.tips('请选择预付比例！', '#advanceRatio');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contractState == "") {
+		layer.tips('请选择合同状态！', '#contractState');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (fundState == "") {
+		layer.tips('请选择款项状态！', '#fundState');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if ((advanceRatio == 100 && fundState != "nopay") || (advanceRatio != 100 && fundState != "nofirstpay")) {
+		layer.tips('款项状态有误，请重新选择！', '#fundState');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contractState != "effective") {
+		layer.confirm('当前合同状态非有效，请确认是否提交？',function(){layer.closeAll('tips');});
+	}
+	
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "contractInfo.htm?method=add",
+		data : {
+            contractCode : contractCode,
+			contractName : contractName,
+			recordNumber : recordNumber,
+			departmentCode : departmentCode,
+			employeeCode : employeeCode,
+			customerCode : customerCode,
+			dealDate : dealDate,
+			deliveryDate : deliveryDate,
+			deliveryInfo : deliveryInfo,
+			contacts : contacts,
+			deliveryAdr : deliveryAdr,
+			payMethod : payMethod,
+			total : total,
+			advanceRatio : advanceRatio,
+			contractState : contractState,
+			fundState : fundState,
+			remarks : remarks,
+            productType : productType,
+            productName : productName,
+            productCount : productCount
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("新增合同信息成功！",  {icon: 1}, function(index){
+						location.replace(location.href);
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("新增失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+} 
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 合同中心 <span class="c-gray en">&gt;</span> 新增合同<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+
+		<input id="contractCode" value="${contractCode}" type="hidden" />
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>合同名称：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder=" 输入完整的合同名称" id="contractName" name="contractName" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">合同备案号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder=" 合同备案号可不填，如有请填写但不可重复" id="recordNumber" name="recordNumber" maxlength="100" >
+			</div>
+		</div>
+
+		<div id="employAndCustomer">
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属员工：</label>
+				<div class="formControls col-xs-8 col-sm-6">
+					<span class="select-box" style="width:45%;">
+					<select class="departmentCode select" size="1" name="departmentCode" id="departmentCode">
+						<option value="">请选择</option>
+						<#list departments as department>
+						<#assign offsetNode = "&nbsp;&nbsp;"/>
+						<#assign linkNode = "&nbsp;&nbsp;"/>
+						<#assign childNode = "├&nbsp;"/>
+						<#assign endNode = "└&nbsp;"/>
+						<option value="${department.departmentCode}">
+						<#if (department.depth > 0)>
+						<#list 1..department.depth as m>
+							<#assign showInfo = showInfo+offsetNode />
+							<#if (m == department.depth)>
+								<#if (department.nextId > 0)>
+									<#assign showInfo = showInfo+childNode />
+								<#else>
+									<#assign showInfo = showInfo+endNode />
+								</#if>
+							<#else>
+								<#assign showInfo = showInfo+linkNode />
+							</#if>
+						</#list>
+						</#if>
+						${showInfo+department.departmentName}
+						</option>
+						<#assign showInfo = "" />
+						</#list>
+					</select>
+					</span>
+					<span class="select-box" style="width:54%;">
+					<select class="employeeCode select" size="1" name="employeeCode" id="employeeCode" data-url="employee.htm?method=getJsonEmployeeByDepartment" data-json-space="employees" data-json-name="name" data-json-value="employeeCode" data-first-title="请选择所属员工" data-first-value="">
+						<option value="" selected>请选择所属员工</option>
+					</select>
+					</span>
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所属客户：</label>
+				<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+					<select class="customerCode select" size="1" name="customerCode" id="customerCode" data-url="customer.htm?method=getJsonCustomerByEmployee" data-json-space="customers" data-json-name="customerName" data-json-value="customerCode" data-first-title="请选择所属客户" data-first-value="">
+						<option value="" selected>请选择所属客户</option>
+					</select>
+					</span>
+				</div>
+			</div>
+
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>成交日期：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="input-text Wdate" readonly="readonly" style="width:180px;" id="dealDate" name="dealDate">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品型号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="productType" name="productType" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品名称：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="productName" name="productName" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>产品数量：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="productCount" name="productCount" maxlength="100" >
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>交货日期：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="input-text Wdate" readonly="readonly" style="width:180px;" id="deliveryDate" name="deliveryDate">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>交货内容：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="deliveryInfo" id="deliveryInfo" cols="" rows="" class="textarea"  placeholder="请描述交付货物的信息...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>联系人：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="contacts" name="contacts" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>收货地址：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="deliveryAdr" name="deliveryAdr" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>付款方式：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="payMethod" name="payMethod" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>合同标的：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="total" name="total" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">预付比例：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<span class="select-box">
+				<select class="select" size="1" name="advanceRatio" id="advanceRatio">
+					<option value="" selected>请选择</option>
+					<option value="5">5%</option>
+					<option value="10">10%</option>
+					<option value="15">15%</option>
+					<option value="20">20%</option>
+					<option value="25">25%</option>
+					<option value="30">30%</option>
+					<option value="35">35%</option>
+					<option value="40">40%</option>
+					<option value="45">45%</option>
+					<option value="50">50%</option>
+					<option value="55">55%</option>
+					<option value="60">60%</option>
+					<option value="65">65%</option>
+					<option value="70">70%</option>
+					<option value="75">75%</option>
+					<option value="80">80%</option>
+					<option value="85">85%</option>
+					<option value="90">90%</option>
+					<option value="95">95%</option>
+					<option value="100">100%</option>
+				</select>
+				</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>合同状态：</label>
+			<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+				<select class="select" size="1" name="contractState" id="contractState">
+					<option value="" selected>请选择</option>
+					<#list contractStates?keys as key>
+					<option value="${key}">${contractStates[key]}</option>
+					</#list>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>款项状态：</label>
+			<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+				<select class="select" size="1" name="fundState" id="fundState">
+					<option value="" selected>请选择</option>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">备注：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="remarks" id="remarks" cols="" rows="" class="textarea"  placeholder="合同备注...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

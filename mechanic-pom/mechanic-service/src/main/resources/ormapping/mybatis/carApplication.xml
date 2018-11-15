@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.car.ICarApplicationDAO">
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.car.CarApplicationDTO">
+        <id column="id" property="id"/>
+        <result column="car_use_code" property="carUseCode"/>
+        <result column="car_id" property="carId"/>
+        <result column="employee_code" property="employeeCode"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="road_haul" property="roadHaul"/>
+        <result column="refueling_number" property="refuelingNumber"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="use_time" property="useTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    id, car_use_code, car_id, employee_code, employee_name,road_haul, refueling_number,status,remark,use_time,end_time,create_time
+    </sql>
+
+    <select id="selectByEmployeeNameAndDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM t_car_application
+        <where>
+            car_id = #{carId}
+            <if test="employeeName != null and employeeName != ''">
+                and employee_name like concat("%", #{employeeName},"%")
+            </if>
+            <if test="startDate != null">
+                and end_time &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                and end_time &lt;= #{endDate}
+            </if>
+        </where>
+    </select>
+</mapper>

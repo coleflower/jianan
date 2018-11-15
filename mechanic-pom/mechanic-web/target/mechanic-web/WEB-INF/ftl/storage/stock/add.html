@@ -1,0 +1,169 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title>新增货架/堆货区</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/js/util.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+	<script>
+        function save() {
+            if ($("#storage  option:selected").val() == "") {
+                layer.tips('选择仓库！', '#storage');
+                return false;
+            } else if ($("#rack option:selected").val() == "") {
+                layer.tips('货架/堆货区编号！', '#rack');
+                return false;
+			} else if ($("#number").val() == "") {
+                layer.tips('请输入数量！', '#number');
+                return false;
+            } else {
+                layer.closeAll('tips');
+            }
+            var index = top.layer.msg('数据提交中，请稍候',{icon: 16,time:false,shade:0.8});
+            //var data = $('#form').serialize();
+            $.ajax({
+                type: 'POST',
+                url: '${base}/stock/save.htm',
+                data: $('#form').serialize(),
+                dataType: 'json',
+                success: function (data) {
+                    if(data.code == 0){
+                        setTimeout(function(){
+                            top.layer.close(index);
+                            top.layer.msg(data.msg);
+                            layer.closeAll("iframe");
+                            //刷新页面
+                            location.reload();
+                        },500);
+                    }else {
+                        top.layer.close(index);
+                        layer.alert(data.msg);
+                    }
+                    return false;
+                },
+				error: function () {
+					top.layer.close(index);
+					layer.alert("系统繁忙!请重试");
+					return false;
+				}
+			});
+        }
+        function getRack() {
+            var storageCode = $("#storage  option:selected").val();
+            if (storageCode == "") {
+                layer.tips('选择仓库！', '#storage');
+                return false;
+			} else {
+                $("#rack").html("<option value=''>货架/堆货区编号</option>");
+                $.ajax({
+                    type: 'POST',
+                    url: '${base}/rack/getRack.htm',
+                    data: {storageCode:storageCode},
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data.code == 0){
+                            $("#rackSpan").show();
+                            for (var i = 0; i < data.data.length; i++) {
+                                $("#rack").append("<option value="+data.data[0].rackCode+">"+data.data[0].rackCode+"</option>");
+                            }
+                        }else {
+                            layer.alert("服务器错误,请重试!");
+                        }
+                        return false;
+                    },
+                    error: function () {
+                        layer.alert("系统繁忙!请重试");
+                        return false;
+                    }
+                });
+			}
+        }
+	</script>
+</head>
+<body>
+<article class="page-container">
+	<form id="form" role="form" class="form form-horizontal" >
+		<input type="text" class="input-text" name="type" value="${type}" hidden>
+
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>规格名称：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+				<input type="text" class="input-text" placeholder="物品编号" name="name" id="name">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>物品编号：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+				<input type="text" class="input-text" placeholder="物品编号" name="goodsCode" id="goodsCode">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>货架/堆货区编号：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+			<span class="select-box" style="width:150px;">
+			<select class="select" id="storage" size="1" onchange="getRack()">
+				<option value="">请选择仓库</option>
+				<#list storageList as storage>
+				<option value="${storage.storageCode}">${storage.storageName}</option>
+				</#list>
+			</select>
+			</span>
+			<span class="select-box" id="rackSpan" style="width:200px; margin-left: 20px; display: none">
+			<select class="select" name="rackCode" id="rack" size="1">
+				<option value="">货架/堆货区编号</option>
+			</select>
+			</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>采购清单编号：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+				<input type="text" class="input-text" placeholder="采购清单编号" name="purchaseCode" id="purchaseCode">
+			</div>
+		</div>
+
+		<div class="row cl">
+			<label class="form-label col-xs-3 col-sm-2"><span class="c-red">*</span>数量：</label>
+			<div class="formControls col-xs-7 col-sm-6">
+				<input type="text" class="input-text" placeholder="数量" name="number" id="number">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-7 col-sm-6 col-xs-offset-3 col-sm-offset-3">
+				<!--<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存并提交</button>-->
+				<button id="saveButton" onclick="save()" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

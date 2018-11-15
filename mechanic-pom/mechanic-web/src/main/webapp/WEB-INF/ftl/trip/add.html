@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<style>
+.permission-list > dd.permission-list2 {
+	padding-left: 10px;
+}
+.permission-list2 .cl {
+	margin-top: 10px;
+	margin-bottom: 15px;
+}
+.permission-list2 .cl label {
+	/*width: 20%;*/
+	text-align: right;
+}
+.permission-list span[name='timeerr'] {
+	display: inline-block;
+}
+</style>
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/cityselect/jquery.cityselect.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#submitButton").click(function() {
+		addTrip();
+	});
+	
+	$("#itemButton").click(function() {
+		addTripItem();
+	});
+});
+
+function addTripItem() {
+	// 获取当前行程明细的区块数
+	var num = $(".permission-list").length;
+	var next = num+1;
+	
+	// 设置相应的ID及动态加载的文字
+	var oid = "tripItem"+next;
+	var otext =  "行程("+next+")";
+	
+	// 生成DOM
+	var tripItem = "<dl class=\"permission-list\" id=\""+oid+"\">"+
+						"<dt>"+
+							"<label>"+otext+"</label>"+
+							"<label class=\"r delete\"><i class=\"Hui-iconfont\">&#xe6a1;</i> 删除</label>"+
+						"</dt>"+
+						"<dd class=\"cl permission-list2\">"+
+							"<div class=\"cl\">"+
+								"<label class=\"col-sm-3\"><span class=\"c-red\">*</span>出差地点：</label>"+
+								"<div class=\"col-sm-8\">"+
+									"<input type=\"text\" class=\"input-text\" placeholder=\" 目的地名称，如：北京西城区黄寺大街\" name=\"destination\" maxlength=\"20\" >"+
+									"<span name=\"dsterr\"></span>"+
+								"</div>"+
+							"</div>"+
+							"<div class=\"cl\">"+
+								"<label class=\"col-sm-3\"><span class=\"c-red\">*</span>开始时间：</label>"+
+								"<div class=\"col-sm-8\">"+
+									"<input type=\"text\" onfocus=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})\" class=\"input-text Wdate\" readonly=\"readonly\" style=\"width:180px;\" name=\"startTime\">"+
+								"</div>"+
+							"</div>"+
+							"<div class=\"cl\">"+
+								"<label class=\"col-sm-3\"><span class=\"c-red\">*</span>结束时间：</label>"+
+								"<div class=\"col-sm-8\">"+
+									"<input type=\"text\" onfocus=\"WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})\" class=\"input-text Wdate\" readonly=\"readonly\" style=\"width:180px;\" name=\"endTime\">"+
+									"<span name=\"timeerr\"></span>"+
+								"</div>"+
+							"</div>"+
+							"<div class=\"cl\">"+
+								"<label class=\"col-sm-3\">备注：</label>"+
+								"<div class=\"col-sm-8\">"+
+									"<input type=\"text\" class=\"input-text\" placeholder=\" 行程简单描述！\" name=\"remarks\" maxlength=\"100\" >"+
+								"</div>"+
+							"</div>"+
+						"</dd>"+
+					"</dl>";
+					
+	// 在明细的最后一行插入DOM
+	$(".permission-list:last").after(tripItem);
+	
+	// 判断num==1时对默认的行程添加删除按钮
+	if(num==1) {
+		$("#tripItem1 dt label:first").after("<label class=\"r delete\"><i class=\"Hui-iconfont\">&#xe6a1;</i> 删除</label>");
+	}
+	
+	removeItem();
+}
+
+function removeItem() {
+	$(".permission-list .delete").off().on('click',function(){
+		var obj = $(this);
+		layer.confirm('确认要删除该行程吗？',function(index){
+			obj.parents('.permission-list').remove();
+			
+			var num = $(".permission-list").length;
+			
+			$(".permission-list").each(function() {
+				var i = $(this).index()+1;
+				$(this).attr('id', "tripItem"+i);
+				$(this).find('label:first').html("行程("+i+")");
+			});
+			
+			if(num==1) {
+				$("#tripItem1 dt label.delete").remove();
+			}
+			
+			layer.close(index);
+		});
+	});
+}
+
+/**
+     * {
+     * "tripPlan":{"days":"","cause":"","cost":""},
+     * "tripItems":[{"destination":"",..,"remarks":""},{...}]
+     * }
+     *spring mvc下提交JSON的MVC处理需要注意的几点：
+     *1.ajax提交时一定要contentType : "application/json; charset=utf-8"；
+     *2.无论通过哪种转化类gson/fastjson,提交的一定是JSON字符串，不是对象；
+     *3.ajax中data : JSON字符串；
+     *
+     *处理方式2：
+     *1.前端直接提交JSON字符串，在MVC层使用@RequestBody 注解进行自动转换；
+     *2.使用GSON对象
+     *static Gson gson = new GsonBuilder().enableComplexMapKeySerialization().create();
+     *TripVO tripVO = gson.fromJson(trips, new TypeToken<TripVO>() {}.getType());
+     *
+     *注意：以上所有JSON均为字符串
+ */
+function addTrip(infoState) {
+	var isPostTag = true;
+	var days = $("#days").val();
+	var cause = $("#cause").val();
+	var cost = $("#cost").val();
+	
+	if (days == "") {
+		layer.tips('请输入出差天数！', '#days');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	var trip = "{";
+	trip += "\"tripPlan\":{\"days\":\""+days+"\",\"cause\":\""+cause+"\",\"cost\":\""+cost+"\"},";
+	// 循环行程列表，判断行程中必要字段是否填写，生成JSON字符串
+	/**for (var i=0;i < $(".permission-list").length;i++) {
+		$($(".permission-list")[i]).find("input[name='destination']").val();
+	}*/
+	trip += "\"tripItems\":[";
+	var items = "";
+	$(".permission-list").each(function(i) {
+		var d = $(this).find("input[name='destination']").val();
+		var s = $(this).find("input[name='startTime']").val();
+		var e = $(this).find("input[name='endTime']").val();
+		var r = $(this).find("input[name='remarks']").val();
+		
+		if(d == "") {
+			$(this).find("span[name='dsterr']").html("<font class=\"c-red\"><i class=\"Hui-iconfont\">&#xe6dd;</i> 出差地点不能为空</font>");
+			isPostTag = false;
+		}
+		
+		if(s == "" || e=="") {
+			$(this).find("span[name='timeerr']").html("<font class=\"c-red\"><i class=\"Hui-iconfont\">&#xe6dd;</i> 请选择开始时间或者结束时间</font>");
+			isPostTag = false;
+		}
+		
+		items += "{\"destination\":\""+d+"\",\"startTime\":\""+s+"\",\"endTime\":\""+e+"\",\"remarks\":\""+r+"\"},";
+	});
+	items = items.substring(0, (items.length - 1));
+	
+	trip += items;
+	trip += "]}";
+
+	if (isPostTag != true){
+		return false;
+	}
+
+	//var requestData = eval("("+trip+")");//JSON对象无用
+	console.log(trip);
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/json; charset=utf-8",
+		url : "trip.htm?method=add",
+		data : trip,
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("新增出差计划成功！",  {icon: 1}, function(index){
+						location.replace(location.href);
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("新增失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+} 
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 销售中心 <span class="c-gray en">&gt;</span> 创建出差计划<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>出差天数：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder=" 如：2天" id="days" name="days" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">出差事由：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="cause" id="cause" cols="" rows="" class="textarea"  placeholder="请描述为什么出差，出差做什么...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">预估费用：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder=" 本次出差的预算" id="cost" name="cost" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">行程明细：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<dl class="permission-list" id="tripItem1">
+					<dt>
+						<label>行程(1)</label>
+						
+					</dt>
+					<dd class="cl permission-list2">
+						<div class="cl">
+							<label class="col-sm-3"><span class="c-red">*</span>出差地点：</label>
+							<div class="col-sm-8">
+								<input type="text" class="input-text" placeholder=" 目的地名称，如：北京西城区黄寺大街" name="destination" maxlength="20" >
+								<span name="dsterr"></span>
+							</div>
+						</div>
+						<div class="cl">
+							<label class="col-sm-3"><span class="c-red">*</span>开始时间：</label>
+							<div class="col-sm-8">
+								<input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="input-text Wdate" readonly="readonly" style="width:180px;" name="startTime">
+							</div>
+						</div>
+						<div class="cl">
+							<label class="col-sm-3"><span class="c-red">*</span>结束时间：</label>
+							<div class="col-sm-8">
+								<input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="input-text Wdate" readonly="readonly" style="width:180px;" name="endTime">
+								<span name="timeerr"></span>
+							</div>
+						</div>
+						<div class="cl">
+							<label class="col-sm-3">备注：</label>
+							<div class="col-sm-8">
+								<input type="text" class="input-text" placeholder=" 行程简单描述！" name="remarks" maxlength="20" >
+							</div>
+						</div>
+					</dd>
+				</dl>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-2">
+				<button id="itemButton" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe600;</i> 增加行程明细</button>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4">
+				<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 提交</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

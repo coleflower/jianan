@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/js/util.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	<#if error?exists>
+	layer.alert("${error}",  {icon: 1}, function(index){
+		layer_close();
+	});
+	</#if>
+	
+	$("#submitButton").click(function() {
+		modify("1");
+	});
+	
+	<#if contactRecord.infoState=="0">
+	$("#saveButton").click(function() {
+		modify("0");
+	});
+	</#if>
+	
+	textarealength($("#contents"), 500);
+});
+
+function modify(infoState) {
+	var connectionWay = $("#connectionWay option:selected").attr("value");
+	var communicateType = $("#communicateType option:selected").attr("value");
+	var contents = trim($("#contents").val());
+	var contactDate = trim($("#contactDate").val());
+		
+	if (connectionWay == "") {
+		layer.tips('请选择联系途径！', '#connectionWay');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (communicateType == "") {
+		layer.tips('请选择沟通类型！', '#communicateType');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contents == "") {
+		layer.tips('请输入沟通内容！', '#contents');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (contactDate == "") {
+		layer.tips('请选择沟通时间！', '#contactDate');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "customerLink.htm?method=modify",
+		data : {
+			id : ${contactRecord.id},
+			customerCode : "${customerInfo.customerCode}",
+			contactsCode : "${customerContacts.contactsCode}",
+			connectionWay : connectionWay,
+			communicateType : communicateType,
+			contents : contents,
+			contactDate : contactDate,
+			infoState : infoState
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("修改联系记录成功！",  {icon: 1}, function(index){
+						// 刷新IFREAME
+						parent.$("#recordFrame")[0].contentWindow.$("#queryRecordForm").submit();						
+						layer_close();
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("修改失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+</script>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">所属客户：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			${customerInfo.customerName}
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">联系人姓名：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			${customerContacts.contactsName}
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>联系途径：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<span class="select-box">
+			<select class="select" size="1" name="connectionWay" id="connectionWay">
+				<#list connectionWay?keys as key>
+				<option value="${key}" <#if contactRecord.connectionWay==key>selected</#if>>${connectionWay[key]}</option>
+				</#list>
+			</select>
+			</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>沟通类型：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<span class="select-box">
+			<select class="select" size="1" name="communicateType" id="communicateType">
+				<#list communicateType?keys as key>
+				<option value="${key}" <#if contactRecord.communicateType==key>selected</#if>>${communicateType[key]}</option>
+				</#list>
+			</select>
+			</span>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>沟通内容：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<textarea name="contents" id="contents" cols="" rows="" class="textarea"  placeholder="总结和客户沟通的过程及结果...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)">${contactRecord.contents}</textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>沟通时间：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="input-text Wdate" readonly="readonly" style="width:180px;" id="contactDate" name="contactDate" value="${(contactRecord.contactDate?datetime)!''}">
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存并提交</button>
+				<#if contactRecord.infoState=="0">
+				<button id="saveButton" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+				</#if>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

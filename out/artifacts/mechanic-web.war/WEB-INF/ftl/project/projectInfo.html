@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	//注意：下面的代码是放在test.html调用,并且id跟test.html中的iframe的id要保持一致
+	$(window.parent.document).find("#infoFrame").load(function(){
+	    var main = $(window.parent.document).find("#infoFrame");
+	    var thisheight = $(document).height();
+	    main.height(thisheight);
+	});
+	
+	textarealength($("#targetIndustry"), 200);
+	textarealength($("#projectDescription"), 500);
+});
+
+function addProject(infoState) {
+	var projectCategoryCode = $("#projectCategoryCode option:selected").attr("value");
+	var projectName = $("#projectName").val();
+	var owner = $("#owner").val();
+	var floorPrice = $("#floorPrice").val();
+	var targetIndustry = $("#targetIndustry").val();
+	var projectDescription = $("#projectDescription").val();
+	
+	if (projectCategoryCode == "") {
+		layer.tips('请选择项目产品分类！', '#projectCategoryCode');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (projectName == "") {
+		layer.tips('请输入项目产品名称！', '#projectName');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (owner == "") {
+		layer.tips('请输入主导人姓名！', '#owner');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "project.htm?method=modify",
+		data : {
+			projectCode : "${project.projectCode}",
+			projectCategoryCode : projectCategoryCode,
+			projectName : projectName,
+			owner : owner,
+			floorPrice : floorPrice,
+			targetIndustry : targetIndustry,
+			projectDescription : projectDescription,
+			infoState : infoState
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("修改项目产品成功！",  {icon: 1}, function(index){
+						location.replace(location.href);
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("修改失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+
+function submitProject(){
+	addProject("1");
+}
+
+function saveProject(){
+	addProject("0");
+}
+</script>
+</head>
+<body>
+<article>
+	<table class="table table-border table-bordered table-bg dataTable">
+		<tr class="text-c">
+			<td class="sorting_1"><span class="c-red">*</span>所属分类：</td>
+			<td>
+ 			<span class="select-box">
+				<select name="projectCategoryCode" id="projectCategoryCode" class="select" size="1">
+					<#list categorys as  category>
+					<#assign offsetNode = "&nbsp;&nbsp;"/>
+					<#assign linkNode = "&nbsp;&nbsp;"/>
+					<#assign childNode = "├&nbsp;"/>
+					<#assign endNode = "└&nbsp;"/>
+					<option value="${category.projectCategoryCode}" <#if (project.projectCategoryCode == category.projectCategoryCode)>selected</#if>>
+					<#if (category.depth > 0)>
+					<#list 1..category.depth as m>
+						<#assign showInfo = showInfo+offsetNode />
+						<#if (m == category.depth)>
+							<#if (category.nextId > 0)>
+								<#assign showInfo = showInfo+childNode />
+							<#else>
+								<#assign showInfo = showInfo+endNode />
+							</#if>
+						<#else>
+							<#assign showInfo = showInfo+linkNode />
+						</#if>
+					</#list>
+					</#if>
+					${showInfo+category.projectCategoryName}
+					</option>
+					<#assign showInfo = "" />
+					</#list>
+				</select>
+			</span>
+			</td>
+			<td class="sorting_1"><span class="c-red">*</span>项目名称：</td>
+			<td><input type="text" class="input-text" placeholder="" id="projectName" name="projectName" value="${project.projectName}" maxlength="50" ></td>
+		</tr>
+		<tr class="text-c">
+			<td class="sorting_1"><span class="c-red">*</span>主导人：</td>
+			<td><input type="text" class="input-text" placeholder="" id="owner" name="owner" value="${project.owner}" maxlength="50" ></td>
+			<td class="sorting_1">最低限价：</td>
+			<td><input type="text" class="input-text" placeholder="" id="floorPrice" name="floorPrice" value="${project.floorPrice}" maxlength="10" ></td>
+		</tr>
+		<tr class="text-c">
+			<td class="sorting_1">目标客群：</td>
+			<td>
+			<div class="formControls">
+			<textarea name="targetIndustry" id="targetIndustry" cols="" rows="" class="textarea"  placeholder="这个项目产品的客户群有哪些...200个字以内" dragonfly="true" onKeyUp="textarealength(this,200)">${project.targetIndustry}</textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/200</p>
+			</div>
+			</td>
+			<td class="sorting_1">描述：</td>
+			<td>
+			<div class="formControls">
+			<textarea name="projectDescription" id="projectDescription" cols="" rows="" class="textarea"  placeholder="项目产品的基本介绍...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)">${project.projectDescription}</textarea>
+			<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+			</td>
+		</tr>
+		<tr class="text-c">
+			<td class="sorting_1"><span class="c-red">*</span>状态：</td>
+			<td class="text-l">
+			<b>${projectStates[project.projectState]}</b>
+			<!-- <span class="select-box">
+				<select class="select" size="1" name="projectState" id="projectState">
+					<#list projectStates?keys as key>
+					<#if project.projectState==key>
+					<option value="${key}"  <#if project.projectState==key>selected</#if>>${projectStates[key]}</option>
+					</#if>
+					</#list>
+				</select>
+				</span> -->
+			</td>
+			<td colspan="2" class="text-r">
+				<button <#if project.projectState=="101">onClick="submitProject()" class="btn btn-primary radius"<#else>class="btn btn-default radius"</#if> type="button"><i class="Hui-iconfont">&#xe632;</i> 修改并提交</button>
+				<#if project.infoState=="0">
+				<button <#if project.projectState=="101">onClick="saveProject()" class="btn btn-secondary radius"<#else>class="btn btn-default radius"</#if> type="button"><i class="Hui-iconfont">&#xe632;</i> 修改</button>
+				</#if>
+			</td>
+		</tr>
+	</table>
+</article>
+</body>
+</html>

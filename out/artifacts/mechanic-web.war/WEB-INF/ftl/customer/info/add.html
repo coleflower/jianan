@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/cityselect/jquery.cityselect.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	
+	$("#area").citySelect({
+		url : "${resRoot}/lib/cityselect/city.min.js",
+		prov : "江苏", //省份 
+		city : "南京", //城市 
+		dist : "鼓楼区", //区县 
+		nodata : "none" //当子集无数据时，隐藏select 
+	});
+
+	$("#submitButton").click(function() {
+		addCustomerInfo("1");
+	});
+	
+	$("#submitButton").click(function() {
+		addCustomerInfo("0");
+	});
+});
+
+
+function addCustomerInfo(infoState) {
+	var customerName = $("#customerName").val();
+	var legalPerson = $("#legalPerson").val();
+	var switchBoard = $("#switchBoard").val();
+	var fax = $("#fax").val();
+	var province = $("#province option:selected").attr("value");
+	var city = $("#city option:selected").attr("value");
+	var county = $("#county option:selected").attr("value");
+	var address = $("#address").val();
+	var postCode = $("#postCode").val();
+	var industry = $("#industry").val();
+	var businessScope = $("#businessScope").val();
+	var grade = $("#grade option:selected").attr("value");
+	var remarks = $("#remarks").val();
+	
+	if (customerName == "") {
+		layer.tips('请输入客户名称！', '#customerName');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (province == "" || city == "") {
+		layer.tips('请选择地址列表！', '#area');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (address == "") {
+		layer.tips('请输入详细地址！', '#address');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (grade == "") {
+		layer.tips('请选择客户等级！', '#grade');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "customerInfo.htm?method=add",
+		data : {
+			customerName : customerName,
+			legalPerson : legalPerson,
+			switchBoard : switchBoard,
+			fax : fax,
+			province : province,
+			city : city,
+			county : county,
+			address : address,
+			postCode : postCode,
+			industry : industry,
+			businessScope : businessScope,
+			grade : grade,
+			remarks : remarks,
+			infoState : infoState
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("新增客户信息成功！",  {icon: 1}, function(index){
+						location.replace(location.href);
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("新增失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+} 
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 客户中心 <span class="c-gray en">&gt;</span> 新增客户<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>客户名称：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder=" 公司全称请勿使用简称" id="customerName" name="customerName" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">法人姓名：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="legalPerson" name="legalPerson" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">企业总机：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder=" 公司联系电话，多个请用竖线分隔" id="switchBoard" name="switchBoard" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">传真号码：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="fax" name="fax" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>公司地址：</label>
+			<div class="formControls col-xs-8 col-sm-6" id="area">
+			<select class="prov" id="province" name="province"></select>
+			<select class="city" disabled="disabled" id="city" name="city"></select>
+			<select class="dist" disabled="disabled" id="county" name="county"></select>
+			<br>
+			<input type="text" class="input-text mt-5" placeholder=" 公司详细地址信息" id="address" name="address" maxlength="100" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">邮政编码：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<input type="text" class="input-text" placeholder="" id="postCode" name="postCode" maxlength="6" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">所属行业：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="industry" id="industry" cols="" rows="" class="textarea"  placeholder="客户属于哪些行业...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">经营范围：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="businessScope" id="businessScope" cols="" rows="" class="textarea"  placeholder="客户的经营范围...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>客户等级：</label>
+			<div class="formControls col-xs-8 col-sm-6"> <span class="select-box">
+				<select class="select" size="1" name="grade" id="grade">
+					<option value="" selected>请选择</option>
+					<#list grade?keys as key>
+					<option value="${key}">${grade[key]}</option>
+					</#list>
+				</select>
+				</span> </div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">备注：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+				<textarea name="remarks" id="remarks" cols="" rows="" class="textarea"  placeholder="客户备注...500个字以内" dragonfly="true" onKeyUp="textarealength(this,500)"></textarea>
+				<p class="textarea-numberbar"><em class="textarea-length">0</em>/500</p>
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存并提交</button>
+				<button id="saveButton" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

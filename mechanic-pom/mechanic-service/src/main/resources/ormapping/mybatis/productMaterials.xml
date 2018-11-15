@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.production.IProductMaterialsDAO">
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.production.ProductMaterialsDTO">
+        <id column="id" property="id" />
+        <result column="product_code" property="productCode"/>
+        <result column="product_materials_code" property="productMaterialsCode"/>
+        <result column="product_materials_name" property="productMaterialsName"/>
+        <result column="product_materials" property="productMaterials"/>
+        <result column="product_materials_count" property="productMaterialsCount"/>
+        <result column="has_out_storage_count" property="hasOutStorageCount"/>
+        <result column="product_materials_standard_code" property="productMaterialsStandardCode"/>
+        <result column="remark" property="remark"/>
+        <result column="stock_log" property="stockLog"/>
+        <result column="procurement_status" property="procurementStatus"/>
+        <result column="supplier" property="supplier"/>
+        <result column="product_price" property="productPrice"/>
+        <result column="procurement_remark" property="procurementRemark"/>
+        <result column="handler_code" property="handlerCode"/>
+        <result column="create_date" property="createDate"/>
+        <result column="application_reason" property="applicationReason"/>
+        <result column="icon" property="icon"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,product_code,product_materials_code,product_materials_name,product_materials,product_materials_count
+        ,product_materials_standard_code,remark,stock_log,procurement_status,supplier,product_price,procurement_remark,handler_code,create_date,application_reason,icon
+    </sql>
+
+    <insert id="insert" parameterType="com.cubicpark.mechanic.domain.dto.production.ProductMaterialsDTO">
+        insert into t_product_materials
+        (id,product_code,product_materials_code,product_materials_name,product_materials,product_materials_count
+        ,product_materials_standard_code,remark,stock_log,procurement_status,supplier,product_price,procurement_remark,handler_code,create_date,application_reason,icon)
+        values
+        (#{id},#{productCode},#{productMaterialsCode},#{productMaterialsName},#{productMaterials},#{productMaterialsCount},#{productMaterialsStandardCode}
+        ,#{remark},#{stockLog},#{procurementStatus},#{supplier},#{productPrice},#{procurementRemark},#{handlerCode},#{createDate},#{applicationReason},#{icon})
+    </insert>
+
+    <update id="updateById" parameterType="com.cubicpark.mechanic.domain.dto.production.ProductMaterialsDTO">
+        update t_product_materials
+        <set>
+            <if test="productCode != null" >
+                product_code = #{productCode},
+            </if>
+            <if test="productMaterialsCode != null" >
+                product_materials_code = #{productMaterialsCode},
+            </if>
+            <if test="productMaterialsName != null" >
+                product_materials_name = #{productMaterialsName},
+            </if>
+            <if test="productMaterials != null" >
+                product_materials = #{productMaterials},
+            </if>
+            <if test="productMaterialsCount != null" >
+                product_materials_count = #{productMaterialsCount},
+            </if>
+            <if test="productMaterialsStandardCode != null" >
+                product_materials_standard_code = #{productMaterialsStandardCode},
+            </if>
+            remark = #{remark},
+            <if test="stockLog != null" >
+                stock_log = #{stockLog},
+            </if>
+            <if test="procurementStatus != null" >
+                procurement_status = #{procurementStatus},
+            </if>
+            <if test="supplier != null" >
+                supplier = #{supplier},
+            </if>
+            <if test="productPrice != null" >
+                product_price = #{productPrice},
+            </if>
+            <if test="procurementRemark != null" >
+                procurement_remark = #{procurementRemark},
+            </if>
+            <if test="handlerCode != null" >
+                handler_code = #{handlerCode},
+            </if>
+            <if test="createDate != null" >
+                create_date = #{createDate},
+            </if>
+            <if test="applicationReason != null and applicationReason != ''">
+                application_reason = #{applicationReason},
+            </if>
+            <if test="icon != null and icon != ''">
+                icon = #{icon},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectByProductCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_product_materials
+        where product_code = #{productCode}
+    </select>
+
+    <select id="selectByProductMaterialsCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_product_materials
+        where product_materials_code = #{productMaterialsCode}
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_product_materials
+        where id = #{id}
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from t_product_materials
+        where id = #{id}
+    </delete>
+
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_product_materials
+        where procurement_status in
+        <foreach collection="list" item="procurementStatus" index="index"
+                 open="(" close=")" separator=",">
+        #{procurementStatus}
+        </foreach>
+    </select>
+
+    <select id="selectAllMaterials" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_product_materials
+    </select>
+
+
+</mapper>

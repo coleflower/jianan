@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.production.IProductionDAO">
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.production.ProductionDTO">
+        <id column="id" property="id" />
+        <result column="product_code" property="productCode"/>
+        <result column="product_type" property="productType"/>
+        <result column="product_name" property="productName"/>
+        <result column="product_count" property="productCount"/>
+        <result column="contract_code" property="contractCode"/>
+        <result column="handler_code" property="handlerCode"/>
+        <result column="materials_handler" property="materialsHandler"/>
+        <result column="status" property="status"/>
+        <result column="worker_count" property="workerCount"/>
+        <result column="finish_time" property="finishTime"/>
+        <result column="remark" property="remark"/>
+        <result column="materials_remark" property="materialsRemark"/>
+        <result column="quality_remark" property="qualityRemark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,product_code,product_type,product_name,product_count,contract_code,handler_code,materials_handler,status,worker_count,finish_time,remark,materials_remark,quality_remark,create_time,update_time
+    </sql>
+
+    <insert id="insert" parameterType="com.cubicpark.mechanic.domain.dto.production.ProductionDTO">
+        insert into t_production
+        (id,product_code,product_type,product_name,product_count,contract_code,handler_code,
+        materials_handler,status,worker_count,finish_time,remark,materials_remark,quality_remark,create_time,update_time)
+        values
+        (#{id},#{productCode},#{productType},#{productName},#{productCount},#{contractCode}
+        ,#{handlerCode},#{materialsHandler},#{status},#{workerCount},#{finishTime},#{remark},#{materialsRemark},#{qualityRemark},#{createTime},#{updateTime})
+    </insert>
+
+    <update id="updateById" parameterType="com.cubicpark.mechanic.domain.dto.production.ProductionDTO">
+        update t_production
+        <set>
+            <if test="productCode != null" >
+            product_code = #{productCode},
+            </if>
+            <if test="productType != null" >
+            product_type = #{productType},
+            </if>
+            <if test="productName != null" >
+            product_name = #{productName},
+            </if>
+            <if test="productCount != null" >
+            product_count = #{productCount},
+            </if>
+            <if test="contractCode != null" >
+            contract_code = #{contractCode},
+            </if>
+            <if test="handlerCode != null" >
+            handler_code = #{handlerCode},
+            </if>
+            <if test="materialsHandler != null" >
+            materials_handler = #{materialsHandler},
+            </if>
+            <if test="status != null" >
+            status = #{status},
+            </if>
+            <if test="workerCount != null" >
+            worker_count = #{workerCount},
+            </if>
+            <if test="finishTime != null" >
+            finish_time = #{finishTime},
+            </if>
+            <if test="remark != null" >
+            remark = #{remark},
+            </if>
+            materials_remark = #{materialsRemark},
+            quality_remark = #{qualityRemark},
+            <if test="createTime != null" >
+            create_time = #{createTime},
+            </if>
+            <if test="updateTime != null" >
+            update_time = #{updateTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_production
+    </select>
+
+    <select id="selectByProductCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_production
+        where product_code = #{productCode}
+    </select>
+
+    <select id="selectByContractCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_production
+        where contract_code = #{contractCode}
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_production
+        where id = #{id}
+    </select>
+
+
+</mapper>

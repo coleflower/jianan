@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.finance.IReimbursementDAO" >
+
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.finance.ReimbursementDTO" >
+        <id column="id" property="id"  />
+        <result column="apply_no" property="applyNo"  />
+        <result column="employee_code" property="employeeCode"  />
+        <result column="mold" property="mold"  />
+        <result column="code" property="code"  />
+        <result column="cost" property="cost"  />
+        <result column="state" property="state"  />
+        <result column="approver" property="approver"  />
+        <result column="payway" property="payWay"  />
+        <result column="voucher" property="voucher"  />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="remarks" property="remarks"  />
+        <result column="version" property="version"  />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id, apply_no,employee_code, mold, code, cost, state, approver,
+        payway, voucher, pay_time, remarks,version, create_date, update_date
+    </sql>
+
+    <select id="findAll" resultMap="BaseResultMap" >
+        select <include refid="Base_Column_List" />
+        from t_reimbursement
+    </select>
+
+    <select id="findById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from t_reimbursement
+        where id=#{id}
+    </select>
+
+    <update id="updateCostById">
+        update t_reimbursement
+        set cost = #{cost}
+        where id=#{id}
+    </update>
+
+    <update id="updateById" >
+        update t_reimbursement
+        set state = #{state} ,payway = #{payway},
+            voucher = #{voucher},pay_time = #{payTime},
+            remarks = #{remarks},approver = #{employeeCode}
+        where id = #{id}
+    </update>
+
+    <update id="updateByIdRefuse" >
+        update t_reimbursement
+        set state = #{state} ,
+            remarks = #{remarks},
+            approver = #{employeeCode},
+            payway = null,
+            voucher = null,
+            pay_time = null
+        where id = #{id}
+    </update>
+
+    <select id="selectByCodeOrStatusOrDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM t_reimbursement
+        <where>
+            <if test="code != null and code != ''">
+                apply_no like concat("%", #{code},"%")
+            </if>
+            <if test="status != null and status != ''">
+                and state = #{status}
+            </if>
+            <if test="createTime != null">
+                and create_date &gt;= #{createTime}
+            </if>
+            <if test="endTime != null">
+                and create_date &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="searchExpressCodeLike" resultType="string">
+    select apply_no
+    from t_reimbursement
+    where apply_no like concat("%", #{code},"%")
+  </select>
+
+    <update id="choiceDebugOrder" >
+    update t_reimbursement
+    set approver = #{employeeCode,jdbcType=VARCHAR},
+      update_date = #{now,jdbcType=TIMESTAMP},
+      version = version + 1
+    where id = #{id,jdbcType=INTEGER}
+    and version = #{version}
+  </update>
+
+    <select id="selectByApplyNo" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_reimbursement
+        where apply_no = #{applyNo}
+    </select>
+
+</mapper>

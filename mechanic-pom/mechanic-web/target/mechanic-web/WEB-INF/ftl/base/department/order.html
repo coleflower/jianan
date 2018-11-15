@@ -1,0 +1,103 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script> 
+<title></title>
+<script type="text/javascript">
+$(document).ready(function() {
+
+	<#if error?exists>
+	layer.alert("${error}", 1);
+	</#if>
+
+});
+
+
+</script>
+</head>
+<body>
+<div class="page-container">
+	<table class="table table-border table-bordered table-hover table-bg">
+		<thead>
+			<tr>
+				<th scope="col" colspan="3">一级部门排序</th>
+			</tr>
+			<!-- <tr class="text-c">
+				<th width="25"><input type="checkbox" value="" name=""></th>
+				<th width="40">ID</th>
+				<th class="text-l">部门名称</th>
+				<th class="text-l" width="100">部门编码</th>
+				<th width="100">是否管理客户</th>
+				<th width="150">操作</th>
+			</tr> -->
+		</thead>
+		<tbody>
+			<#assign i = 1/>
+			<#assign rootNum = rootDepartment?size/>
+			<#list rootDepartment as department>
+			<tr class="text-c">
+				<td class="text-l">${department.departmentName}</td>
+				<#if (i>1)>
+				<form action="department.htm?method=order&action=up" method="post">
+				<td class="text-l">
+					<select name="moveNum" size="1" class="select" style="width:50%;">
+						<option value="">向上移动</option>
+						<#list 1..(i-1) as m>
+						<option value="${m}">${m}</option>
+						</#list>
+					</select>
+					<input type=hidden name="id" value="${department.id}">
+					<input type=hidden name="sameRootTag" value="${department.sameRootTag}">&nbsp;<input class="btn btn-primary radius" type="submit" name="Submit" value=修改>
+				</td>
+				</form>
+				<#else>
+				<td></td>
+				</#if>
+				<#if (rootNum>i)>
+				<form action="department.htm?method=order&action=down" method="post">
+				<td class="text-l">
+					<select name="moveNum" size="1" class="select" style="width:50%;">
+						<option value="">向下移动</option>
+						<#list 1..(rootNum-i) as m>
+						<option value="${m}">${m}</option>
+						</#list>
+					</select>
+					<input type=hidden name="id" value="${department.id}">
+					<input type=hidden name="sameRootTag" value="${department.sameRootTag}">&nbsp;<input class="btn btn-primary radius" type="submit" name="Submit" value=修改>
+				</td>
+				</form>
+				<#else>
+				<td></td>
+				</#if>
+			</tr>
+			<#assign i=i+1 />
+			</#list>
+		</tbody>
+	</table>
+</div>
+
+</body>
+</html>

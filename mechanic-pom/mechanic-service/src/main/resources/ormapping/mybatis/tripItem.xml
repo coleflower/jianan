@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.trip.ITripItemDAO">
+	<resultMap id="tripItemResultMapper" type="com.cubicpark.mechanic.domain.dto.trip.TripItemDTO">
+		<id column="id" property="id" />
+		<result column="plancode" property="planCode" />
+		<result column="destination" property="destination" />
+		<result column="starttime" property="startTime" />
+		<result column="endtime" property="endTime" />
+		<result column="remarks" property="remarks" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="batchAddTripItem" parameterType="java.util.List">
+		<![CDATA[insert into t_trip_item (plancode, destination, starttime, endtime, remarks, createdate, updatedate)
+		values]]>
+        <foreach collection="list" item="item" index="index" separator=",">
+            <![CDATA[(#{item.planCode}, #{item.destination}, #{item.startTime}, #{item.endTime}, #{item.remarks}, #{item.createDate}, #{item.updateDate})]]>
+        </foreach>
+	</insert>
+	
+	<select id="getTripItemByPlanCode" parameterType="String" resultMap="tripItemResultMapper">
+		<![CDATA[SELECT * FROM t_trip_item where plancode = #{planCode}]]>
+	</select>
+</mapper>

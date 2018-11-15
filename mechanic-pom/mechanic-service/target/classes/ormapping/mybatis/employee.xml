@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.employee.IEmployeeDAO">
+	<resultMap id="employeeResultMapper" type="com.cubicpark.mechanic.domain.dto.employee.EmployeeDTO">
+		<id column="id" property="id" />
+		<result column="employeecode" property="employeeCode" />
+		<result column="passwords" property="passwords" />
+		<result column="departmentcode" property="departmentCode" />
+		<result column="positioncode" property="positionCode" />
+		<result column="name" property="name" />
+		<result column="sex" property="sex" />
+		<result column="education" property="education" />
+		<result column="college" property="college" />
+		<result column="extension" property="extension" />
+		<result column="telephone" property="telephone" />
+		<result column="entrydate" property="entryDate" />
+		<result column="leavedate" property="leaveDate" />
+		<result column="accountstatus" property="accountStatus" />
+		<result column="handoverperson" property="handoverPerson" />
+		<result column="rolecode" property="roleCode" />
+		<result column="permission" property="permission" />
+		<result column="salesareas" property="salesAreas" />
+		<result column="remarks" property="remarks" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addEmployee" parameterType="com.cubicpark.mechanic.domain.dto.employee.EmployeeDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_employee (
+		employeecode, 
+		passwords, 
+		departmentcode, 
+		positioncode, 
+		name, 
+		sex, 
+		education, 
+		college, 
+		extension, 
+		telephone, 
+		entrydate,
+		accountstatus,
+		createdate, 
+		updatedate
+		) values (
+		#{employeeCode}, 
+		#{passwords}, 
+		#{departmentCode}, 
+		#{positionCode}, 
+		#{name}, 
+		#{sex}, 
+		#{education}, 
+		#{college}, 
+		#{extension}, 
+		#{telephone}, 
+		#{entryDate}, 
+		#{accountStatus}, 
+		#{createDate}, 
+		#{updateDate})]]>
+	</insert>
+	
+	<update id="modifyEmployee" parameterType="com.cubicpark.mechanic.domain.dto.employee.EmployeeDTO">
+		<![CDATA[update t_employee ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="departmentCode != null and departmentCode != '' ">  
+				<![CDATA[departmentcode = #{departmentCode},]]>
+			</if>
+			<if test="positionCode != null and positionCode != '' ">  
+				<![CDATA[positioncode = #{positionCode},]]>
+			</if>
+			<if test="name != null and name != '' ">  
+				<![CDATA[name = #{name},]]>
+			</if>
+			<if test="sex != null and sex != '' ">  
+				<![CDATA[sex = #{sex},]]>
+			</if>
+			<if test="education != null and education != '' ">  
+				<![CDATA[education = #{education},]]>
+			</if>
+			<if test="college != null and college != '' ">  
+				<![CDATA[college = #{college},]]>
+			</if>
+			<if test="extension != null and extension != '' ">  
+				<![CDATA[extension = #{extension},]]>
+			</if>
+			<if test="telephone != null and telephone != '' ">  
+				<![CDATA[telephone = #{telephone},]]>
+			</if>
+			<if test="entryDate != null and entryDate != '' ">  
+				<![CDATA[entrydate = #{entryDate},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">  
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where employeecode = #{employeeCode}]]>
+	</update>
+	
+	<update id="setEmployeeStatus" >
+		<![CDATA[update t_employee set accountstatus = #{status}, updatedate = now() where employeecode = #{employeeCode}]]>
+	</update>
+	
+	<update id="setEmployeeQuit" >
+		<![CDATA[update t_employee ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="status != null and status != '' ">  
+				<![CDATA[accountstatus = #{status},]]>
+			</if>
+			<if test="leaveDate != null and leaveDate != '' ">  
+				<![CDATA[leavedate = #{leaveDate},]]>
+			</if>
+			<if test="handoverPerson != null and handoverPerson != '' ">  
+				<![CDATA[handoverperson = #{handoverPerson},]]>
+			</if>
+			<![CDATA[updatedate = now(),]]>
+		</trim>
+		<![CDATA[where employeecode = #{employeeCode}]]>
+	</update>
+	
+	<update id="setEmployeeRole" >
+		<![CDATA[update t_employee ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="roleCode != null and roleCode != '' ">  
+				<![CDATA[rolecode = #{roleCode},]]>
+			</if>
+			<if test="permission != null and permission != '' ">  
+				<![CDATA[permission = #{permission},]]>
+			</if>
+			<if test="salesAreas != null and salesAreas != '' ">  
+				<![CDATA[salesareas = #{salesAreas},]]>
+			</if>
+			<![CDATA[updatedate = now(),]]>
+		</trim>
+		<![CDATA[where employeecode = #{employeeCode}]]>
+	</update>
+	
+	<update id="modifyPassWords" >
+		<![CDATA[update t_employee set passwords = #{newPassWords}, updatedate = now() where employeecode = #{employeeCode}]]>
+	</update>
+	
+	<select id="getEmployeeByCode" parameterType="String" resultMap="employeeResultMapper">
+		<![CDATA[SELECT * FROM t_employee where employeecode = #{employeeCode}]]>
+	</select>
+	
+	<select id="login" resultMap="employeeResultMapper">
+		<![CDATA[SELECT * FROM t_employee where passwords = #{passWords} and employeecode = #{employeeCode}]]>
+	</select>
+	
+	<select id="getDepartmentEmployee" parameterType="String" resultMap="employeeResultMapper">
+		<![CDATA[SELECT * FROM t_employee where departmentcode = #{departmentCode}]]>
+	</select>
+	
+	<select id="queryEmployee" parameterType="com.cubicpark.mechanic.domain.dto.employee.EmployeeQueryDTO" resultMap="employeeResultMapper">
+		<![CDATA[SELECT * FROM t_employee where 1=1]]>
+		 <if test="employeeCode !=null and employeeCode !=''">
+		 	<![CDATA[ and employeecode=#{employeeCode}]]>
+		 </if>
+		 <if test="name !=null and name !=''">
+		 	<![CDATA[ and name=#{name}]]>
+		 </if>
+		 <if test="accountStatus !=null and accountStatus !=''">
+		 	<![CDATA[ and accountstatus=#{accountStatus}]]>
+		 </if>
+		 <if test="departmentCode !=null and departmentCode.size() > 0">
+		 	<![CDATA[ and departmentcode in]]>
+			<foreach item="item" index="index" collection="departmentCode" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		 </if>
+		 <if test="startEntryDate !=null and startEntryDate != '' and endEntryDate != null and endEntryDate != ''">
+		 	<![CDATA[ and entrydate >= #{startEntryDate} and entrydate <= #{endEntryDate}]]>
+		 </if>
+	</select>
+
+	<select id="selectByDepartmentCode" parameterType="String" resultMap="employeeResultMapper">
+		<![CDATA[SELECT * FROM t_employee where departmentCode = #{departmentCode}]]>
+	</select>
+</mapper>

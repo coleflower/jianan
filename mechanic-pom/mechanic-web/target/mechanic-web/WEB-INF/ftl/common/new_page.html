@@ -1,0 +1,32 @@
+<div style="overflow:hidden;">
+    <div class="dataTables_info_class" id="DataTables_Table_0_info" role="status" aria-live="polite">
+        共${result.total}条记录，&nbsp;
+        共${result.pages}页，  &nbsp;
+        当前显示第&nbsp;${result.current}&nbsp;页
+    </div>
+    <div class="dataTables_paginate_right " id="DataTables_Table_0_paginate">
+        <a class="paginate_button_right previous disabled" href="<#if result.current!=1>${baseUrl}&current=${1}<#else>javascript:;</#if>" >首页</a>
+        <#if result.current != 1>
+        <a class="paginate_button_right previous disabled" href="<#if result.current!=1>${baseUrl}&current=${result.current - 1}<#else>javascript:;</#if>">上一页</a>
+        </#if>
+        <span>
+		<a class="paginate_button current" href="javascript:;">${result.current}</a>
+	</span>
+        <#if result.current != result.pages>
+        <a class="paginate_button_right next disabled"  href="<#if result.current != result.pages>${baseUrl}&current=${result.current + 1}<#else>javascript:;</#if>" >下一页</a>
+        </#if>
+        <a class="paginate_button_right previous disabled" href="<#if result.current!=result.pages>${baseUrl}&current=${result.pages}<#else>javascript:;</#if>">末页</a>
+    </div>
+</div>
+
+<!--
+<div class="pagin">
+    <div class="message">共<i class="blue">${result.total}</i>条记录，共<i class="blue">${result.size}</i>页，    当前显示第&nbsp;<i class="blue">${result.current}&nbsp;</i>页</div>
+    <ul class="paginList">
+        <li class="paginItem <#if result.current==1>current</#if>"><a href="<#if result.current!=1>${baseUrl}&current=${1}<#else>javascript:;</#if>">首页</a></li>
+        <li class="paginItem <#if result.current==1>current</#if>"><a href="<#if result.current!=1>${baseUrl}&current=${result.current - 1}<#else>javascript:;</#if>">上一页</a></li>
+        <li class="paginItem current"><a href="javascript:;">${result.current}</a></li>
+        <li class="paginItem <#if result.current == result.size>current</#if>"><a href="<#if result.current != result.size>${baseUrl}&current=${result.current + 1}<#else>javascript:;</#if>" >下一页</a></li>
+        <li class="paginItem <#if result.current == result.size>current</#if>"><a href="<#if result.current!=result.size>${baseUrl}&current=${result.size}<#else>javascript:;</#if>">末页</a></li>
+    </ul>
+</div>-->

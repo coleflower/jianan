@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.project.IProjectEnclosureDAO">
+	<resultMap id="projectEnclosureResultMapper" type="com.cubicpark.mechanic.domain.dto.project.ProjectEnclosureDTO">
+		<id column="id" property="id" />
+		<result column="projectcode" property="projectCode" />
+		<result column="enclosurename" property="enclosureName" />
+		<result column="url" property="url" />
+		<result column="description" property="description" />
+		<result column="infostate" property="infoState" />
+		<result column="createdate" property="createDate" />
+		<result column="updatedate" property="updateDate" />
+	</resultMap>
+	
+	<insert id="addProjectEnclosure" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectEnclosureDTO" useGeneratedKeys="true" keyProperty="id">
+		<![CDATA[insert into t_project_enclosure (projectcode, enclosurename, url, description, infostate, createdate, updatedate)
+		values
+		(#{projectCode}, #{enclosureName}, #{url}, #{description}, #{infoState}, #{createDate}, #{updateDate})]]>
+	</insert>
+	
+	<update id="modifyProjectEnclosure" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectEnclosureDTO">
+		<![CDATA[update t_project_enclosure ]]>
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="enclosureName != null and enclosureName != '' ">  
+				<![CDATA[enclosurename = #{enclosureName},]]>
+			</if>
+			<if test="url != null and url != '' ">  
+				<![CDATA[url = #{url},]]>
+			</if>
+			<if test="description != null and description != '' ">  
+				<![CDATA[description = #{description},]]>
+			</if>
+			<if test="infoState != null and infoState != '' ">  
+				<![CDATA[infostate = #{infoState},]]>
+			</if>
+			<if test="updateDate != null and updateDate != '' ">  
+				<![CDATA[updatedate = #{updateDate},]]>
+			</if>
+		</trim>
+		<![CDATA[where id = #{id}]]>
+	</update>
+	
+	<delete id="delProjectEnclosureById" parameterType="int">
+		<![CDATA[delete from t_project_enclosure where id=#{id} and infostate = '0']]>
+	</delete>
+	
+	<select id="getProjectEnclosureByProjectCode" parameterType="String" resultMap="projectEnclosureResultMapper">
+		<![CDATA[SELECT * FROM t_project_enclosure where projectcode = #{projectCode}]]>
+	</select>
+	
+	<select id="getProjectEnclosureById" parameterType="int" resultMap="projectEnclosureResultMapper">
+		<![CDATA[SELECT * FROM t_project_enclosure where id = #{id}]]>
+	</select>
+
+</mapper>

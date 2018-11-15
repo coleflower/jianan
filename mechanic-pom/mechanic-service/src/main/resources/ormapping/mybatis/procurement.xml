@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.procurement.IProcurementDAO">
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.procurement.ProcurementDTO">
+        <id column="id" property="id"/>
+        <result column="procurement_code" property="procurementCode" />
+        <result column="product_code" property="productCode"/>
+        <result column="product_materials_id" property="productMaterialsId"/>
+        <result column="name" property="name"/>
+        <result column="material" property="material"/>
+        <result column="count" property="count"/>
+        <result column="code_name" property="codeName"/>
+        <result column="supplier" property="supplier"/>
+        <result column="operator" property="operator"/>
+        <result column="quoted_price" property="quotedPrice"/>
+        <result column="status" property="status"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,procurement_code,product_code,product_materials_id,name,material,count,code_name,supplier,operator,quoted_price,status,remark,create_time
+    </sql>
+
+    <insert id="insert" parameterType="com.cubicpark.mechanic.domain.dto.procurement.ProcurementDTO">
+        insert into t_procurement
+        (id,procurement_code,product_code,product_materials_id,name,material,count,code_name,supplier,operator,quoted_price,status,remark,create_time)
+        values
+        (#{id},#{procurementCode},#{productCode},#{productMaterialsId},#{name},#{material},#{count},#{codeName},#{supplier},#{operator},#{quotedPrice},#{status},#{remark},#{createTime})
+    </insert>
+
+    <select id="selectByStatusAndEmployeeCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_procurement
+        where status = #{status}
+        <if test="employeeCode != null" >
+        and operator = #{employeeCode}
+        </if>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_procurement
+        where id = #{id}
+    </select>
+
+    <update id="updateById" parameterType="java.lang.Integer">
+        update t_procurement
+        <set>
+            <if test="procurementCode != null" >
+                procurement_code = #{procurementCode},
+            </if>
+            <if test="productCode != null" >
+                product_code = #{productCode},
+            </if>
+            <if test="productMaterialsId != null" >
+                product_materials_id = #{productMaterialsId},
+            </if>
+            <if test="name != null" >
+                name = #{name},
+            </if>
+            <if test="material != null" >
+                material = #{material},
+            </if>
+            <if test="count != null" >
+                count = #{count},
+            </if>
+            <if test="codeName != null" >
+                code_name = #{codeName},
+            </if>
+            <if test="supplier != null" >
+                supplier = #{supplier},
+            </if>
+            <if test="operator != null" >
+                operator = #{operator},
+            </if>
+            <if test="quotedPrice != null" >
+                quoted_price = #{quotedPrice},
+            </if>
+            <if test="status != null" >
+                status = #{status},
+            </if>
+              remark = #{remark},
+            <if test="createTime != null" >
+                create_time = #{createTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_procurement
+    </select>
+
+    <select id="selectByProductMaterialsId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_procurement
+        where product_materials_id = #{productMaterialsId}
+    </select>
+
+    <select id="selectByProcurementIdArray" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_procurement
+        where id in
+        <foreach collection="list" item="procurementId" index="index"
+                 open="(" close=")" separator=",">
+            #{procurementId}
+        </foreach>
+    </select>
+
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_procurement
+        where status = #{status}
+    </select>
+</mapper>

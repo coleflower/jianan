@@ -1,0 +1,249 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": false,//控制顶部显示条数 
+		//"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": false, //分页
+		"bInfo": false,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[8]}// 不参与排序的列
+		]
+	});
+});
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+//弹出全屏操作窗口，关闭后回调刷新本页面
+function fullOpenOperation(title,url){
+	var index = layer.open({
+		type: 2,
+		title: title,
+		content: url,
+		cancel: function(){ 
+		    //右上角关闭回调
+		    $("form").submit();
+		}
+	});
+	layer.full(index);
+}
+
+// 修改账号状态
+function modifyAccountStatus(employeeCode, newStatus) {
+
+	if (employeeCode == "" && newStatus == "") {
+		layer.alert("账号状态修改参数不完整，请确认后重试！", 1);
+		return false;
+	}
+
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "employee.htm?method=modifyStatus",
+		data : {
+			employeeCode : employeeCode,
+			newStatus : newStatus
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("账号状态变更成功！",  {icon: 1}, function(index){
+						$("form").submit();
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("修改账号状态失败，请稍后重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+
+function resetPassword(employeeCode) {
+	if (employeeCode == "") {
+		layer.alert("请选择需要密码重置的员工工号，请确认后重试！", 1);
+		return false;
+	}
+
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "employee.htm?method=resetPassword",
+		data : {
+			employeeCode : employeeCode
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("密码重置成功！",  {icon: 1}, function(index){
+						$("form").submit();
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("密码重置失败，请稍后重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 员工中心 <span class="c-gray en">&gt;</span> 员工管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+	<form action="employee.htm?method=query" method="post" class="form form-horizontal" id="form-member-add">
+	<div class="text-c"> 
+		<input type="text" name="employeeCode" id="employeeCode" value="${query.employeeCode}" placeholder=" 员工编号" style="width:100px" class="input-text">
+		<input type="text" name="name" id="name" value="${query.name}" placeholder=" 姓名" style="width:80px" class="input-text">
+		<span class="select-box inline">
+		<select name="departmentCode" class="select">
+			<option value="" selected>所有部门</option>
+			<#list allDepartment as department>
+			<#assign offsetNode = "&nbsp;&nbsp;"/>
+			<#assign linkNode = "&nbsp;&nbsp;"/>
+			<#assign childNode = "├&nbsp;"/>
+			<#assign endNode = "└&nbsp;"/>
+			<option value="${department.departmentCode}" <#if (query.departmentCode == department.departmentCode)>selected</#if>>
+			<#if (department.depth > 0)>
+			<#list 1..department.depth as m>
+				<#assign showInfo = showInfo+offsetNode />
+				<#if (m == department.depth)>
+					<#if (department.nextId > 0)>
+						<#assign showInfo = showInfo+childNode />
+					<#else>
+						<#assign showInfo = showInfo+endNode />
+					</#if>
+				<#else>
+					<#assign showInfo = showInfo+linkNode />
+				</#if>
+			</#list>
+			</#if>
+			${showInfo+department.departmentName}
+			</option>
+			<#assign showInfo = "" />
+			</#list>
+		</select>
+		</span> 
+		<span class="select-box inline">
+		<select name="accountStatus" class="select">
+			<option value="" selected>所有状态</option>
+		<#list accountState?keys as key>
+			<option value="${key}" <#if query.accountStatus==key>selected="true"</#if>>${accountState[key]}</option>
+		</#list>
+		</select>
+		</span> 
+		入职日期：
+		<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'endEntryDate\')||\'%y-%M-%d\'}'})" name="startEntryDate" id="startEntryDate" value="${query.startEntryDate}" class="input-text Wdate" style="width:120px;">
+		-
+		<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'startEntryDate\')}',maxDate:'%y-%M-%d'})" name="endEntryDate" id="endEntryDate" value="${query.endEntryDate}" class="input-text Wdate" style="width:120px;"> 
+		<button name="" id="" class="btn btn-success" type="submit"><i class="Hui-iconfont">&#xe665;</i> 查询</button><#if error?exists><span class="c-red">${error}</span></#if>
+	</div>
+	</form>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th width="100">员工编号</th>
+					<th width="100">姓名</th>
+					<th>所在部门</th>
+					<th width="100">职位</th>
+					<th width="75">学历</th>
+					<th width="80">分机号</th>
+					<th width="80">手机</th>
+					<th width="100">账号状态</th>
+					<th width="160">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#if employees?exists>
+				<#list employees as employee>
+				<tr class="text-c">
+					<td class="text-l">${employee.employeeCode}</td>
+					<td class="text-l">${employee.name}</td>
+					<td class="text-l">${employee.departmentName}</td>
+					<td class="text-l">${employee.positionName}</td>
+					<td class="text-l">${educationMap[employee.education]}</td>
+					<td>${employee.extension}</td>
+					<td>${employee.telephone}</td>
+					<td class="td-status">
+					<#if employee.accountStatus=="101"><i class="Hui-iconfont c-red f-20" title="未激活">&#xe601;</i></#if>
+					<#if employee.accountStatus=="102"><i class="Hui-iconfont c-green f-20" title="激活">&#xe601;</i></#if>
+					<#if employee.accountStatus=="103"><i class="Hui-iconfont c-red f-20" title="锁定（禁用）">&#xe60e;</i></#if>
+					<#if employee.accountStatus=="104"><i class="Hui-iconfont c-red f-20" title="停用">&#xe631;</i></#if>
+					</td>
+					<td class="f-14 td-manage">
+					<a style="text-decoration:none" class="ml-5" onClick="fullOpenOperation('修改员工信息','employee.htm?method=initModify&employeeCode=${employee.employeeCode}')" href="javascript:;" title="修改员工信息"><i class="Hui-iconfont f-20">&#xe6df;</i></a> 
+					<a style="text-decoration:none" class="ml-5" onClick="openOperation('权限编辑','employee.htm?method=initRole&employeeCode=${employee.employeeCode}','800')" href="javascript:;" title="权限编辑"><i class="Hui-iconfont f-20">&#xe61d;</i></a> 
+					<#if employee.accountStatus=="103">
+					<a style="text-decoration:none" class="ml-5" onClick="modifyAccountStatus('${employee.employeeCode}','102')" href="javascript:;" title="解锁账号"><i class="Hui-iconfont c-green f-20">&#xe605;</i></a> 
+					<#elseif employee.accountStatus=="102">
+					<a style="text-decoration:none" class="ml-5" onClick="modifyAccountStatus('${employee.employeeCode}','103')" href="javascript:;" title="锁定账号"><i class="Hui-iconfont c-red f-20">&#xe60e;</i></a> 
+					<#else>
+					<i class="Hui-iconfont f-20 ml-5" title="不可操作">&#xe60e;</i>
+					</#if>
+					<#if employee.accountStatus=="101">
+					<i class="Hui-iconfont f-20 ml-5" title="不可操作">&#xe63f;</i>
+					<#else>
+					<a style="text-decoration:none" class="ml-5" onClick="resetPassword('${employee.employeeCode}')" href="javascript:;" title="重置密码"><i class="Hui-iconfont f-20">&#xe63f;</i></a>
+					</#if>
+					<#if employee.accountStatus=="101" || employee.accountStatus=="104">
+					<i class="Hui-iconfont f-20 ml-5" title="不可操作">&#xe62c;</i>
+					<#else>
+					<a style="text-decoration:none" class="ml-5" onClick="openOperation('离职办理','employee.htm?method=initQuit&employeeCode=${employee.employeeCode}','800')" href="javascript:;" title="离职办理"><i class="Hui-iconfont f-20">&#xe62c;</i></a>
+					</#if>
+					</td>
+				</tr>
+				</#list>
+				</#if>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

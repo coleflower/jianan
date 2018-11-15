@@ -1,0 +1,110 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<title></title>
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/datatables/1.10.0/jquery.dataTables.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/My97DatePicker/WdatePicker.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/jquery.cxSelect/1.4.1/jquery.cxselect.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.table-sort').dataTable({
+		"aaSorting": [[ 0, "desc" ]],//默认第几个排序
+		"bStateSave": true,//状态保存
+		"bLengthChange": true,//控制顶部显示条数
+		//"bFilter": false, //控制显示当前数据搜索框
+		"bPaginate": true, //分页
+		"bInfo": true,//控制底部显示当前条目
+		"aoColumnDefs": [
+		  //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+		  {"orderable":false,"aTargets":[2]}// 不参与排序的列
+		]
+	});
+});
+
+//弹出指定的操作窗口
+function openOperation(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+
+//弹出全屏操作窗口，关闭后回调刷新本页面
+function fullOpenOperation(title,url){
+    var index = layer.open({
+        type: 2,
+        title: title,
+        content: url
+    });
+    layer.full(index);
+}
+</script>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 补发配件 <span class="c-gray en">&gt;</span> 选择合同<a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="col-sm-6">
+	<form action="contract.htm?method=selectContractByContractNameLike" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="mt-20" id="departmentToEmployee">
+			<input type="text" name="contractNameLike" id="contractNameLike" value="${customerName!''}" placeholder=" 请输入客户名称" style="width:200px" class="input-text">
+			<button type="submit" class="btn btn-success"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+		</div>
+	</form>
+	<div class="mt-20">
+		<table class="table table-border table-bordered table-bg table-hover table-sort">
+			<thead>
+				<tr class="text-c">
+					<th>合同编号</th>
+					<th width="80">合同名称</th>
+					<th width="100">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<#if contractDTOS?exists>
+				<#list contractDTOS as contract>
+				<tr class="text-c">
+					<td >${contract.contractCode}
+						<#if contract.parentContractCode != null>
+						(补发配件合同)
+						</#if>
+					</td>
+					<td >${contract.contractName}</td>
+
+					<td class="f-14 td-manage">
+					<#if contract.parentContractCode == null && !bill??>
+					<a style="text-decoration:none" class="ml-5" onclick="openOperation('添加配件补发合同','contract.htm?method=initAdd&contractCode=${contract.contractCode}&customercode=${customercode}')" title="添加补发配件合同"><i class="Hui-iconfont f-20">&#xe600;</i></a>
+					</#if>
+					<#if bill??>
+					<a style="text-decoration:none" class="ml-5" onclick="openOperation('新增开票','bill.htm?method=initAdd')" title="新增开票"><i class="Hui-iconfont f-20">&#xe600;</i></a>
+					</#if>
+					</td>
+				</tr>
+				</#list>
+				</#if>
+			</tbody>
+		</table>
+	</div>
+</div>
+</body>
+</html>

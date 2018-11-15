@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.cubicpark.mechanic.dao.project.IProjectCategoryDAO">
+	<resultMap id="projectCategoryResultMapper" type="com.cubicpark.mechanic.domain.dto.project.ProjectCategoryDTO">
+		<id column="id" property="id" />
+		<result column="projectcategorycode" property="projectCategoryCode" />
+		<result column="projectcategoryname" property="projectCategoryName" />
+		<result column="parentid" property="parentId" />
+		<result column="parentpath" property="parentPath" />
+		<result column="depth" property="depth" />
+		<result column="sameroottag" property="sameRootTag" />
+		<result column="child" property="child" />
+		<result column="previd" property="prevId" />
+		<result column="nextid" property="nextId" />
+		<result column="sort" property="sort" />
+	</resultMap>
+	
+	<select id="getAll" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category order by sameroottag,sort]]>
+	</select>
+	
+	<select id="getMaxID" resultType="Integer">
+		<![CDATA[SELECT Max(id) FROM t_project_category]]>
+	</select>
+	
+	<select id="getMaxSameRootTag" resultType="Integer">
+		<![CDATA[SELECT Max(sameroottag) FROM t_project_category]]>
+	</select>
+	
+	<select id="getByID" parameterType="int" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE id = #{id}]]>
+	</select>
+	
+	<select id="getMaxChildSortByParentID" parameterType="int" resultType="int">
+		<![CDATA[SELECT Max(sort) FROM t_project_category where parentid = #{id}]]>
+	</select>
+	
+	<select id="getChildByParentIDWithSort" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid = #{id} and sort = #{sort}]]>
+	</select>
+	
+	<select id="getMaxSortByParentPath" parameterType="String" resultType="int">
+		<![CDATA[SELECT Max(sort) FROM t_project_category where parentpath like CONCAT(#{parentPath},'%')]]>
+	</select>
+	
+	<select id="getCountByParentPath" parameterType="String" resultType="int">
+		<![CDATA[SELECT count(id) FROM t_project_category where parentpath like CONCAT('%',#{parentPath},'%')]]>
+	</select>
+	
+	<select id="getRootBySameRootTagWithDepth" parameterType="int" resultType="int">
+		<![CDATA[SELECT id FROM t_project_category where sameroottag = #{sameRootTag} and Depth=0]]>
+	</select>
+	
+	<select id="getChildByParentIDWithName" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid = #{id} and projectcategoryname = #{name}]]>
+	</select>
+	
+	<select id="getByParentIDWithNameExceptSelf" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid = #{parentId} and projectcategoryname = #{name} and id <> #{id}]]>
+	</select>
+	
+	<select id="getInIDOrderByDepth" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE id in]]>
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach> 
+		<![CDATA[order by Depth]]>
+	</select>
+	
+	<select id="getAllRootOrderBySameRootTag" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid=0 order by sameroottag]]>
+	</select>
+	
+	<select id="getRootLtSameRootTag" parameterType="int" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid=0  and sameroottag < #{sameRootTag} order by sameroottag desc]]>
+	</select>
+	
+	<select id="getRootGtSameRootTag" parameterType="int" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid=0  and sameroottag > #{sameRootTag} order by sameroottag]]>
+	</select>
+	
+	<select id="getChildsByParentIDLtSort" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid=#{id}  and sort < #{sort} order by sort desc]]>
+	</select>
+	
+	<select id="getChildsByParentIDGtSort" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentid=#{id}  and sort > #{sort} order by sort]]>
+	</select>
+	
+	<select id="getGroupByParentPathWithSortDesc" parameterType="String" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentpath like CONCAT('%',#{parentPath},'%') order by sort desc]]>
+	</select>
+	
+	<select id="getGroupByParentPathWithSortAsc" parameterType="String" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE parentpath like CONCAT('%',#{parentPath},'%') order by sort]]>
+	</select>
+	
+	<select id="getChildsCountByParentIDLtSort" resultType="int">
+		<![CDATA[SELECT count(id) FROM t_project_category where parentid=#{id} and sort < #{sort}]]>
+	</select>
+	
+	<select id="getChildsCountByParentIDGtSort" resultType="int">
+		<![CDATA[SELECT count(id) FROM t_project_category where parentid=#{id} and sort > #{sort}]]>
+	</select>
+	
+	<insert id="add" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectCategoryDTO">
+		<![CDATA[insert into t_project_category (id, projectcategorycode, projectcategoryname, parentid, parentpath, depth, sameroottag, child, previd, nextid, sort)
+		values
+		(#{id}, #{projectCategoryCode}, #{projectCategoryName}, #{parentId}, #{parentPath}, #{depth}, #{sameRootTag}, #{child}, #{prevId}, #{nextId}, #{sort})]]>
+	</insert>
+	
+	<update id="modifyChildNumByID" >
+		<![CDATA[update t_project_category set child = #{childNum} where id = #{id}]]>
+	</update>
+	
+	<update id="modifySortAddOneBySameRootTagWithGtSort" >
+		<![CDATA[update t_project_category set sort=sort+1 where sameroottag = #{sameRootTag} and sort > #{sort}]]>
+	</update>
+	
+	<update id="modifySortByID" >
+		<![CDATA[update t_project_category set sort = #{sort} where id = #{id}]]>
+	</update>
+	
+	<update id="modify" parameterType="com.cubicpark.mechanic.domain.dto.project.ProjectCategoryDTO">
+		<![CDATA[update t_project_category ]]>
+		<set>
+			<if test="projectCategoryName != null">
+				<![CDATA[projectcategoryname = #{projectCategoryName}, ]]>
+			</if>
+		</set>
+		<![CDATA[where id=#{id}]]>
+	</update>
+	
+	<update id="modifyPrevIDByID" >
+		<![CDATA[update t_project_category set previd = #{prevID} where id = #{id}]]>
+	</update>
+	
+	<update id="modifyNextIDByID" >
+		<![CDATA[update t_project_category set nextid = #{nextID} where id = #{id}]]>
+	</update>
+	
+	<update id="modifySelfSameRootTag" >
+		<![CDATA[update t_project_category set sameroottag = #{newSameRootTag} where sameroottag = #{sameRootTag}]]>
+	</update>
+	
+	<delete id="delByID" parameterType="int">
+		<![CDATA[delete from t_project_category where id=#{id}]]>
+	</delete>
+	
+	<select id="getDepartmentByCode" parameterType="String" resultMap="projectCategoryResultMapper">
+		<![CDATA[SELECT * FROM t_project_category WHERE projectcategorycode = #{projectCategoryCode}]]>
+	</select>
+</mapper>

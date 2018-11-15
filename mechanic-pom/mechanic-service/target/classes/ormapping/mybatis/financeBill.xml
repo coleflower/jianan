@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cubicpark.mechanic.dao.finance.IFinanceBillDao">
+    <resultMap id="BaseResultMap" type="com.cubicpark.mechanic.domain.dto.finance.FinanceBillDTO">
+        <id column="id" property="id"  />
+        <result column="finance_bill_code" property="financeBillCode" />
+        <result column="bill_title" property="billTitle" />
+        <result column="bill_type" property="billType"  />
+        <result column="contract_code" property="contractCode"  />
+        <result column="customer_code" property="customerCode" />
+        <result column="proposer" property="proposer"  />
+        <result column="proposer_name" property="proposerName"  />
+        <result column="employee_code" property="employeeCode"  />
+        <result column="employee_name" property="employeeName"  />
+        <result column="money" property="money" />
+        <result column="status" property="status"  />
+        <result column="icon" property="icon"  />
+        <result column="remark" property="remark"  />
+        <result column="create_date" property="createDate"  />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+        id,finance_bill_code,bill_type,bill_title,contract_code,customer_code,proposer,proposer_name,employee_code,employee_name,money,status,icon,remark,create_date
+    </sql>
+
+    <insert id="insert" parameterType="com.cubicpark.mechanic.domain.dto.finance.FinanceBillDTO">
+        insert into t_finance_bill
+        (id,finance_bill_code,bill_type,bill_title,contract_code,customer_code,proposer,proposer_name,employee_code,employee_name,money,status,icon,remark,create_date)
+        values
+        (#{id},#{financeBillCode},#{billType},#{billTitle},#{contractCode},#{customerCode},#{proposer},#{proposerName},#{employeeCode},#{employeeName},#{money},#{status},#{icon},#{remark},#{createDate})
+    </insert>
+
+    <update id="updateById">
+        update t_finance_bill
+        set finance_bill_code = #{financeBillCode},
+        bill_title = #{billTitle},
+        bill_type = #{billType},
+        contract_code = #{contractCode},
+        customer_code = #{customerCode},
+        proposer = #{proposer},
+        proposer_name = #{proposerName},
+        employee_code = #{employeeCode},
+        employee_name = #{employeeName},
+        money = #{money},
+        status = #{status},
+        icon = #{icon},
+        remark = #{remark},
+        create_date = #{createDate}
+        where id = #{id}
+    </update>
+
+    <select id="selectByContractCode" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from t_finance_bill
+        where contract_code = #{contractCode}
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_finance_bill
+        where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_finance_bill
+    </select>
+
+
+    <select id="selectUnprocessed" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_finance_bill
+        where status = '待开票'
+    </select>
+
+    <select id="findInOneMouth" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from t_finance_bill
+        where create_date &gt;= #{oneMouthBefore}
+        and proposer = #{proposer}
+    </select>
+
+    <select id="findByProposer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" />
+        from t_finance_bill
+        where proposer = #{proposer}
+    </select>
+
+    <select id="searchCodeLike" resultType="string">
+    select contract_code
+    from t_finance_bill
+    where contract_code like concat("%", #{code},"%")
+  </select>
+
+    <select id="selectByCodeOrStatusOrDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM t_finance_bill
+        <where>
+            <if test="code != null and code != ''">
+                contract_code like concat("%", #{code},"%")
+            </if>
+            <if test="status == 1">
+                and status = '待开票'
+            </if>
+            <if test="status == 2">
+                and status != '待开票'
+            </if>
+            <if test="createTime != null">
+                and create_date &gt;= #{createTime}
+            </if>
+            <if test="endTime != null">
+                and create_date &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByDepartmentCodeOrEmployeeCodeOrStatusOrDate" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List" />
+        FROM t_finance_bill
+        <where>
+            <if test="employeeCode != null and employeeCode != ''">
+                proposer = #{employeeCode}
+            </if>
+            <if test="status != '' and status != null">
+                and status = #{status}
+            </if>
+            <if test="startTime != null">
+                and create_date &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and create_date &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectByContractCodeAndStatus" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from t_finance_bill
+        where contract_code = #{contractCode}
+        and status = #{status}
+    </select>
+</mapper>

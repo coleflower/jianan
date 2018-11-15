@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<LINK rel="Bookmark" href="/favicon.ico" >
+<LINK rel="Shortcut Icon" href="/favicon.ico" />
+<title></title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<!--[if IE 6]>
+<script type="text/javascript" src="${resRoot}/lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--[if lt IE 9]>
+<script type="text/javascript" src="${resRoot}/lib/html5.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/respond.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/PIE_IE678.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/Hui-iconfont/1.0.7/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/lib/icheck/icheck.css" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="${resRoot}/static/h-ui.admin/css/style.css" />
+<script type="text/javascript" src="${resRoot}/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="${resRoot}/lib/icheck/jquery.icheck.min.js"></script> 
+<script type="text/javascript" src="${resRoot}/lib/layer/2.1/layer.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui/js/H-ui.js"></script> 
+<script type="text/javascript" src="${resRoot}/static/h-ui.admin/js/H-ui.admin.js"></script>
+<script type="text/javascript" src="${resRoot}/js/util.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	<#if error?exists>
+	layer.alert("${error}",  {icon: 1}, function(index){
+		layer_close();
+	});
+	</#if>
+	
+	$("#submitButton").click(function() {
+		modify("1");
+	});
+	
+	<#if customerContacts.infoState=="0">
+	$("#saveButton").click(function() {
+		modify("0");
+	});
+	</#if>
+	
+});
+
+
+function modify(infoState) {
+	var contactsName = trim($("#contactsName").val());
+	var department = trim($("#department").val());
+	var position = trim($("#position").val());
+	var telephone = trim($("#telephone").val());
+	var mobile = trim($("#mobile").val());
+	var email = trim($("#email").val());
+	var qq = trim($("#qq").val());
+	var weixin = trim($("#weixin").val());
+		
+	if (contactsName == "") {
+		layer.tips('请输入联系人姓名！', '#contactsName');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (department == "") {
+		layer.tips('请输入联系人所在部门！', '#department');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (position == "") {
+		layer.tips('请输入联系人的职位！', '#position');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (telephone == "" && mobile == "") {
+		layer.tips('固定电话和手机二选一录入，推荐录入手机号码！', '#mobile');
+		return false;
+	} else {
+		layer.closeAll('tips');
+	}
+	
+	if (telephone != "") {
+		if (!isTellPhone(telephone)) {
+			layer.tips('固定电话格式不正确，请录入正确的固定电话号码！', '#telephone');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+	}
+	
+	if (mobile != "") {
+		if (!isMobile(mobile)) {
+			layer.tips('手机号码有误，请录入正确的手机号码！', '#mobile');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+	}
+	
+	if (email != "") {
+		if (!isEmail(email)) {
+			layer.tips('电子邮箱地址有误，请录入正确的电子邮箱地址！', '#email');
+			return false;
+		} else {
+			layer.closeAll('tips');
+		}
+	}
+		
+	$.ajax({
+		type : "POST",
+		dataType : "json",
+		contentType : "application/x-www-form-urlencoded",//"application/json; charset=utf-8",
+		url : "customerContacts.htm?method=modify",
+		data : {
+			customerCode : "${customerContacts.customerCode}",
+			contactsCode : "${customerContacts.contactsCode}",
+			contactsName : contactsName,
+			department : department,
+			position : position,
+			telephone : telephone,
+			mobile : mobile,
+			email : email,
+			qq : qq,
+			weixin : weixin,
+			infoState : infoState
+		},
+		success : function(data) {
+			if(data.status == "success") {
+				if (data.message == "200") {
+					layer.alert("修改联系人成功！",  {icon: 1}, function(index){
+						// 刷新IFREAME
+						parent.$("#contactsFrame").attr("src", parent.$("#contactsFrame").attr("src"));
+						layer_close();
+					});
+				} else {
+					layer.alert(data.message, 1);
+				}
+			} else {
+				layer.alert("修改失败，请重试！", 1);
+			}
+		},
+		error : function() {
+			layer.alert("系统繁忙，请稍后再试！", 1);
+		}
+	});
+}
+</script>
+</head>
+<body>
+<article class="page-container">
+	<form action="" method="post" class="form form-horizontal" id="form-member-add">
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">所属客户：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			${customerInfo.customerName}
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>联系人姓名：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder=" 姓名全名不得使用简称" id="contactsName" name="contactsName" value="${customerContacts.contactsName}" maxlength="10" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>所在部门：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder=" " id="department" name="department" value="${customerContacts.department}" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><span class="c-red">*</span>职位：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder="" id="position" name="position" value="${customerContacts.position}" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">固定电话：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder=" 格式：区号-主机号-分机号" id="telephone" name="telephone" value="${customerContacts.telephone}" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">手机：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder=" 固定电话和手机二选一录入" id="mobile" name="mobile" value="${customerContacts.mobile}" maxlength="11" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">电子邮件：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder="" id="email" name="email" value="${customerContacts.email}" maxlength="50" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">QQ号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder="" id="qq" name="qq" value="${customerContacts.qq}" maxlength="20" >
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2">微信号：</label>
+			<div class="formControls col-xs-8 col-sm-6">
+			<input type="text" class="input-text" placeholder="" id="weixin" name="weixin" value="${customerContacts.weixin}" maxlength="50" >
+			</div>
+		</div>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+				<button id="submitButton" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存并提交</button>
+				<#if customerContacts.infoState=="0">
+				<button id="saveButton" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+				</#if>
+			</div>
+		</div>
+	</form>
+</article>
+</body>
+</html>

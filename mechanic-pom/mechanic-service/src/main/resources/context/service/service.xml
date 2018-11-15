@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+	
+	<!-- 属性装载 -->
+	<bean id="propertyConfigurer"
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/> 
+        <property name="locations">
+            <list>
+				<value>classpath*:properties/database.properties</value>
+            </list>
+        </property>
+    </bean>
+    
+	<context:component-scan base-package="com.cubicpark.mechanic.domain.service" />
+
+	<bean class="com.cubicpark.mechanic.common.util.MenthaCodeUtil">
+		<property name="seqDAO"><ref bean="seqDAO"/></property>
+	</bean>
+	
+	<bean id="educationMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="edu01" value="小学"/>
+				<entry key="edu02" value="初中"/>
+				<entry key="edu03" value="高中"/>
+				<entry key="edu04" value="职业高中"/>
+				<entry key="edu05" value="中专"/>
+				<entry key="edu06" value="大学专科"/>
+				<entry key="edu07" value="大学本科"/>
+				<entry key="edu08" value="硕士研究生"/>
+				<entry key="edu09" value="博士研究生"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="accountStateMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="101" value="未激活"/>
+				<entry key="102" value="激活"/>
+				<entry key="103" value="禁用"/>
+				<entry key="104" value="停用"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="menuMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="menu001" value="系统设置"/>
+				<entry key="menu002" value="销售中心"/>
+				<entry key="menu003" value="技术中心"/>
+				<entry key="menu004" value="生产中心"/>
+				<entry key="menu005" value="采购中心"/>
+				<entry key="menu006" value="仓储中心"/>
+				<entry key="menu007" value="物流中心"/>
+				<entry key="menu008" value="售后评价中心"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="roleMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="r001" value="总经理"/>
+				<entry key="r002" value="总监"/>
+				<entry key="r003" value="小组长"/>
+				<entry key="r004" value="业务员"/>
+				<entry key="r005" value="观察员"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="projectStateMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="101" value="未生效"/>
+				<entry key="102" value="生效"/>
+				<entry key="103" value="终止"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="gradeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="G00" value="无效客户"/>
+				<entry key="G01" value="一级客户"/>
+				<entry key="G02" value="二级客户"/>
+				<entry key="G03" value="三级客户"/>
+				<entry key="G04" value="四级客户"/>
+				<entry key="G05" value="KA客户"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="customerQueryEventMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="E00" value="新增客户"/>
+				<entry key="E01" value="联系客户"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="connectionWayMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="CW00" value="电话"/>
+				<entry key="CW01" value="QQ"/>
+				<entry key="CW02" value="EMAIL"/>
+				<entry key="CW03" value="客户来访"/>
+				<entry key="CW04" value="上门拜访"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="communicateTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="CT00" value="主动联系"/>
+				<entry key="CT01" value="定时联系"/>
+				<entry key="CT02" value="回访联系"/>
+				<entry key="CT03" value="客户联系"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="demandTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="CT00" value="疑似 "/>
+				<entry key="CT01" value="新增"/>
+				<entry key="CT02" value="有效"/>
+				<entry key="CT03" value="实现 "/>
+				<entry key="CT03" value="作废 "/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="contractStateMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="tobeeffective" value="待生效 "/>
+				<entry key="effective" value="有效"/>
+				<entry key="cancel" value="作废"/>
+				<entry key="expired" value="已过期 "/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="fundStateMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="nopay" value="未付款"/>
+				<entry key="nofirstpay" value="未首付"/>
+				<entry key="firstpay" value="已首付待回款"/>
+				<entry key="backpay" value="正常回款未结清"/>
+				<entry key="endpay" value="已尾款已结清"/>
+				<entry key="allpay" value="全部结清"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="fundTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="firstpay" value="首期款"/>
+				<entry key="backpay" value="正常回款"/>
+				<entry key="endpay" value="尾款"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="payWayMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="PAY00" value="现金"/>
+				<entry key="PAY01" value="网银转账"/>
+				<entry key="PAY02" value="第三方支付"/>
+				<entry key="PAY03" value="银行汇款"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="tripStateMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="sourceMap">
+			<map merge="default">
+				<entry key="to" value="待审批"/>
+				<entry key="pass" value="审批通过"/>
+				<entry key="refuse" value="审批拒绝"/>
+				<entry key="cancel" value="作废"/>
+			</map>
+		</property>
+	</bean>
+</beans>
